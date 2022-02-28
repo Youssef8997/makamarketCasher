@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:untitled6/Compoandis/Comp.dart';
+import 'package:untitled6/HomeLayout/HomeLayout.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class Login extends StatelessWidget {
@@ -25,99 +27,112 @@ class Login extends StatelessWidget {
                 border: Border.all(color: Colors.grey.shade700, width: 5)),
             child: Row(
               children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: LoginLogo(Size),
-                      ),
-                      MakaMarketName(),
-                      const Spacer(),
-                      MyName(context),
-                      const Text("Number:01273599580",style: TextStyle(color: Colors.grey,fontSize: 25,fontWeight: FontWeight.bold),),
-                    ],
-                  ),
-                ),
+                LogoCoulmn(Size, context),
                 const SizedBox(
-                  width: 10,
+                  width: 20,
                 ),
+              MyDiveder(Size),
                 const SizedBox(
-                  width: 10,
+                  width: 20,
                 ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 60,
-                        width: 400,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadiusDirectional.circular(25.0),
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: Expanded(
-                          child: TextFormField(
-                            style: TextStyle(color: Colors.white),
-                            maxLines: 1,
-                            controller: UserName,
-                            decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon:
-                                    Icon(Icons.drive_file_rename_outline,color: Colors.white),
-                                hintText: "User Name",
-                                hintStyle: TextStyle(color: Colors.white),
-                                label: Text("User Name",style: TextStyle(color: Colors.white),)),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        height: 60,
-                        width: 400,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadiusDirectional.circular(25.0),
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: Expanded(
-                          child: TextFormField(
-                            style: TextStyle(color: Colors.white),
-                            controller: UserPass,
-                            decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(Icons.lock,color: Colors.white),
-                                hintText: "Password",
-                                hintStyle: TextStyle(color: Colors.white),
-                                label: Text("Password",style: TextStyle(color: Colors.white)),
-                            ),
-                            obscureText: true,
-                            obscuringCharacter: "*",
-                            maxLines: 1,
-
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-
-                      Container(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadiusDirectional.circular(20.0),
-                          ),
-                          child: MaterialButton(minWidth: 150,onPressed: (){}, child: const Text("Login"),color: Colors.blue.shade400,))
-                    ],
-                  ),
-                )
+                TextFiledcoulmn(context)
               ],
             ),
           )
         ],
       ),
     );
+  }
+
+  Expanded TextFiledcoulmn(context) {
+    return Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 60,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadiusDirectional.circular(25.0),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: TextFormField(
+                        style: TextStyle(color: Colors.white),
+                        maxLines: 1,
+                        controller: UserName,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon:
+                                Icon(Icons.drive_file_rename_outline,color: Colors.white),
+                            hintText: "User Name",
+                            hintStyle: TextStyle(color: Colors.white),
+                            label: Text("User Name",style: TextStyle(color: Colors.white),)),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      height: 60,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadiusDirectional.circular(25.0),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: TextFormField(
+                        style: TextStyle(color: Colors.white),
+                        controller: UserPass,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon: Icon(Icons.lock,color: Colors.white),
+                            hintText: "Password",
+                            hintStyle: TextStyle(color: Colors.white),
+                            label: Text("Password",style: TextStyle(color: Colors.white)),
+                        ),
+                        obscureText: true,
+                        obscuringCharacter: "*",
+                        maxLines: 1,
+
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    Container(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadiusDirectional.circular(20.0),
+                        ),
+                        child: MaterialButton(minWidth: 150,onPressed: (){Nevigator(bool: false,page: HomeScreen(),context: context);}, child: const Text("Login"),color: Colors.blue.shade400,))
+                  ],
+                ),
+              );
+  }
+
+  Expanded LogoCoulmn(Size Size, BuildContext context) {
+    return Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: LoginLogo(Size),
+                    ),
+                    MakaMarketName(),
+                    const Spacer(),
+                    MyName(context),
+                    const Text("Number:01273599580",style: TextStyle(color: Colors.grey,fontSize: 25,fontWeight: FontWeight.bold),),
+                  ],
+                ),
+              );
+  }
+
+  Container MyDiveder(Size Size) {
+    return Container(
+              color: Colors.white10,
+               height: Size.height * 0.8,
+              width: 1,
+            );
   }
 
   Text MakaMarketName() {
