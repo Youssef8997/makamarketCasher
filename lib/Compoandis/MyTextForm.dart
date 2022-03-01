@@ -1,19 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Widget Mytextfield({required Controlr,required String hint,Prefix,suffix,keybordtype,isobsr=false,validator}) {
+Widget MyTextField({required Controlr,required String hint,Prefix,suffix,keybordtype,isobsr=false,validator}) {
   return Container(
     height: 50,
     clipBehavior: Clip.antiAliasWithSaveLayer,
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey),
+      border: Border.all(color: Colors.white),
       borderRadius: BorderRadius.circular(25.0),
     ),
     child: TextFormField(
+      style: TextStyle(color: Colors.white),
       controller: Controlr,
       keyboardType: keybordtype,
       decoration: InputDecoration(
+        contentPadding: EdgeInsetsDirectional.fromSTEB(20, 0, 0,0),
           hintText: hint,
+          hintStyle:TextStyle(color: Colors.white),
+
           prefixIcon: Prefix,
           suffixIcon: suffix,
           border: InputBorder.none
