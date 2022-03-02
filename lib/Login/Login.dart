@@ -182,8 +182,8 @@ colorFilter: ColorFilter.mode(Colors.black12, BlendMode.multiply),
     return SizedBox(
       width: Size.width,
       height: Size.height,
-      child: Image.network(
-        "https://i.pinimg.com/736x/1d/fa/80/1dfa80166c5aba41aee1dad05edd1e7f.jpg",
+      child: Image.asset(
+        "Asset/LoginWallpapers.jpg",
         fit: BoxFit.fill,
         filterQuality: FilterQuality.high,
       ),

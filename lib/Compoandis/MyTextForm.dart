@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,keybordtype,isobsr=false,validator,OnEditng}) {
+Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,keybordtype,isobsr=false,validator,OnTap,enabled}) {
   return Container(
     height: 50,
     clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -10,7 +10,8 @@ Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,k
       borderRadius: BorderRadius.circular(25.0),
     ),
     child: TextFormField(
-      onFieldSubmitted: OnEditng,
+      enabled: enabled,
+      onTap: OnTap,
        autovalidateMode: AutovalidateMode.always,
       style: TextStyle(color: Colors.white),
       controller: Controlr,

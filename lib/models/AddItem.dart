@@ -85,10 +85,11 @@ class AddItem extends StatelessWidget {
                   child: Column(
                     children: [
                       Row(
-                        children: const [
-                          Icon(Icons.search, color: Colors.teal),
-                          SizedBox(width: 5),
-                          Text(
+                        children:  [
+                          Icon(cuibt.Search?Icons.clear:Icons.search, color: Colors.teal),
+                          const SizedBox(width: 5),
+                          cuibt.Search?const Text(
+                              "Close", style: TextStyle(color: Colors.blueGrey)):const Text(
                               "Search", style: TextStyle(color: Colors.blueGrey)),
                         ],
                       ),
