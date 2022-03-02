@@ -13,32 +13,91 @@ class AddItem extends StatelessWidget {
   var NumberOfItem = TextEditingController();
   var SupplayerOfItem = TextEditingController();
   var winOfItem = TextEditingController();
-
+  var NameOfSearch = TextEditingController();
+  var CodeOfSearch = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
         listener: (context, state) {},
         builder: (context, state) {
-          var size = MediaQuery.of(context).size;
+          var size = MediaQuery
+              .of(context)
+              .size;
+          var cuibt = CasherCuibt.get(context);
           return Stack(
-            alignment: AlignmentDirectional.center,
+
             children: [
               AddItiemWallpapper(size),
-              Container(
-                height: size.height * .75,
-                width: size.width * .5,
-                decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(.8),
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(
-                      color: Colors.grey.shade900,
-                      width: 4,
-                    )),
-                child: AddItemCountenar(),
+              Padding(
+                padding: const EdgeInsets.all(50),
+                child: Column(
+                  children: [
+                    MyName(context),
+                    SizedBox(height: 30,),
+                    MakaMarketName()
+                  ],
+                ),
+              ),
+              SizedBox(height: 20,),
+              SearchButton(cuibt),
+               Padding(
+                   padding: const EdgeInsetsDirectional.only(end: 15),
+                   child: Align(child: SearchCountenar(context,size),alignment: Alignment.centerRight,))
+             ,
+              AnimatedAlign(
+                duration: const Duration(milliseconds: 600),
+                curve: Curves.fastOutSlowIn,
+
+                alignment: cuibt.Search ? Alignment.centerLeft : Alignment
+                    .center,
+                child: Container(
+
+                  height: size.height * .75,
+                  width: size.width * .5,
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(.8),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                        color: Colors.grey.shade900,
+                        width: 4,
+                      )),
+                  child: AddItemCountenar(context),
+                ),
               )
             ],
           );
         });
+  }
+
+  Positioned SearchButton(CasherCuibt cuibt) {
+    return Positioned(
+              top: 40,
+              right: 30,
+              child: Container(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                child: MaterialButton(
+                  onPressed: () {
+                    cuibt.AddItemChangeSearch();
+                  },
+                  child: Column(
+                    children: [
+                      Row(
+                        children: const [
+                          Icon(Icons.search, color: Colors.teal),
+                          SizedBox(width: 5),
+                          Text(
+                              "Search", style: TextStyle(color: Colors.blueGrey)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  color: Colors.grey.shade900,
+                ),
+              ),
+            );
   }
 
   SizedBox AddItiemWallpapper(Size Size) {
@@ -53,147 +112,170 @@ class AddItem extends StatelessWidget {
     );
   }
 
-  Stepper buildStepper() {
-    return Stepper(
-      currentStep: 1,
-      type: StepperType.horizontal,
-      steps: [
-        Step(
-          title: Text("Name", style: TextStyle(color: Colors.white)),
-          content: MyTextField(
-              hint: "Write Name of item......", Controlr: NameOfItem),
-          /*state: cuibt.currentStep > 0 ? StepState.complete : StepState.indexed,*/
-        ),
-        Step(
-          title: Text("Code", style: TextStyle(color: Colors.white)),
-          content: MyTextField(
-              hint: "Write Code of item......", Controlr: CodeOfItem),
-          /*  state: cuibt.currentStep > 1 ? StepState.complete : StepState.indexed,*/
-        ),
-        Step(
-          title: Text("Price", style: TextStyle(color: Colors.white)),
-          content: MyTextField(
-              hint: "Write Code of item......", Controlr: PriceOfItem),
-          /*state: cuibt.currentStep > 2 ? StepState.complete : StepState.indexed,*/
-        ),
-        Step(
-          title: Text("How many of this product",
-              style: TextStyle(color: Colors.white)),
-          content: MyTextField(
-              hint: "Write Number of item......", Controlr: NumberOfItem),
-          /*state: cuibt.currentStep > 3 ? StepState.complete : StepState.indexed,*/
-        ),
-        Step(
-          title: const Text("repeat", style: TextStyle(color: Colors.white)),
-          content: DropdownButton(
-            hint: Text("f repeat", style: TextStyle(color: Colors.black)),
-            items: [
-              DropdownMenuItem(
-                child: const Text("5 Min"),
-                value: "5 Min",
-                enabled: true,
-              ),
-              DropdownMenuItem(
-                child: const Text("10 Min"),
-                value: "10 Min",
-                enabled: true,
-              ),
-              DropdownMenuItem(
-                child: const Text("30 Min"),
-                value: "30 Min",
-                enabled: true,
-              ),
-              DropdownMenuItem(
-                child: const Text("1 hour"),
-                value: "1 hour",
-                enabled: true,
-              ),
-              DropdownMenuItem(
-                child: const Text("Daily"),
-                value: "Daily",
-                enabled: true,
-              ),
-            ],
-            value: "Daily",
-            onChanged: (String?
-                value) {}, /*onChanged: (Object? value) => cuibt.changevaluerepeat(value)*/
-          ),
-          /*   state: cuibt.currentStep > 4 ? StepState.complete : StepState.indexed,*/
-        ),
-        Step(
-          title: Text("Suplayers", style: TextStyle(color: Colors.white)),
-          content: DropdownButton(
-            hint: Text("f Suplayers", style: TextStyle(color: Colors.black)),
-            items: [
-              DropdownMenuItem(
-                child: const Text("high,"),
-                value: "high",
-                enabled: true,
-              ),
-              DropdownMenuItem(
-                child: const Text("medium"),
-                value: "medium",
-                enabled: true,
-              ),
-              DropdownMenuItem(
-                child: const Text("low"),
-                value: "low",
-                enabled: true,
-              ),
-            ],
-            value: "low",
-            onChanged: (String?
-                value) {}, /*onChanged: (Object? value) => cuibt.changevaluepri(value)*/
-          ),
-          /*state: cuibt.currentStep > 5 ? StepState.complete : StepState.indexed,*/
-        ),
-      ],
-/*      onStepContinue: () => cuibt.OnPressedContStepper(context),
-      onStepCancel: () => cuibt.OnPressedcacselStepper(context),*/
-    );
-  }
-
-  AddItemCountenar() {
+  AddItemCountenar(context) {
+    var cuibt=CasherCuibt.get(context);
     return SingleChildScrollView(
       padding: EdgeInsetsDirectional.all(20),
       child: Column(
         children: [
-          TitleOfContenar(),
+          TitleOfContenar("Add Item"),
+
           SizedBox(
             height: 5,
           ),
-          MyTextField(Controlr: NameOfItem, hint: "Name of item"),
+          MyTextField(
+              Controlr: NameOfItem, label: "Name of item", hint: "Name"),
           SizedBox(
             height: 20,
           ),
-          MyTextField(Controlr: CodeOfItem, hint: "Name of item"),
+          MyTextField(Controlr: CodeOfItem,
+              label: "Code Of Item",
+              hint: "003************"),
           SizedBox(
             height: 20,
           ),
-          MyTextField(Controlr: PriceOfItem, hint: "Name of item"),
+          MyTextField(
+              Controlr: PriceOfItem, label: "Price Of Item", hint: "15.5"),
           SizedBox(
             height: 20,
           ),
-          MyTextField(Controlr: winOfItem, hint: "Name of item"),
+          MyTextField(
+              Controlr: winOfItem, label: "net profit", hint: "win Of Item"),
           SizedBox(
             height: 20,
           ),
-          MyTextField(Controlr: NumberOfItem, hint: "Name of item"),
+          MyTextField(
+              Controlr: NumberOfItem, label: "Number Of Item", hint: "20"),
           SizedBox(
             height: 20,
           ),
-          MyTextField(Controlr: SupplayerOfItem, hint: "Name of item"),
-          MaterialButton(
-            onPressed: () {},
-            child: Text("Insert", style: TextStyle(color: Colors.white)),
-            color: Colors.grey.shade900,
-
-
+          MyTextField(
+              Controlr: SupplayerOfItem,
+              label: "Supplier Of Item",
+              hint: ""
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                child: MaterialButton(
+                  onPressed: () {},
+                  child: Text("Insert", style: TextStyle(color: Colors.white)),
+                  color: Colors.grey.shade900,
+                ),
+              ),
+              const SizedBox(width: 20,),
+              Visibility(
+                visible:cuibt.Search ,
+                child: Container(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
+                  child: MaterialButton(
+                    onPressed: () {},
+                    child:const  Text("Edit", style: TextStyle(color: Colors.white)),
+                    color: Colors.grey.shade900,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20,),
+              Visibility(
+                visible:cuibt.Search ,
+                child: Container(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
+                  child: MaterialButton(
+                    onPressed: () {},
+                    child:const  Text("Delete", style: TextStyle(color: Colors.white)),
+                    color: Colors.grey.shade900,
+                  ),
+                ),
+              ),
+            ],
           )
         ],
       ),
     );
   }
 
-  Widget TitleOfContenar() => "Add Item".text.size(25).make().shimmer();
+  Widget TitleOfContenar(value) => "$value".text.size(25).make().shimmer();
+  Widget MyName(BuildContext context) {
+    return Column(
+      children: [
+        "Mada By:Youssef Ahmed"
+            .text
+            .bold
+            .italic
+            .size(25)
+            .make()
+            .shimmer(primaryColor:Colors.teal, secondaryColor: Colors.grey[900])
+            .h10(context),
+      ],
+    );
+  }
+  Text MakaMarketName() {
+    return const Text(
+      "Maka Market",
+      style: TextStyle(
+          color: Colors.grey,
+          fontSize: 30,
+          fontStyle: FontStyle.italic,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(color: Colors.black, blurRadius: .5, offset: Offset(0, 3.5))
+          ]),
+    );
+  }
+  SearchCountenar(context,size) {
+    var cuibt = CasherCuibt.get(context);
+    return AnimatedOpacity(opacity: cuibt.Search ? 1 : 0,
+      duration: Duration(milliseconds: 600),
+      child:AbsorbPointer(
+        absorbing:!cuibt.Search,
+        child: Container(
+          padding: const EdgeInsetsDirectional.all(20),
+          height: size.height * .75,
+          width: size.width * .4,
+          decoration: BoxDecoration(
+              color: Colors.black.withOpacity(.8),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(
+                color: Colors.grey.shade900,
+                width: 4,
+              )),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                TitleOfContenar("Search of Item"),
+                SizedBox(
+                  height: 20,
+                ),
+                MyTextField(
+                    Controlr: NameOfSearch,
+                    label: "Name",
+                    hint: ""
+                ),
+                SizedBox(height: 15,),
+                MyTextField(
+                    Controlr: CodeOfSearch,
+                    label: "Code Of Item",
+                    hint: "0300**************"
+                ),
+              ],
+            ),
+          ),
+        ),
+      )
+      ,);
+  }
 }
