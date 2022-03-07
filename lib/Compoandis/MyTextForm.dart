@@ -13,16 +13,16 @@ Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,k
       enabled: enabled,
       onTap: OnTap,
        autovalidateMode: AutovalidateMode.always,
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.black),
       controller: Controlr,
       keyboardType: keybordtype,
       decoration: InputDecoration(
         contentPadding: EdgeInsetsDirectional.fromSTEB(20, 0, 0,0),
           hintText: hint,
-          hintStyle:TextStyle(color: Colors.grey),
+          hintStyle:TextStyle(color: Colors.black),
 label: Text("$label"),
 
-          labelStyle: TextStyle(color: Colors.white),
+          labelStyle: TextStyle(color: Colors.black),
           prefixIcon: Prefix,
           suffixIcon: suffix,
           border: InputBorder.none

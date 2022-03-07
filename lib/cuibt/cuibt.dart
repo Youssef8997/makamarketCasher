@@ -38,4 +38,10 @@ class CasherCuibt extends Cubit<CasherState>{
     ItemsSearch=!ItemsSearch;
     emit(ChangeSearchAbilty());
   }
+
+var n;
+  void d(){
+    n=2;
+    emit(ChangeSearchAbilty());
+  }
 }

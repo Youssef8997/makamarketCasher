@@ -3,7 +3,7 @@ import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
-
+import 'package:hexcolor/hexcolor.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,7 +17,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt,CasherState>
       (
-        listener: (context,state){},
+        listener: (context,state){
+
+        },
         builder: (context,state){
           var cuibt=CasherCuibt.get(context);
           return AdvancedDrawer(
@@ -39,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: const BorderRadius.all(Radius.circular(16)),
             ),
             child: Scaffold(
+              backgroundColor: HexColor("#4dd6a9"),
               extendBodyBehindAppBar: true,
               appBar: AppBar(
                 elevation: 0,
@@ -50,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     valueListenable: _advancedDrawerController,
                     builder: (_, value, __) {
                       return AnimatedSwitcher(
-                        duration: Duration(milliseconds: 250),
+                        duration: const Duration(milliseconds: 250),
                         child: Icon(
                           value.visible ? Icons.clear : Icons.menu,
                           key: ValueKey<bool>(value.visible),
@@ -59,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
+
               ),
               body: cuibt.body[cuibt.MyIndex],
             ),

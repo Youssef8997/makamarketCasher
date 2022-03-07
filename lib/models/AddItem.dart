@@ -42,8 +42,8 @@ class AddItem extends StatelessWidget {
               SearchButton(cuibt),
                Padding(
                    padding: const EdgeInsetsDirectional.only(end: 15),
-                   child: Align(child: SearchCountenar(context,size),alignment: Alignment.centerRight,))
-             ,
+                   child: Align(child: SearchCountenar(context,size),alignment: Alignment.centerRight,)),
+              //Add Item Container
               AnimatedAlign(
                 duration: const Duration(milliseconds: 600),
                 curve: Curves.fastOutSlowIn,
@@ -55,13 +55,13 @@ class AddItem extends StatelessWidget {
                   height: size.height * .75,
                   width: size.width * .5,
                   decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(.8),
+                      color: Colors.indigo.shade500.withOpacity(.8),
                       borderRadius: BorderRadius.circular(25),
                       border: Border.all(
                         color: Colors.grey.shade900,
                         width: 4,
                       )),
-                  child: AddItemCountenar(context),
+                  child: AddItemCoulmn(context),
                 ),
               )
             ],
@@ -83,6 +83,7 @@ class AddItem extends StatelessWidget {
                     cuibt.AddItemChangeSearch();
                   },
                   child: Column(
+
                     children: [
                       Row(
                         children:  [
@@ -106,14 +107,14 @@ class AddItem extends StatelessWidget {
       width: Size.width,
       height: Size.height,
       child: Image.network(
-        "https://i.pinimg.com/736x/1d/fa/80/1dfa80166c5aba41aee1dad05edd1e7f.jpg",
+        "https://i.pinimg.com/564x/3f/0f/60/3f0f604cf81d704324992ea79854bce9.jpg",
         fit: BoxFit.fill,
         filterQuality: FilterQuality.high,
       ),
     );
   }
 
-  AddItemCountenar(context) {
+  AddItemCoulmn(context) {
     var cuibt=CasherCuibt.get(context);
     return SingleChildScrollView(
       padding: EdgeInsetsDirectional.all(20),
@@ -248,8 +249,8 @@ class AddItem extends StatelessWidget {
           height: size.height * .75,
           width: size.width * .4,
           decoration: BoxDecoration(
-              color: Colors.black.withOpacity(.8),
-              borderRadius: BorderRadius.circular(30),
+              color: Colors.indigo.shade500.withOpacity(.8),
+              borderRadius: BorderRadius.circular(25),
               border: Border.all(
                 color: Colors.grey.shade900,
                 width: 4,
