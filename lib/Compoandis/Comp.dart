@@ -12,9 +12,9 @@ Container Wallpaper(Size Size) {
           fit: BoxFit.fill,
           filterQuality: FilterQuality.high,
           colorFilter: ColorFilter.mode(
-              Colors.  black87, BlendMode.modulate),
-          image:NetworkImage(
-            "https://i.pinimg.com/736x/d1/fc/2e/d1fc2e90f30c4f353cb7f588a1854bc0.jpg",
+              Colors.  black54, BlendMode.darken),
+          image:AssetImage(
+            "Asset/LoginWallpapers.jpg",
           ),
         )),
   );

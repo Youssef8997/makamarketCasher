@@ -13,22 +13,23 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     var Size = MediaQuery.of(context).size;
     return Scaffold(
-    backgroundColor:HexColor("#469D89"),
+
       extendBodyBehindAppBar: true,
       appBar: _appBar(),
       body: Stack(
         alignment: AlignmentDirectional.center,
         children: [
+          Wallpaper(Size),
           Align(
             alignment: AlignmentDirectional.center,
             child: Container(
               height: Size.height * 0.8,
               width: Size.width * 0.6,
               decoration: BoxDecoration(
-                  color: HexColor("#b1d9cd"),
+                  color: Colors.white70,
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
-                    color: HexColor("#78C6A3"),
+                    color: Colors.white,
                     width: 6,
                   )),
               child: Row(
@@ -61,7 +62,7 @@ class Login extends StatelessWidget {
             width: 400,
             decoration: BoxDecoration(
               borderRadius: BorderRadiusDirectional.circular(25.0),
-              border: Border.all(color:HexColor("#248277")),
+              border: Border.all(color:Colors.black),
             ),
             child: TextFormField(
               style: TextStyle(color: Colors.black),
@@ -87,7 +88,7 @@ class Login extends StatelessWidget {
             width: 400,
             decoration: BoxDecoration(
               borderRadius: BorderRadiusDirectional.circular(25.0),
-              border: Border.all(color:HexColor("#248277")),
+              border: Border.all(color:Colors.black),
             ),
             child: TextFormField(
               style: TextStyle(color: Colors.black),
@@ -118,7 +119,7 @@ class Login extends StatelessWidget {
                   Nevigator(bool: false, page: HomeScreen(), context: context);
                 },
                 child: const Text("Login",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
-                color: HexColor("#248277"),
+                color: Colors.black87,
               ))
         ],
       ),
@@ -139,7 +140,7 @@ class Login extends StatelessWidget {
           const Text(
             "Number:01273599580",
             style: TextStyle(
-                color: Colors.grey, fontSize: 25, fontWeight: FontWeight.bold),
+                color: Colors.black, fontSize: 25, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -163,7 +164,7 @@ class Login extends StatelessWidget {
           fontStyle: FontStyle.italic,
           fontWeight: FontWeight.bold,
           shadows: [
-            Shadow(color: Colors.green, blurRadius:.5, offset: Offset(0, 3))
+            Shadow(color: Colors.black, blurRadius:1, offset: Offset(0, 3))
           ]),
     );
   }
@@ -174,7 +175,7 @@ class Login extends StatelessWidget {
       width: Size.width * .3,
       decoration: const BoxDecoration(
           image: DecorationImage(
-              colorFilter: ColorFilter.mode(Colors.grey, BlendMode.multiply),
+              colorFilter: ColorFilter.mode(Colors.grey, BlendMode.modulate),
               image: AssetImage(
                 "Asset/login.png",
               ))),
@@ -190,7 +191,7 @@ class Login extends StatelessWidget {
             .italic
             .size(25)
             .make()
-            .shimmer(primaryColor: Colors.black, secondaryColor: HexColor("#036666"))
+            .shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white)
             .h15(context),
       ],
     );
@@ -220,7 +221,7 @@ class Login extends StatelessWidget {
           .italic
           .size(25.0)
           .make()
-          .shimmer(duration: const Duration(seconds: 2)),
+          .shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white)
     );
   }
 }

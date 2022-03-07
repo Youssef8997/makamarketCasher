@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         },
         builder: (context,state){
+          var size=MediaQuery.of(context).size;
           var cuibt=CasherCuibt.get(context);
           return AdvancedDrawer(
             backdropColor: Colors.blueGrey,
@@ -41,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: const BorderRadius.all(Radius.circular(16)),
             ),
             child: Scaffold(
-              backgroundColor: HexColor("#4dd6a9"),
               extendBodyBehindAppBar: true,
               appBar: AppBar(
                 elevation: 0,
@@ -64,7 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
               ),
-              body: cuibt.body[cuibt.MyIndex],
+              body: Stack(children: [
+                Wallpaper(size),
+                cuibt.body[cuibt.MyIndex]
+              ] ),
             ),
             drawer: SafeArea(
               child: ListTileTheme(

@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
+import 'package:untitled6/Compoandis/MyContenar.dart';
 import 'package:untitled6/Compoandis/MyTextForm.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 
@@ -8,115 +12,110 @@ import '../cuibt/State.dart';
 
 class CasherPage extends StatelessWidget {
   @override
-  var SearchControlar=TextEditingController();
+  var SearchControlar = TextEditingController();
+
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
         listener: (context, state) {},
         builder: (context, state) {
           var size = MediaQuery.of(context).size;
           return Stack(children: [
-
             NumberOfOrder(),
             //SearchRightBottom
-            AnimatedAlign(
-              duration:const Duration(milliseconds: 500) ,
-             alignment:  CasherCuibt.get(context).Search ?AlignmentDirectional.center:AlignmentDirectional.centerEnd,
-
-                child:
-                    RotatedBox(
-                        child: SearchButton(CasherCuibt.get(context)),
-                      quarterTurns:5,
-
-                    )
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: AnimatedAlign(
+                  duration: const Duration(milliseconds: 500),
+                  alignment: CasherCuibt.get(context).Search
+                      ? AlignmentDirectional.center
+                      : AlignmentDirectional.centerEnd,
+                  child: RotatedBox(
+                    child: SearchButton(CasherCuibt.get(context)),
+                    quarterTurns: 5,
+                  )),
             ),
             //CashierConte
             AnimatedAlign(
               duration: const Duration(milliseconds: 700),
               curve: Curves.fastOutSlowIn,
-              alignment: CasherCuibt.get(context).Search ? Alignment.centerLeft : Alignment
-                  .center,
+              alignment: CasherCuibt.get(context).Search
+                  ? Alignment.centerLeft
+                  : Alignment.center,
               child: AnimatedContainer(
-                duration:  const Duration(milliseconds: 700),
+                padding: const EdgeInsetsDirectional.all(10),
+                duration: const Duration(milliseconds: 700),
                 curve: Curves.fastLinearToSlowEaseIn,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 decoration: BoxDecoration(
-                    color: Colors.blueGrey.shade800.withOpacity(.9),
+                    color: Colors.white70,
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
-                      color: Colors.grey.shade900,
+                      color: Colors.white,
                       width: 4,
                     )),
                 height: size.height * .8,
-                width: CasherCuibt.get(context).Search?size.width * .48:size.width * .9,
+                width: CasherCuibt.get(context).Search
+                    ? size.width * .48
+                    : size.width * .9,
                 child: CasherTable(context),
               ),
             ),
             //searchConte
             Padding(
                 padding: const EdgeInsetsDirectional.only(end: 15),
-                child: Align(child: SearchCountenar(context,size),alignment: Alignment.centerRight,)),
+                child: Align(
+                  child: SearchCountenar(context, size),
+                  alignment: Alignment.centerRight,
+                )),
           ]);
         });
   }
-  SearchCountenar(context,size) {
+
+  SearchCountenar(context, Size size) {
     var cuibt = CasherCuibt.get(context);
-    return AnimatedOpacity(opacity: cuibt.Search ? 1 : 0,
-      duration: Duration(milliseconds: 700),
+    return AnimatedOpacity(
+      opacity: cuibt.Search ? 1 : 0,
+      duration: const Duration(milliseconds: 700),
       curve: Curves.fastOutSlowIn,
-      child:AbsorbPointer(
-        absorbing:!cuibt.Search,
-        child: Container(
-          padding: const EdgeInsetsDirectional.all(20),
-          height: size.height * .8,
-          width: size.width * .4,
-          decoration: BoxDecoration(
-              color: Colors.indigo.shade500.withOpacity(.8),
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Colors.grey.shade900,
-                width: 4,
-              )),
-          child: SingleChildScrollView(
+      child: MyContenar(
+          Height: size.height * .8,
+          Width: size.width * .4,
+          Child: SingleChildScrollView(
             child: Column(
               children: [
-
-                SizedBox(
+               const SizedBox(
                   height: 20,
                 ),
-                MyTextField(
-                    Controlr: SearchControlar,
-                    label: "Name",
-                    hint: ""
+                MyTextField(Controlr: SearchControlar, label: "Name", hint: ""),
+                const SizedBox(
+                  height: 15,
                 ),
-                SizedBox(height: 15,),
                 MyTextField(
                     Controlr: SearchControlar,
                     label: "Code Of Item",
-                    hint: "0300**************"
-                ),
+                    hint: "0300**************"),
               ],
             ),
-          ),
-        ),
-      )
-      ,);
+          )),
+    );
   }
+
   Positioned NumberOfOrder() {
     return Positioned(
-      top: 20,
+      top: 10,
       right: 20,
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(10.0),
         child: Container(
             height: 40,
             width: 100,
             decoration: BoxDecoration(
-                color: Colors.grey[400],
-                borderRadius: BorderRadius.circular(20)),
+                color: Colors.white70, borderRadius: BorderRadius.circular(20)),
             alignment: AlignmentDirectional.center,
             child: const SelectableText(
               "1000",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontWeight: FontWeight.w800, fontStyle: FontStyle.italic),
             )),
       ),
     );
@@ -140,18 +139,17 @@ class CasherPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(cuibt.Search ? Icons.clear : Icons.search,
-                    color: Colors.teal),
+                    color: Colors.grey[900]),
                 const SizedBox(width: 5),
                 cuibt.Search
-                    ? const Text("Close",
-                        style: TextStyle(color: Colors.blueGrey))
+                    ? const Text("Close", style: TextStyle(color: Colors.black))
                     : const Text("Search",
-                        style: TextStyle(color: Colors.blueGrey)),
+                        style: TextStyle(color: Colors.black)),
               ],
             ),
           ],
         ),
-        color: Colors.grey.shade900,
+        color: Colors.white70,
       ),
     );
   }
@@ -159,16 +157,19 @@ class CasherPage extends StatelessWidget {
   CasherTable(context) {
     return DataTable(
         dataTextStyle:
-            TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        headingTextStyle:
-            TextStyle(fontWeight: FontWeight.w700, color: Colors.white),
+            TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        headingTextStyle: const TextStyle(
+            fontWeight: FontWeight.w900,
+            color: Colors.black,
+            fontSize: 20,
+            fontStyle: FontStyle.italic,
+      ),
         columnSpacing: 90,
         horizontalMargin: 10,
         border: TableBorder.all(
-          borderRadius: BorderRadius.circular(25),
-          width: .5,
-          color: Colors.white
-        ),
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(15),
+            width: 2),
         columns: const [
           DataColumn(
             label: Text("Code"),
