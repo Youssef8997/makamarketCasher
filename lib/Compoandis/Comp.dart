@@ -7,14 +7,14 @@ Container Wallpaper(Size Size) {
   return Container(
     width: Size.width,
     height: Size.height,
-    decoration: BoxDecoration(
+    decoration:const BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.fill,
           filterQuality: FilterQuality.high,
           colorFilter: ColorFilter.mode(
-              Colors.  black54, BlendMode.darken),
-          image:AssetImage(
-            "Asset/LoginWallpapers.jpg",
+              Colors.grey, BlendMode.modulate),
+          image: AssetImage(
+            "Asset/waaass.jpg",
           ),
         )),
   );

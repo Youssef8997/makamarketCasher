@@ -6,7 +6,7 @@ Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,k
     height: 50,
     clipBehavior: Clip.antiAliasWithSaveLayer,
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.white),
+      border: Border.all(color: Colors.black),
       borderRadius: BorderRadius.circular(25.0),
     ),
     child: TextFormField(
@@ -20,7 +20,7 @@ Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,k
         contentPadding: EdgeInsetsDirectional.fromSTEB(20, 0, 0,0),
           hintText: hint,
           hintStyle:TextStyle(color: Colors.black),
-label: Text("$label"),
+label: label!=null?Text("$label"):null,
 
           labelStyle: TextStyle(color: Colors.black),
           prefixIcon: Prefix,

@@ -6,6 +6,8 @@ import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import '../Compoandis/MyContenar.dart';
+
 class Empoloye extends StatefulWidget {
   @override
   State<Empoloye> createState() => _EmpoloyeState();
@@ -13,12 +15,15 @@ class Empoloye extends StatefulWidget {
 
 class _EmpoloyeState extends State<Empoloye> {
   int ListTileSelect = 1;
-  var timeControlar = TextEditingController(text:DateFormat.jm().toString());
-@override
+  var AttdintgtimeControlar = TextEditingController();
+  var LeavetimeControlar = TextEditingController();
+  var value;
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    timeControlar.text=DateFormat.jm().format(DateTime.now());
+    AttdintgtimeControlar.text=DateFormat.jm().format(DateTime.now());
+    LeavetimeControlar.text=DateFormat.jm().format(DateTime.now());
   }
   @override
   Widget build(BuildContext context) {
@@ -26,9 +31,8 @@ class _EmpoloyeState extends State<Empoloye> {
         listener: (context, state) {},
         builder: (context, state) {
           var size = MediaQuery.of(context).size;
-          return Stack(
-            alignment: Alignment.center,
-            children: [LoginWallpapper(size), EmpoloyeContenar(size)],
+          return Center(
+           child:EmpoloyeContainer(size),
           );
         });
   }
@@ -45,38 +49,67 @@ class _EmpoloyeState extends State<Empoloye> {
     );
   }
 
-  EmpoloyeContenar(Size Size) {
-    return Container(
-      padding: EdgeInsetsDirectional.all(20),
-      height: Size.height * 0.8,
-      width: Size.width * 0.6,
-      decoration: BoxDecoration(
-          color: Colors.black.withOpacity(.8),
-          borderRadius: BorderRadiusDirectional.circular(30.0),
-          border: Border.all(color: Colors.grey.shade700, width: 5)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(child: TitleOfContenar("Employee")),
-          ListTiled(),
-          if (ListTileSelect == 1)
-            Column(
-              children: [
+  EmpoloyeContainer(Size Size) {
+    return MyContainer(
 
-                MyTextField(
+      Height: Size.height * 0.8,
+     Width: Size.width * 0.6,
 
-                    Controlr: timeControlar,
-                    hint: "${timeControlar.text}",
-                    label: "Time of Attending",
+     Child: EmpoloyeContent(),
+    );
+  }
 
-                    Prefix: const Icon(Icons.watch_later))
+  Column EmpoloyeContent() {
+    var Size=MediaQuery.of(context).size;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(child: TitleOfContenar("Employee")),
+        ListTiled(),
+        if (ListTileSelect == 1)
 
-              ],
-            )
-          else
-            Column()
-        ],
-      ),
+          Column(
+            children: [
+SizedBox(height: 20,),
+              Container(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                height: 50,
+                width: Size.width*.7,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25.0),
+                    border: Border.all(color: Colors.black,
+                        width: 2
+                    )
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                    items: [
+                      DropdownMenuItem(child: Text("dffddf"),value: "ddd",)
+                    ],onChanged: (Object? value)=>{},value: value,),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              MyTextField(
+                  Controlr: AttdintgtimeControlar,
+                  hint: AttdintgtimeControlar.text,
+                  label: "Time of Attending",
+                  Prefix: const Icon(Icons.watch_later)),
+              const SizedBox(
+                height: 30,
+              ),
+              MyTextField(
+                  Controlr: LeavetimeControlar,
+                  hint: LeavetimeControlar.text,
+                  label: "Time of Attending",
+                  Prefix: const Icon(Icons.watch_later)),
+
+            ],
+          )
+        else
+          Column()
+      ],
     );
   }
 
@@ -91,10 +124,10 @@ class _EmpoloyeState extends State<Empoloye> {
               selected: ListTileSelect == 1 ? true : false,
               selectedColor: Colors.teal,
               style: ListTileStyle.list,
-              title: Text(
+              title: const Text(
                 "Time", /*style: TextStyle(color: Colors.white*/
               ),
-              leading: Icon(
+              leading: const Icon(
                 Icons.watch_later, /*color: Colors.blueGrey*/
               ),
               onTap: () {
@@ -107,10 +140,10 @@ class _EmpoloyeState extends State<Empoloye> {
               selected: ListTileSelect == 1 ? false : true,
               selectedColor: Colors.amber,
               style: ListTileStyle.list,
-              title: Text(
+              title: const Text(
                 "Rating",
               ),
-              leading: Icon(
+              leading: const Icon(
                 Icons.star,
               ),
               onTap: () {
@@ -122,7 +155,6 @@ class _EmpoloyeState extends State<Empoloye> {
           ],
         ));
   }
+  Widget TitleOfContenar(value) => "$value".text.size(25).make().shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white);
 
-  Widget TitleOfContenar(value) =>
-      "$value".text.center.size(25).make().shimmer();
 }

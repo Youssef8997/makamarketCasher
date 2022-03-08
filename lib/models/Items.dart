@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled6/Compoandis/MyContenar.dart';
 import 'package:untitled6/Compoandis/MyTextForm.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 
 class Items extends StatelessWidget {
-  var CodeControlar = TextEditingController();
-  var NameControlar = TextEditingController();
+  var CodeController = TextEditingController();
+  var NameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -16,35 +17,36 @@ class Items extends StatelessWidget {
           var size = MediaQuery.of(context).size;
           var cuibt = CasherCuibt.get(context);
 
-          return Stack(
-            alignment: AlignmentDirectional.center,
-            children: [
-              ItemsWallpapers(size),
-              ItemsOfContenar(size, cuibt),
-            ],
-          );
+          return Center(child:ItemsOfContenar(size, cuibt) ,);
         });
   }
 
-  ItemsWallpapers(Size size) {
-    return Container(
-      width: size.width,
-      height: size.height,
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.fill,
-              filterQuality: FilterQuality.high,
-              colorFilter:
-                  ColorFilter.mode(Colors.blueGrey, BlendMode.modulate),
-              image: NetworkImage(
-                "https://i.pinimg.com/564x/4c/55/9b/4c559b82bae97c0a4031eab5fd4ae36c.jpg",
-              ))),
-    );
-  }
+
 
   Widget SearchButton(CasherCuibt cuibt) {
     return cuibt.ItemsSearch
-        ? Positioned(
+        ? Row(
+      children: [
+        Expanded(
+            child: MyTextField(
+              Controlr: NameController,
+              hint: "",
+              label: "Search",
+            )),
+        SizedBox(
+          width: 20,
+        ),
+        MaterialButton(
+          onPressed: () {
+            cuibt.ItemSChangeSearch();
+            NameController.clear();
+          },
+          child:
+          const Text("Enter", style: TextStyle(color: Colors.white)),
+          color: Colors.grey,
+        )
+      ],
+    ):Positioned(
             top: 40,
             right: 30,
             child: Container(
@@ -72,40 +74,14 @@ class Items extends StatelessWidget {
               ),
             ),
           )
-        : Row(
-            children: [
-              Expanded(
-                  child: MyTextField(
-                Controlr: NameControlar,
-                hint: "",
-                label: "Search",
-              )),
-              SizedBox(
-                width: 20,
-              ),
-              MaterialButton(
-                onPressed: () {
-                  cuibt.ItemSChangeSearch();
-                  NameControlar.clear();
-                },
-                child:
-                    const Text("Enter", style: TextStyle(color: Colors.white)),
-                color: Colors.grey,
-              )
-            ],
-          );
+        ;
   }
 
   ItemsOfContenar(Size, cuibt) {
-    return Container(
-      padding: EdgeInsetsDirectional.all(30),
-      height: Size.height * 0.9,
-      width: Size.width * 0.9,
-      decoration: BoxDecoration(
-          color: Colors.black.withOpacity(.8),
-          borderRadius: BorderRadiusDirectional.circular(30.0),
-          border: Border.all(color: Colors.grey.shade700, width: 5)),
-      child: Column(
+    return MyContainer(
+      Height: Size.height * 0.9,
+      Width: Size.width * 0.9,
+     Child: Column(
         children: [SearchButton(cuibt)],
       ),
     );

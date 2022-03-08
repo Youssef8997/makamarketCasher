@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled6/Compoandis/MyContenar.dart';
 import 'package:untitled6/Compoandis/MyTextForm.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -27,14 +28,14 @@ class AddItem extends StatelessWidget {
           return Stack(
 
             children: [
-              AddItiemWallpapper(size),
               Padding(
                 padding: const EdgeInsets.all(50),
                 child: Column(
                   children: [
                     MyName(context),
                     SizedBox(height: 30,),
-                    MakaMarketName()
+                  if(!cuibt.Search)
+                  MakaMarketName()
                   ],
                 ),
               ),
@@ -50,18 +51,10 @@ class AddItem extends StatelessWidget {
 
                 alignment: cuibt.Search ? Alignment.centerLeft : Alignment
                     .center,
-                child: Container(
-
-                  height: size.height * .75,
-                  width: size.width * .5,
-                  decoration: BoxDecoration(
-                      color: Colors.indigo.shade500.withOpacity(.8),
-                      borderRadius: BorderRadius.circular(25),
-                      border: Border.all(
-                        color: Colors.grey.shade900,
-                        width: 4,
-                      )),
-                  child: AddItemCoulmn(context),
+                child: MyContainer(
+                  Height: size.height * .75,
+                  Width: size.width * .5,
+                  Child: AddItemCoulmn(context),
                 ),
               )
             ],
@@ -87,33 +80,20 @@ class AddItem extends StatelessWidget {
                     children: [
                       Row(
                         children:  [
-                          Icon(cuibt.Search?Icons.clear:Icons.search, color: Colors.teal),
+                          Icon(cuibt.Search?Icons.clear:Icons.search, color: Colors.black),
                           const SizedBox(width: 5),
                           cuibt.Search?const Text(
-                              "Close", style: TextStyle(color: Colors.blueGrey)):const Text(
-                              "Search", style: TextStyle(color: Colors.blueGrey)),
+                              "Close", style: TextStyle(color: Colors.grey)):const Text(
+                              "Search", style: TextStyle(color: Colors.grey)),
                         ],
                       ),
                     ],
                   ),
-                  color: Colors.grey.shade900,
+                  color: Colors.grey.shade200,
                 ),
               ),
             );
   }
-
-  SizedBox AddItiemWallpapper(Size Size) {
-    return SizedBox(
-      width: Size.width,
-      height: Size.height,
-      child: Image.network(
-        "https://i.pinimg.com/564x/3f/0f/60/3f0f604cf81d704324992ea79854bce9.jpg",
-        fit: BoxFit.fill,
-        filterQuality: FilterQuality.high,
-      ),
-    );
-  }
-
   AddItemCoulmn(context) {
     var cuibt=CasherCuibt.get(context);
     return SingleChildScrollView(
@@ -209,18 +189,17 @@ class AddItem extends StatelessWidget {
       ),
     );
   }
-
-  Widget TitleOfContenar(value) => "$value".text.size(25).make().shimmer();
+  Widget TitleOfContenar(value) => "$value".text.size(25).make().shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white);
   Widget MyName(BuildContext context) {
     return Column(
       children: [
-        "Mada By:Youssef Ahmed"
+        "Designed By:Youssef Ahmed"
             .text
             .bold
             .italic
             .size(25)
             .make()
-            .shimmer(primaryColor:Colors.teal, secondaryColor: Colors.grey[900])
+            .shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white)
             .h10(context),
       ],
     );
@@ -229,12 +208,12 @@ class AddItem extends StatelessWidget {
     return const Text(
       "Maka Market",
       style: TextStyle(
-          color: Colors.grey,
+          color: Colors.black,
           fontSize: 30,
           fontStyle: FontStyle.italic,
           fontWeight: FontWeight.bold,
           shadows: [
-            Shadow(color: Colors.black, blurRadius: .5, offset: Offset(0, 3.5))
+            Shadow(color: Colors.black, blurRadius:1, offset: Offset(0, 3))
           ]),
     );
   }
@@ -244,18 +223,10 @@ class AddItem extends StatelessWidget {
       duration: Duration(milliseconds: 600),
       child:AbsorbPointer(
         absorbing:!cuibt.Search,
-        child: Container(
-          padding: const EdgeInsetsDirectional.all(20),
-          height: size.height * .75,
-          width: size.width * .4,
-          decoration: BoxDecoration(
-              color: Colors.indigo.shade500.withOpacity(.8),
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Colors.grey.shade900,
-                width: 4,
-              )),
-          child: SingleChildScrollView(
+        child: MyContainer(
+          Height: size.height * .75,
+         Width: size.width * .4,
+         Child: SingleChildScrollView(
             child: Column(
               children: [
                 TitleOfContenar("Search of Item"),

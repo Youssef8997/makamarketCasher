@@ -11,9 +11,11 @@ import 'package:untitled6/cuibt/cuibt.dart';
 import '../cuibt/State.dart';
 
 class CasherPage extends StatelessWidget {
-  @override
-  var SearchControlar = TextEditingController();
 
+  var NameController = TextEditingController();
+  var numberController = TextEditingController();
+  var CodeController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
         listener: (context, state) {},
@@ -35,29 +37,33 @@ class CasherPage extends StatelessWidget {
                   )),
             ),
             //CashierConte
-            AnimatedAlign(
-              duration: const Duration(milliseconds: 700),
-              curve: Curves.fastOutSlowIn,
-              alignment: CasherCuibt.get(context).Search
-                  ? Alignment.centerLeft
-                  : Alignment.center,
-              child: AnimatedContainer(
-                padding: const EdgeInsetsDirectional.all(10),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: AnimatedAlign(
+
                 duration: const Duration(milliseconds: 700),
-                curve: Curves.fastLinearToSlowEaseIn,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                decoration: BoxDecoration(
-                    color: Colors.white70,
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 4,
-                    )),
-                height: size.height * .8,
-                width: CasherCuibt.get(context).Search
-                    ? size.width * .48
-                    : size.width * .9,
-                child: CasherTable(context),
+                curve: Curves.fastOutSlowIn,
+                alignment: CasherCuibt.get(context).Search
+                    ? Alignment.centerLeft
+                    : Alignment.center,
+                child: AnimatedContainer(
+                  padding: const EdgeInsetsDirectional.all(10),
+                  duration: const Duration(milliseconds: 700),
+                  curve: Curves.fastLinearToSlowEaseIn,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                        color: Colors.white54,
+                        width: 3,
+                      )),
+                  height: size.height * .76,
+                  width: CasherCuibt.get(context).Search
+                      ? size.width * .48
+                      : size.width * .9,
+                  child: CasherTable(context),
+                ),
               ),
             ),
             //searchConte
@@ -67,8 +73,42 @@ class CasherPage extends StatelessWidget {
                   child: SearchCountenar(context, size),
                   alignment: Alignment.centerRight,
                 )),
+             //bottom Container
+             BottomContainer(size, context)
           ]);
         });
+  }
+
+  Padding BottomContainer(Size size, BuildContext context) {
+    return Padding(
+             padding: const EdgeInsets.only(top:30),
+             child: Align(
+              alignment:  AlignmentDirectional.bottomCenter,
+              child: MyContainer(
+                Height: size.height*.118,
+                Width: CasherCuibt.get(context).Search?(size.width)-10 :size.width * .9,
+                 Child:CasheeRow() ,
+              ),
+          ),
+           );
+  }
+
+  Row CasheeRow() {
+    return Row(
+                  children: [
+                    const Text("Code:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
+                    const SizedBox(width: 5,),
+                    Expanded(child: MyTextField(Controlr: CodeController, hint:"Write code of Product",)),
+                    const SizedBox( width: 5),
+                    const Text("Name:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
+                    const SizedBox(width: 5,),
+                    Expanded(child: MyTextField(Controlr: NameController, hint:"Write name of Product")),
+                    const SizedBox( width: 5),
+                    const Text("Name:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
+                    const SizedBox(width: 5,),
+                    Expanded(child: MyTextField(Controlr: numberController, hint:"Write number of Product")),
+                  ],
+                );
   }
 
   SearchCountenar(context, Size size) {
@@ -77,8 +117,8 @@ class CasherPage extends StatelessWidget {
       opacity: cuibt.Search ? 1 : 0,
       duration: const Duration(milliseconds: 700),
       curve: Curves.fastOutSlowIn,
-      child: MyContenar(
-          Height: size.height * .8,
+      child: MyContainer(
+          Height: size.height * .76,
           Width: size.width * .4,
           Child: SingleChildScrollView(
             child: Column(
@@ -86,12 +126,12 @@ class CasherPage extends StatelessWidget {
                const SizedBox(
                   height: 20,
                 ),
-                MyTextField(Controlr: SearchControlar, label: "Name", hint: ""),
+                MyTextField(Controlr: NameController, label: "Name", hint: ""),
                 const SizedBox(
                   height: 15,
                 ),
                 MyTextField(
-                    Controlr: SearchControlar,
+                    Controlr: CodeController,
                     label: "Code Of Item",
                     hint: "0300**************"),
               ],
