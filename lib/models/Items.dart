@@ -52,9 +52,12 @@ class Items extends StatelessWidget {
             child: Container(
               clipBehavior: Clip.antiAliasWithSaveLayer,
               decoration: BoxDecoration(
+                color: Colors.grey,
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: MaterialButton(
+                color: Colors.blueGrey[700],
+
                 onPressed: () {
                   cuibt.ItemSChangeSearch();
                 },
@@ -70,7 +73,7 @@ class Items extends StatelessWidget {
                     ),
                   ],
                 ),
-                color: Colors.grey.shade900,
+
               ),
             ),
           )

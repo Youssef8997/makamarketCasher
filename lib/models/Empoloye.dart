@@ -70,7 +70,7 @@ class _EmpoloyeState extends State<Empoloye> {
 
           Column(
             children: [
-SizedBox(height: 20,),
+            const SizedBox(height: 20,),
               Container(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 height: 50,

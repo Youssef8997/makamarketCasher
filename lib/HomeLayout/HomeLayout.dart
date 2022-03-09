@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
-import 'package:hexcolor/hexcolor.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -167,10 +166,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         backgroundColor: Colors.blueGrey,
                         foregroundColor:Colors.blueGrey ,
                         radius:15,
-                        backgroundImage: AssetImage("Asset/Admin logo.jpg"),
+                        backgroundImage: AssetImage("Asset/Store.jpg"),
 
                       ),
-                      title: const Text('Admin'),
+                      title: const Text('مخزن'),
                     ),
                     ListTile(
                       onTap: () {},

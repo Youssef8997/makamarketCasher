@@ -24,7 +24,7 @@ class CasherCuibt extends Cubit<CasherState>{
     Supplayers(),
     Empoloye(),
     Money(),
-    Admin(),
+    Store(),
   ];
   void ChangeMyIndex(value){
     MyIndex=value;
