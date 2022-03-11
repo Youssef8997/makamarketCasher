@@ -8,14 +8,8 @@ import 'package:velocity_x/velocity_x.dart';
 import '../cuibt/cuibt.dart';
 
 class AddItem extends StatelessWidget {
-  var NameOfItem = TextEditingController();
-  var CodeOfItem = TextEditingController();
-  var PriceOfItem = TextEditingController();
-  var NumberOfItem = TextEditingController();
-  var SupplayerOfItem = TextEditingController();
-  var winOfItem = TextEditingController();
-  var NameOfSearch = TextEditingController();
-  var CodeOfSearch = TextEditingController();
+
+  var scrolllabel=ScrollController();
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
@@ -98,94 +92,133 @@ class AddItem extends StatelessWidget {
     var cuibt=CasherCuibt.get(context);
     return SingleChildScrollView(
       padding: EdgeInsetsDirectional.all(20),
-      child: Column(
-        children: [
-          TitleOfContenar("Add Item"),
-
-          SizedBox(
-            height: 5,
-          ),
-          MyTextField(
-              Controlr: NameOfItem, label: "Name of item", hint: "Name"),
-          SizedBox(
-            height: 20,
-          ),
-          MyTextField(Controlr: CodeOfItem,
-              label: "Code Of Item",
-              hint: "003************"),
-          SizedBox(
-            height: 20,
-          ),
-          MyTextField(
-              Controlr: PriceOfItem, label: "Price Of Item", hint: "15.5"),
-          SizedBox(
-            height: 20,
-          ),
-          MyTextField(
-              Controlr: winOfItem, label: "net profit", hint: "win Of Item"),
-          SizedBox(
-            height: 20,
-          ),
-          MyTextField(
-              Controlr: NumberOfItem, label: "Number Of Item", hint: "20"),
-          SizedBox(
-            height: 20,
-          ),
-          MyTextField(
-              Controlr: SupplayerOfItem,
-              label: "Supplier Of Item",
-              hint: ""
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25.0),
-                ),
-                child: MaterialButton(
-                  onPressed: () {},
-                  child: Text("Insert", style: TextStyle(color: Colors.white)),
-                  color: Colors.grey.shade900,
-                ),
-              ),
-              const SizedBox(width: 20,),
-              Visibility(
-                visible:cuibt.Search ,
-                child: Container(
+      child: Form(
+      key:cuibt.kayform ,
+        child:  Column(
+          children: [
+            TitleOfContenar("Add Item"),
+            const SizedBox(
+              height: 5,
+            ),
+            MyTextField(
+                Controlr: cuibt.NameOfItem, label: "Name of item", hint: "Name",validator: (value) {
+              if (value!.isEmpty) {
+                return " Name must not be empty";
+              }
+              return null;
+            }),
+            const SizedBox(
+              height: 20,
+            ),
+            MyTextField(Controlr: cuibt.CodeOfItem,
+                label: "Code Of Item",
+                hint: "003************",
+            validator: (value) {
+              if (value!.isEmpty) {
+                return "      Code must not be empty";
+              }
+              return null;
+            }
+            ),
+            const  SizedBox(
+              height: 20,
+            ),
+            MyTextField(
+                Controlr: cuibt.PriceOfItem, label: "Price Of Item", hint: "15.5",validator: (value) {
+              if (value!.isEmpty) {
+                return "     Price must not be empty";
+              }
+              return null;
+            }),
+            const SizedBox(
+              height: 20,
+            ),
+            MyTextField(
+                Controlr: cuibt.NumberOfItem, label: "Number Of Item", hint: "20",validator: (value) {
+              if (value!.isEmpty) {
+                return "      Number must not be empty";
+              }
+              return null;
+            }),
+            SizedBox(
+              height: 20,
+            ),
+            MyTextField(
+                Controlr:cuibt. FirstDate,
+                label: "data Of firstdata",
+                hint: "3-10-2022",
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "      data Of firstdata must not be empty";
+                }
+                return null;
+              }
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            MyTextField(
+                Controlr:cuibt.EndDate, label: "EndDate", hint: "3-10-2023",validator:(value) {
+              if (value!.isEmpty) {
+                return "      data Of EndDate must not be empty";
+              }
+              return null;
+            } ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25.0),
                   ),
                   child: MaterialButton(
-                    onPressed: () {},
-                    child:const  Text("Edit", style: TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      if (cuibt.kayform.currentState!.validate()){
+                        cuibt.insert();
+                      }
+                    },
+                    child: Text("Insert", style: TextStyle(color: Colors.white)),
                     color: Colors.grey.shade900,
                   ),
                 ),
-              ),
-              const SizedBox(width: 20,),
-              Visibility(
-                visible:cuibt.Search ,
-                child: Container(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  child: MaterialButton(
-                    onPressed: () {},
-                    child:const  Text("Delete", style: TextStyle(color: Colors.white)),
-                    color: Colors.grey.shade900,
+                const SizedBox(width: 20,),
+                Visibility(
+                  visible:cuibt.Search ,
+                  child: Container(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    child: MaterialButton(
+                      onPressed: () {},
+                      child:const  Text("Edit", style: TextStyle(color: Colors.white)),
+                      color: Colors.grey.shade900,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          )
-        ],
+                const SizedBox(width: 20,),
+                Visibility(
+                  visible:cuibt.Search ,
+                  child: Container(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    child: MaterialButton(
+                      onPressed: () {},
+                      child:const  Text("Delete", style: TextStyle(color: Colors.white)),
+                      color: Colors.grey.shade900,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -226,29 +259,104 @@ class AddItem extends StatelessWidget {
         child: MyContainer(
           Height: size.height * .75,
          Width: size.width * .4,
-         Child: SingleChildScrollView(
-            child: Column(
+         Child: Scrollbar(
+           controller: scrolllabel,
+            isAlwaysShown: true,
+
+            child: ListView(
+              physics: BouncingScrollPhysics(),
+
+              controller:scrolllabel ,
               children: [
-                TitleOfContenar("Search of Item"),
+                Center(child: TitleOfContenar("Search of Item")),
                 SizedBox(
                   height: 20,
                 ),
                 MyTextField(
-                    Controlr: NameOfSearch,
+                    Controlr: cuibt.NameOfSearch,
                     label: "Name",
-                    hint: ""
+                    hint: "",
+                  onChanged: (value){
+                    cuibt.cahnge();
+                  }
+
                 ),
                 SizedBox(height: 15,),
                 MyTextField(
-                    Controlr: CodeOfSearch,
+                    Controlr: cuibt.CodeOfSearch,
                     label: "Code Of Item",
-                    hint: "0300**************"
+                    hint: "0300**************",
+                    onChanged: (value){
+                      cuibt.cahnge();
+                    }
                 ),
+                SizedBox(height: 30,),
+                CasherTable(context)
+
               ],
             ),
           ),
         ),
       )
       ,);
+  }
+  CasherTable(context) {
+    var cuibt=CasherCuibt.get(context);
+    return DataTable(
+
+        dataTextStyle:
+        TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        headingTextStyle: const TextStyle(
+          fontWeight: FontWeight.w900,
+          color: Colors.black,
+          fontSize: 20,
+          fontStyle: FontStyle.italic,
+        ),
+        columnSpacing: 60,
+        horizontalMargin: 10,
+        border: TableBorder.all(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(15),
+            width: 2),
+        columns: const [
+          DataColumn(
+            label: Text("Code"),
+          ),
+          DataColumn(
+            label: Text("Name"),
+          ),
+          DataColumn(
+            label: Text("Price"),
+          ),
+          DataColumn(
+            label: Text("Number"),
+          ),
+          DataColumn(
+            label: Text("EndDate"),
+          ),
+        ],
+        rows: cuibt.Products.map((e){
+          if("${e["Name"]}"==cuibt.NameOfSearch.text||e["Code"]==cuibt.CodeOfSearch.text) {
+            print("${e["Name"]}".matchAsPrefix(cuibt.NameOfSearch.text)?.groupCount.toString());
+            return DataRow(cells: [
+            DataCell(Text("${e["Code"]}")),
+            DataCell(Text("${e["Name"]}")),
+            DataCell(Text("${e["Price"]}")),
+            DataCell(Text("${e["Number"]}")),
+            DataCell(Text("${e["EndDate"]}")),
+          ]);
+          } else {
+            return const DataRow(cells: [
+              DataCell(Text("")),
+              DataCell(Text("")),
+              DataCell(Text("")),
+              DataCell(Text("")),
+              DataCell(Text("")),
+            ]);
+          }
+        } ).toList()
+
+
+        );
   }
 }

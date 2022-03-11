@@ -6,8 +6,7 @@ import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 
 class Items extends StatelessWidget {
-  var CodeController = TextEditingController();
-  var NameController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -17,36 +16,39 @@ class Items extends StatelessWidget {
           var size = MediaQuery.of(context).size;
           var cuibt = CasherCuibt.get(context);
 
-          return Center(child:ItemsOfContenar(size, cuibt) ,);
+          return Center(
+            child: ItemsOfContenar(size, cuibt,context ),
+          );
         });
   }
-
-
 
   Widget SearchButton(CasherCuibt cuibt) {
     return cuibt.ItemsSearch
         ? Row(
-      children: [
-        Expanded(
-            child: MyTextField(
-              Controlr: NameController,
-              hint: "",
-              label: "Search",
-            )),
-        SizedBox(
-          width: 20,
-        ),
-        MaterialButton(
-          onPressed: () {
-            cuibt.ItemSChangeSearch();
-            NameController.clear();
-          },
-          child:
-          const Text("Enter", style: TextStyle(color: Colors.white)),
-          color: Colors.grey,
-        )
-      ],
-    ):Positioned(
+            children: [
+              Expanded(
+                  child: MyTextField(
+                Controlr: cuibt.NameController,
+                hint: "",
+                label: "Search",
+                    onChanged: (value){cuibt.cahnge();}
+
+              )),
+              SizedBox(
+                width: 20,
+              ),
+              MaterialButton(
+                onPressed: () {
+                  cuibt.ItemSChangeSearch();
+                  cuibt.NameController.clear();
+                },
+                child:
+                    const Text("Enter", style: TextStyle(color: Colors.white)),
+                color: Colors.grey,
+              )
+            ],
+          )
+        : Positioned(
             top: 40,
             right: 30,
             child: Container(
@@ -57,7 +59,6 @@ class Items extends StatelessWidget {
               ),
               child: MaterialButton(
                 color: Colors.blueGrey[700],
-
                 onPressed: () {
                   cuibt.ItemSChangeSearch();
                 },
@@ -73,20 +74,103 @@ class Items extends StatelessWidget {
                     ),
                   ],
                 ),
-
               ),
             ),
-          )
-        ;
+          );
   }
 
-  ItemsOfContenar(Size, cuibt) {
+  ItemsOfContenar(Size,CasherCuibt cuibt,context ) {
     return MyContainer(
       Height: Size.height * 0.9,
       Width: Size.width * 0.9,
-     Child: Column(
-        children: [SearchButton(cuibt)],
+      Child: Column(
+        children: [
+          SearchButton(cuibt),
+          const SizedBox(height: 30),
+          CasherTable(context,Size)
+        ],
       ),
     );
   }
+
+  CasherTable(context,Size size) {
+    var cuibt=CasherCuibt.get(context);
+    return Container(
+      height:size.height*.7,
+      width: size.width*.8,
+      child: DataTable(
+
+          dataTextStyle:
+          TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          headingTextStyle: const TextStyle(
+            fontWeight: FontWeight.w900,
+            color: Colors.black,
+            fontSize: 20,
+            fontStyle: FontStyle.italic,
+          ),
+          columnSpacing: 60,
+          horizontalMargin: 10,
+          border: TableBorder.all(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(15),
+              width: 2),
+          columns: const [
+            DataColumn(
+              label: Text("Code"),
+            ),
+            DataColumn(
+              label: Text("Name"),
+            ),
+            DataColumn(
+              label: Text("Price"),
+            ),
+            DataColumn(
+              label: Text("Number"),
+            ),
+            DataColumn(
+              label: Text("EndDate"),
+            ),
+          ],
+          rows:cuibt.Products.skipWhile((value) => "${value["Name"]}"!=cuibt.NameController.text||value["Code"]!=cuibt.NameController.text).map((e){
+            return DataRow(cells: [
+              DataCell(Text("${e["Code"]}")),
+              DataCell(Text("${e["Name"]}")),
+              DataCell(Text("${e["Price"]}")),
+              DataCell(Text("${e["Number"]}")),
+              DataCell(Text("${e["EndDate"]}")),
+            ]);
+          /*  if("${e["Name"]}"==cuibt.NameController.text||e["Code"]==cuibt.NameController.text) {
+              print("${e["Name"]}".matchAsPrefix(cuibt.NameOfSearch.text)?.groupCount.toString());
+              return DataRow(cells: [
+                DataCell(Text("${e["Code"]}")),
+                DataCell(Text("${e["Name"]}")),
+                DataCell(Text("${e["Price"]}")),
+                DataCell(Text("${e["Number"]}")),
+                DataCell(Text("${e["EndDate"]}")),
+              ]);
+            } else  {
+              return const DataRow(cells: [
+                DataCell(Text("")),
+                DataCell(Text("")),
+                DataCell(Text("")),
+                DataCell(Text("")),
+                DataCell(Text("")),
+
+              ],);
+            }*/
+          } ).toList()
+
+
+      ),
+    );
+  }
+ 
 }
+/*
+cuibt.Products.skipWhile((value) =>"${["Name"]}"==cuibt.NameController.text).map((e) => DataRow(cells: [
+DataCell(Text("${e["Code"]}")),
+DataCell(Text("${e["Name"]}")),
+DataCell(Text("${e["Price"]}")),
+DataCell(Text("${e["Number"]}")),
+DataCell(Text("${e["EndDate"]}")),
+]) ).toList()*/

@@ -22,6 +22,7 @@ class CasherPage extends StatelessWidget {
         builder: (context, state) {
           var size = MediaQuery.of(context).size;
           return Stack(children: [
+            if(CasherCuibt.get(context).boolen)
             NumberOfOrder(),
             //SearchRightBottom
             Padding(
