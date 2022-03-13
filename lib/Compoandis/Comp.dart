@@ -4,7 +4,7 @@ Future Nevigator({ page, context, bool=false}){
   return Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context)=> page),(Route route)=>bool);
 }
 Container Wallpaper(Size Size) {
-  return Container(
+  return   Container(
     width: Size.width,
     height: Size.height,
     decoration:const BoxDecoration(

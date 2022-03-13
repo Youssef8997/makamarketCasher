@@ -10,3 +10,7 @@ abstract class CasherState{}
   class InsertProductSucssesful extends CasherState{}
   class InsertProductError extends CasherState{}
   class setstate extends CasherState{}
+  class InsertValueIntoControlar extends CasherState{}
+  class UpdateProducts extends CasherState{}
+  class DeleteProducts extends CasherState{}
+  class sureItemNotFound extends CasherState{}

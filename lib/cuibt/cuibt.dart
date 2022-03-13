@@ -24,16 +24,18 @@ class CasherCuibt extends Cubit<CasherState>{
   bool Search=false;
   bool boolen=false;
   bool ItemsSearch=false;
+  bool DisableInsertButton=false;
   //Controller of AddItem Screen
   var NameOfItem = TextEditingController();
   var CodeOfItem = TextEditingController();
   var PriceOfItem = TextEditingController();
   var NumberOfItem = TextEditingController();
-  var FirstDate = TextEditingController();
+  var StartDate = TextEditingController();
   var EndDate = TextEditingController();
   var NameOfSearch = TextEditingController();
   var CodeOfSearch = TextEditingController();
   var kayform = GlobalKey<FormState>();
+  int? id;
   //controller of Items Screen
   var NameController = TextEditingController();
   List<Widget>body=[
@@ -51,6 +53,7 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void AddItemChangeSearch(){
     Search=!Search;
+    DisableInsertButton=!DisableInsertButton;
     emit(ChangeSearchAbilty());
   }
   void ItemSChangeSearch(){
@@ -94,16 +97,16 @@ class CasherCuibt extends Cubit<CasherState>{
   {
     await dataBase.transaction((txn) {
       txn.rawInsert(
-          'INSERT INTO Products(Name,Code,Price,Number,StartDate,EndDate)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${FirstDate.text }","${EndDate.text}")')
+          'INSERT INTO Products(Name,Code,Price,Number,StartDate,EndDate)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text }","${EndDate.text}")')
           .then((value) {
         print("$value insertetd sucsseffly");
         emit(InsertProductSucssesful());
-        getUsersAfterChange();
+        getProductsAfterChange();
         NameOfItem.clear();
         CodeOfItem.clear();
         PriceOfItem.clear();
         NumberOfItem.clear();
-        FirstDate.clear();
+        StartDate.clear();
         EndDate.clear();
       }).catchError((error) {
         print(" the error is ${error.toString()}");
@@ -112,7 +115,7 @@ class CasherCuibt extends Cubit<CasherState>{
       return getname();
     });
   }
-  void getUsersAfterChange() {
+  void getProductsAfterChange() {
     getDataProducts(dataBase).then((value) {
       Products = [];
       Products = value;
@@ -128,5 +131,55 @@ var n;
   void d(){
     n=2;
     emit(ChangeSearchAbilty());
+  }
+  void insertValueIntoControlar(e){
+    NameOfItem.text=e["Name"];
+    CodeOfItem.text=e["Code"];
+    PriceOfItem.text=e["Price"].toString();
+    NumberOfItem.text=e["Number"].toString();
+    StartDate.text=e["StartDate"].toString();
+    EndDate.text=e["EndDate"].toString();
+    id=e["id"];
+DisableInsertButton=true;
+    emit(InsertValueIntoControlar());
+  }
+  void Update(){
+    if (PriceOfItem.text!=null)
+    dataBase.rawUpdate(
+        'UPDATE Products SET Price=? WHERE id=? ', [PriceOfItem.text, id]);
+    if(NumberOfItem.text!=null)
+      dataBase.rawUpdate(
+          'UPDATE Products SET Number=? WHERE id=? ', [NumberOfItem.text, id]);
+    if(NameOfItem.text!=null)
+      dataBase.rawUpdate(
+          'UPDATE Products SET Name=? WHERE id=? ', [NameOfItem.text, id]);
+    if(StartDate.text!=null)
+      dataBase.rawUpdate(
+          'UPDATE Products SET StartDate=? WHERE id=? ', [StartDate.text, id]);
+    if(EndDate.text!=null)
+      dataBase.rawUpdate(
+          'UPDATE Products SET EndDate=? WHERE id=? ', [EndDate.text, id]);
+    getProductsAfterChange();
+    emit(UpdateProducts());
+  }
+  void delete()async{
+    await dataBase.rawDelete('DELETE FROM Products WHERE id=? ', [id]).then((value) =>getProductsAfterChange());
+   CodeOfItem.clear();
+    NameOfItem.clear();
+    NumberOfItem.clear();
+   PriceOfItem.clear();
+   EndDate.clear();
+    StartDate.clear();
+    id=null;
+    emit(DeleteProducts());
+  }
+  void SureItemNotFound(){
+    Products.map((e){
+      if(e["Code"]==CodeOfItem.text){
+        DisableInsertButton=true;
+        emit(sureItemNotFound());
+
+      }
+    });
   }
 }

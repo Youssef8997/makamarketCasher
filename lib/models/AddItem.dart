@@ -159,7 +159,7 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
-                Controlr: cuibt.FirstDate,
+                Controlr: cuibt.StartDate,
                 label: "data Of firstdata",
                 hint: "3-10-2022",
                 validator: (value) {
@@ -187,20 +187,27 @@ class AddItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  child: MaterialButton(
-                    onPressed: () {
-                      if (cuibt.kayform.currentState!.validate()) {
-                        cuibt.insert();
-                      }
-                    },
-                    child:
-                        Text("Insert", style: TextStyle(color: Colors.white)),
-                    color: Colors.grey.shade900,
+                AbsorbPointer(
+                  absorbing: cuibt.DisableInsertButton,
+                  child: Container(
+
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    child: MaterialButton(
+
+                      onPressed: () {
+                        cuibt.SureItemNotFound();
+                        if (cuibt.kayform.currentState!.validate()&&!cuibt.DisableInsertButton) {
+                          print(!cuibt.DisableInsertButton);
+                          cuibt.insert();
+                        }
+                      },
+                      child:
+                          Text("Insert", style: TextStyle(color: Colors.white)),
+                      color: Colors.grey.shade900,
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -214,7 +221,9 @@ class AddItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(25.0),
                     ),
                     child: MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {if (cuibt.kayform.currentState!.validate()) {
+                        cuibt.Update();
+                      }},
                       child: const Text("Edit",
                           style: TextStyle(color: Colors.white)),
                       color: Colors.grey.shade900,
@@ -232,7 +241,9 @@ class AddItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(25.0),
                     ),
                     child: MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        cuibt.delete();
+                      },
                       child: const Text("Delete",
                           style: TextStyle(color: Colors.white)),
                       color: Colors.grey.shade900,
@@ -370,55 +381,25 @@ class AddItem extends StatelessWidget {
         ],
         rows: cuibt.Products.skipWhile((value) =>
             "${value["Name"]}" != cuibt.NameOfSearch.text ||
-            value["Code"] != cuibt.NameOfSearch.text).map((e) {
-          return DataRow(cells: [
+            value["Code"] == cuibt.NameOfSearch.text).map((e) {
+          return DataRow(
+              onLongPress: (){
+                cuibt.insertValueIntoControlar(e);
+
+              },
+              cells: [
             DataCell(Text("${e["Code"]}")),
-            DataCell(Text("${e["Name"]}"), onDoubleTap: () {
-              CasherCuibt.get(context).CodeOfSearch.text=e["Name"];
-              settingDialog(context, "Edit name");
-            }),
+            DataCell(Text("${e["Name"]}"),
+            ),
             DataCell(
               Text("${e["Price"]}"),
-              onDoubleTap: () {},
+
             ),
-            DataCell(Text("${e["Number"]}"), onDoubleTap: () {}),
-            DataCell(Text("${e["EndDate"]}"), onDoubleTap: () {}),
+            DataCell(Text("${e["Number"]}")),
+            DataCell(Text("${e["EndDate"]}")),
           ]);
         }).toList());
   }
 
-  settingDialog(context, Title) {
-    var size = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return BlurryContainer(
-            height: double.maxFinite,
-            width: double.maxFinite,
-            blur: 6,
-            child: AlertDialog(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              backgroundColor: Colors.white,
-              elevation: 0,
 
-              title: Text("$Title"),
-              content: Container(
-                height: size.height*.6,
-                width: size.width*.6,
-                color: Colors.white70,
-
-                child: Column(
-                  children: [
-                    MyTextField(
-                      Controlr: CasherCuibt.get(context).CodeOfSearch,
-                      hint: "Name",
-                    )
-
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
 }
