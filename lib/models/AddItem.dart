@@ -187,27 +187,25 @@ class AddItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AbsorbPointer(
-                  absorbing: cuibt.DisableInsertButton,
-                  child: Container(
+                Container(
 
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    child: MaterialButton(
-
-                      onPressed: () {
-                        cuibt.SureItemNotFound();
-                        if (cuibt.kayform.currentState!.validate()&&!cuibt.DisableInsertButton) {
-                          print(!cuibt.DisableInsertButton);
-                          cuibt.insert();
-                        }
-                      },
-                      child:
-                          Text("Insert", style: TextStyle(color: Colors.white)),
-                      color: Colors.grey.shade900,
-                    ),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
+                  child: MaterialButton(
+                    onPressed: () {
+                      cuibt.SureItemNotFound();
+                      if (cuibt.kayform.currentState!.validate()) {
+            if(cuibt.DisableInsertButton) {
+              cuibt.insert();
+            }
+            else print("this is ${cuibt.DisableInsertButton}");
+                      }
+                    },
+                    child:
+                        Text("Insert", style: TextStyle(color: Colors.white)),
+                    color: Colors.grey.shade900,
                   ),
                 ),
                 const SizedBox(

@@ -22,9 +22,9 @@ class CasherCuibt extends Cubit<CasherState>{
   List Products=[];
   int MyIndex=0;
   bool Search=false;
-  bool boolen=false;
+
   bool ItemsSearch=false;
-  bool DisableInsertButton=false;
+  bool DisableInsertButton=true;
   //Controller of AddItem Screen
   var NameOfItem = TextEditingController();
   var CodeOfItem = TextEditingController();
@@ -53,7 +53,7 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void AddItemChangeSearch(){
     Search=!Search;
-    DisableInsertButton=!DisableInsertButton;
+
     emit(ChangeSearchAbilty());
   }
   void ItemSChangeSearch(){
@@ -62,7 +62,7 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("MakaMarketCashier.db", version: 2, onCreate: (dataBase, version) {
+    await openDatabase("MakaMarket.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name TEXT,Code TEXT,Price DOUBLE,Number INTEGER,StartDate Text,EndDate Text)')
@@ -74,8 +74,6 @@ class CasherCuibt extends Cubit<CasherState>{
         emit(CreateDataBaseError());
       });
     }, onOpen: (dataBase) {
-      boolen=true;
-      print("the bool  = $boolen");
       print("open data base");
      getDataProducts(dataBase).then((value) {
        Products = value;
@@ -140,7 +138,7 @@ var n;
     StartDate.text=e["StartDate"].toString();
     EndDate.text=e["EndDate"].toString();
     id=e["id"];
-DisableInsertButton=true;
+
     emit(InsertValueIntoControlar());
   }
   void Update(){
@@ -173,13 +171,18 @@ DisableInsertButton=true;
     id=null;
     emit(DeleteProducts());
   }
-  void SureItemNotFound(){
-    Products.map((e){
-      if(e["Code"]==CodeOfItem.text){
-        DisableInsertButton=true;
-        emit(sureItemNotFound());
-
+   void SureItemNotFound(){
+    for (var element in Products) {
+      if(element["Code"]==CodeOfItem.text){
+        DisableInsertButton=false;
+        print("this is ${DisableInsertButton}");
       }
-    });
+      if(element["Code"]!=CodeOfItem.text)
+        DisableInsertButton=false;
+    }
+    emit(sureItemNotFound());
+  }
+  void data(){
+    dataBase.delete("Products");
   }
 }
