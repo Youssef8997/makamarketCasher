@@ -11,7 +11,7 @@ import 'package:untitled6/models/Casherpage.dart';
 import 'package:untitled6/models/Empoloye.dart';
 import 'package:untitled6/models/Items.dart';
 import 'package:untitled6/models/Money.dart';
-import 'package:untitled6/models/Supplayers.dart';
+import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 class CasherCuibt extends Cubit<CasherState>{
@@ -38,6 +38,13 @@ class CasherCuibt extends Cubit<CasherState>{
   int? id;
   //controller of Items Screen
   var NameController = TextEditingController();
+  //Controller Of AddInvoice
+  var NameOfSupllayers=TextEditingController();
+  var CostOfSupllayers=TextEditingController();
+  var PaidOfSupllayers=TextEditingController();
+  var TotalOfInvoice=TextEditingController();
+  var TotalOfSupllayers=TextEditingController();
+  var DateOfSupllayers=TextEditingController();
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -62,10 +69,12 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("MakaMarket.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("Marketa.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
-          'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name TEXT,Code TEXT,Price DOUBLE,Number INTEGER,StartDate Text,EndDate Text)')
+          'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name INTEGER,Code TEXT,Price DOUBLE,Number INTEGER,StartDate Text,EndDate Text)');
+      dataBase.execute(
+          'CREATE TABLE Sponsored (id INTEGER PRIMARY KEY,Name TEXT,CostOfInvoice DOUBLE,PaidMoney DOUBLE,TotalOfInvoice DOUBLE,TotalMoney DOUBLE,StartDate NUMERIC)')
           .then((value) {
          print("Table is created");
         emit(CreateDataBaseSucssesful());
@@ -171,16 +180,18 @@ var n;
     id=null;
     emit(DeleteProducts());
   }
-   void SureItemNotFound(){
+
+   Future SureItemNotFound()async{
     for (var element in Products) {
-      if(element["Code"]==CodeOfItem.text){
+      if("${element["Code"]}".contains("${CodeOfItem.text}")){
         DisableInsertButton=false;
-        print("this is ${DisableInsertButton}");
-      }
-      if(element["Code"]!=CodeOfItem.text)
-        DisableInsertButton=false;
+        print("this is cuibt ${DisableInsertButton}");
+        emit(sureItemNotFound());
+      }else DisableInsertButton=true;
+
+      emit(sureItemNotFound());
     }
-    emit(sureItemNotFound());
+
   }
   void data(){
     dataBase.delete("Products");

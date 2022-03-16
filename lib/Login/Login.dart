@@ -140,7 +140,7 @@ class Login extends StatelessWidget {
           const Text(
             "Number:01273599580",
             style: TextStyle(
-                color: Colors.black, fontSize: 25, fontWeight: FontWeight.w700),
+                color: Colors.black, fontSize: 23, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -157,7 +157,7 @@ class Login extends StatelessWidget {
 
   Text MakaMarketName() {
     return const Text(
-      "Maka Market",
+      "Market",
       style: TextStyle(
           color: Colors.black,
           fontSize: 30,
@@ -197,17 +197,6 @@ class Login extends StatelessWidget {
     );
   }
 
- /* SizedBox LoginWallpapper(Size Size) {
-    return SizedBox(
-      width: Size.width,
-      height: Size.height,
-      child: Image.asset(
-        "Asset/LoginWallpapers.jpg",
-        fit: BoxFit.fill,
-        filterQuality: FilterQuality.high,
-      ),
-    );
-  }*/
 
 
   AppBar _appBar() {

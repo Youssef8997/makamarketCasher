@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
+import 'package:untitled6/models/Supplayer/AddSublayers.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-import '../Compoandis/MyContenar.dart';
+import '../../Compoandis/MyContenar.dart';
 class Supplayers extends StatelessWidget {
   @override
   var value;
@@ -14,22 +16,22 @@ class Supplayers extends StatelessWidget {
         builder: (context,state){
         var Size=MediaQuery.of(context).size;
           return Center(
-            child:SupplayersContenar(Size),
+            child:SupplayersContenar(Size,context),
           );
         }
     );
   }
 
   Widget TitleOfContenar(value) => "$value".text.size(30).make().shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white);
-  SupplayersContenar(Size Size) {
+  SupplayersContenar(Size Size,context) {
     return MyContainer(
       Height: Size.height * 0.8,
       Width: Size.width * 0.6,
-      Child: Supplayerscontent(Size),
+      Child: Supplayerscontent(Size,context),
     );
   }
 
-  Column Supplayerscontent(Size Size) {
+  Column Supplayerscontent(Size Size,context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -61,7 +63,7 @@ class Supplayers extends StatelessWidget {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () {Nevigator(bool: true,context: context,page: InputSupplayers());},
                 child:const  Text("Add invoice", style: TextStyle(color: Colors.white)),
                 color: Colors.grey.shade900,
               ),

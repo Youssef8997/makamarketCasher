@@ -120,6 +120,9 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
+              onChanged: (value){
+                cuibt.SureItemNotFound();
+              },
                 Controlr: cuibt.CodeOfItem,
                 label: "Code Of Item",
                 hint: "003************",
@@ -195,13 +198,13 @@ class AddItem extends StatelessWidget {
                   ),
                   child: MaterialButton(
                     onPressed: () {
-                      cuibt.SureItemNotFound();
+                      cuibt.SureItemNotFound().then((value) {
                       if (cuibt.kayform.currentState!.validate()) {
             if(cuibt.DisableInsertButton) {
               cuibt.insert();
             }
             else print("this is ${cuibt.DisableInsertButton}");
-                      }
+                      }});
                     },
                     child:
                         Text("Insert", style: TextStyle(color: Colors.white)),
@@ -321,16 +324,7 @@ class AddItem extends StatelessWidget {
                     onChanged: (value) {
                       cuibt.cahnge();
                     }),
-                SizedBox(
-                  height: 15,
-                ),
-                MyTextField(
-                    Controlr: cuibt.CodeOfSearch,
-                    label: "Code Of Item",
-                    hint: "0300**************",
-                    onChanged: (value) {
-                      cuibt.cahnge();
-                    }),
+             
                 SizedBox(
                   height: 30,
                 ),
@@ -377,9 +371,8 @@ class AddItem extends StatelessWidget {
             label: Text("EndDate"),
           ),
         ],
-        rows: cuibt.Products.skipWhile((value) =>
-            "${value["Name"]}" != cuibt.NameOfSearch.text ||
-            value["Code"] == cuibt.NameOfSearch.text).map((e) {
+        rows: cuibt.Products.skipWhile((value)=> value["Name"]!=cuibt.NameOfSearch.text
+            ).map((e) {
           return DataRow(
               onLongPress: (){
                 cuibt.insertValueIntoControlar(e);
