@@ -40,8 +40,11 @@ class InputSupplayers extends StatelessWidget {
 
   Widget AddSuplayyerContant(CasherCuibt cuibt) {
     return Form(
+      key: cuibt.SublayersKeyForm,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          const SizedBox(height: 20,),
           MyTextField(
               Controlr: cuibt.NameOfSupllayers,
               hint: "Pepsi Company",
@@ -52,6 +55,58 @@ class InputSupplayers extends StatelessWidget {
               }
                return null;
             }
+          ),
+          MyTextField(
+              Controlr: cuibt.CostOfInvoice,
+              hint: "650 LE",
+            label: "Cost of invoice ",
+            validator: (value){
+              if(value!.isEmpty){
+                return "Cost must not be Empty";
+              }
+               return null;
+            }
+          ),
+          MyTextField(
+              Controlr: cuibt.PaidOfInvoice,
+              hint: "400 LE",
+            label: "Paid of Sublayer",
+            validator: (value){
+              if(value!.isEmpty){
+                return "Paid must not be Empty";
+              }
+               return null;
+            }
+          ),
+          MyTextField(
+              Controlr: cuibt.DateOfSupllayers,
+              hint: "3/10/2022",
+            label: "First date ",
+            validator: (value){
+              if(value!.isEmpty){
+                return "First date must not be Empty";
+              }
+               return null;
+            }
+          ),
+          Center(
+            child: Container(
+
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child: MaterialButton(
+                onPressed: () {
+                    if (cuibt.SublayersKeyForm.currentState!.validate()) {
+                      cuibt.insertIntoSupplayers();
+                    }
+                },
+                child:
+               const  Text("Add invoice", style: TextStyle(color: Colors.white)),
+                color: Colors.grey.shade900,
+              ),
+            ),
           )
         ],
       ),

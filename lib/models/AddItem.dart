@@ -201,7 +201,7 @@ class AddItem extends StatelessWidget {
                       cuibt.SureItemNotFound().then((value) {
                       if (cuibt.kayform.currentState!.validate()) {
             if(cuibt.DisableInsertButton) {
-              cuibt.insert();
+              cuibt.insertIntoProducts();
             }
             else print("this is ${cuibt.DisableInsertButton}");
                       }});

@@ -14,24 +14,25 @@ class Supplayers extends StatelessWidget {
     return BlocConsumer<CasherCuibt,CasherState>
       (listener: (context,state){},
         builder: (context,state){
+        var cuibt=CasherCuibt.get(context);
         var Size=MediaQuery.of(context).size;
           return Center(
-            child:SupplayersContenar(Size,context),
+            child:SupplayersContenar(Size,context,cuibt),
           );
         }
     );
   }
 
   Widget TitleOfContenar(value) => "$value".text.size(30).make().shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white);
-  SupplayersContenar(Size Size,context) {
+  SupplayersContenar(Size Size,context,CasherCuibt cuibt) {
     return MyContainer(
       Height: Size.height * 0.8,
       Width: Size.width * 0.6,
-      Child: Supplayerscontent(Size,context),
+      Child: Supplayerscontent(Size,context,cuibt),
     );
   }
 
-  Column Supplayerscontent(Size Size,context) {
+  Column Supplayerscontent(Size Size,context,CasherCuibt cuibt) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -48,9 +49,10 @@ class Supplayers extends StatelessWidget {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton(
-              items: [
-              DropdownMenuItem(child: Text("dffddf"),value: "ddd",)
-            ],onChanged: (Object? value)=>{},value: value,),
+              items: cuibt.Supplayer.map((e) {
+                return DropdownMenuItem(child:Text("${e["Name"]}"),value:e["Name"],);
+              }).toList(),
+              onChanged: (Object? value)=>{},value: value,),
           ),
         ),
         const Spacer(),

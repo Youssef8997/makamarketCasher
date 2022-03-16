@@ -20,6 +20,7 @@ class CasherCuibt extends Cubit<CasherState>{
   var databaseFactory = databaseFactoryFfi;
   late Database dataBase;
   List Products=[];
+  List Supplayer=[];
   int MyIndex=0;
   bool Search=false;
 
@@ -40,11 +41,12 @@ class CasherCuibt extends Cubit<CasherState>{
   var NameController = TextEditingController();
   //Controller Of AddInvoice
   var NameOfSupllayers=TextEditingController();
-  var CostOfSupllayers=TextEditingController();
-  var PaidOfSupllayers=TextEditingController();
-  var TotalOfInvoice=TextEditingController();
-  var TotalOfSupllayers=TextEditingController();
+  var CostOfInvoice=TextEditingController();
+  var PaidOfInvoice=TextEditingController();
+  double TotalOfInvoice=0;
+  double TotalOfSupllayers=0.0;
   var DateOfSupllayers=TextEditingController();
+  var SublayersKeyForm = GlobalKey<FormState>();
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -100,8 +102,10 @@ class CasherCuibt extends Cubit<CasherState>{
   Future<List<Map>> getDataProducts(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Products');
   }
-  Future insert() async
-  {
+  Future<List<Map>> getDataSupplayers(dataBase) async {
+    return await dataBase.rawQuery('SELECT*FROM Sponsored');
+  }
+  Future insertIntoProducts() async {
     await dataBase.transaction((txn) {
       txn.rawInsert(
           'INSERT INTO Products(Name,Code,Price,Number,StartDate,EndDate)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text }","${EndDate.text}")')
@@ -122,12 +126,42 @@ class CasherCuibt extends Cubit<CasherState>{
       return getname();
     });
   }
+  Future insertIntoSupplayers() async {
+    TotalOfInvoice=double.parse(CostOfInvoice.text)-double.parse(PaidOfInvoice.text);
+    TotalOfSupllayers+=TotalOfInvoice;
+    await dataBase.transaction((txn) {
+      txn.rawInsert(
+          'INSERT INTO Sponsored(Name,CostOfInvoice,PaidMoney,TotalOfInvoice,TotalMoney,StartDate)VALUES("${NameOfSupllayers.text}","${CostOfInvoice.text}","${PaidOfInvoice.text}","$TotalOfInvoice","$TotalOfSupllayers","${DateOfSupllayers.text}")')
+          .then((value) {
+        print("$value insertetd sucsseffly");
+        emit(InsertProductSucssesful());
+        getSponcersAfterChange();
+        NameOfSupllayers.clear();
+        CostOfInvoice.clear();
+        PaidOfInvoice.clear();
+        DateOfSupllayers.clear();
+      }).catchError((error) {
+        print(" the error is ${error.toString()}");
+        emit(InsertProductError());
+      });
+      return getname();
+    });
+  }
+
   void getProductsAfterChange() {
     getDataProducts(dataBase).then((value) {
       Products = [];
       Products = value;
       print(Products);
       emit(GetDataProductsSucssesful());
+    });
+  }
+  void getSponcersAfterChange() {
+    getDataSupplayers(dataBase).then((value) {
+      Supplayer = [];
+      Supplayer = value;
+      print(Supplayer);
+      emit(GetDataSupplayersSucssesful());
     });
   }
   Future<String> getname() async => ("youssef ahmed ");
@@ -185,7 +219,7 @@ var n;
     for (var element in Products) {
       if("${element["Code"]}".contains("${CodeOfItem.text}")){
         DisableInsertButton=false;
-        print("this is cuibt ${DisableInsertButton}");
+        print("this is cuibt $DisableInsertButton");
         emit(sureItemNotFound());
       }else DisableInsertButton=true;
 
@@ -193,7 +227,5 @@ var n;
     }
 
   }
-  void data(){
-    dataBase.delete("Products");
-  }
+
 }
