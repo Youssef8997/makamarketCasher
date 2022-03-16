@@ -71,12 +71,14 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("Marketa.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("Casher.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name INTEGER,Code TEXT,Price DOUBLE,Number INTEGER,StartDate Text,EndDate Text)');
       dataBase.execute(
-          'CREATE TABLE Sponsored (id INTEGER PRIMARY KEY,Name TEXT,CostOfInvoice DOUBLE,PaidMoney DOUBLE,TotalOfInvoice DOUBLE,TotalMoney DOUBLE,StartDate NUMERIC)')
+          'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate NUMERIC)');
+      dataBase.execute(
+          'CREATE TABLE Invoice (id INTEGER PRIMARY KEY,NameOfSuppliers TEXT,CostInvoice DOUBLE,PaidInvoice DOUBLE,TotalInvoice DOUBLE,LastDate NUMERIC)')
           .then((value) {
          print("Table is created");
         emit(CreateDataBaseSucssesful());
@@ -127,11 +129,28 @@ class CasherCuibt extends Cubit<CasherState>{
     });
   }
   Future insertIntoSupplayers() async {
-    TotalOfInvoice=double.parse(CostOfInvoice.text)-double.parse(PaidOfInvoice.text);
-    TotalOfSupllayers+=TotalOfInvoice;
     await dataBase.transaction((txn) {
       txn.rawInsert(
-          'INSERT INTO Sponsored(Name,CostOfInvoice,PaidMoney,TotalOfInvoice,TotalMoney,StartDate)VALUES("${NameOfSupllayers.text}","${CostOfInvoice.text}","${PaidOfInvoice.text}","$TotalOfInvoice","$TotalOfSupllayers","${DateOfSupllayers.text}")')
+          'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
+          .then((value) {
+        print("$value insertetd sucsseffly");
+        emit(InsertProductSucssesful());
+        getSponcersAfterChange();
+        NameOfSupllayers.clear();
+        CostOfInvoice.clear();
+        PaidOfInvoice.clear();
+        DateOfSupllayers.clear();
+      }).catchError((error) {
+        print(" the error is ${error.toString()}");
+        emit(InsertProductError());
+      });
+      return getname();
+    });
+  }
+  Future insertIntoInvoice() async {
+    await dataBase.transaction((txn) {
+      txn.rawInsert(
+          'INSERT INTO Invoice(NameOfSuppliers,CostInvoice,PaidInvoice,TotalInvoice,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
           .then((value) {
         print("$value insertetd sucsseffly");
         emit(InsertProductSucssesful());
