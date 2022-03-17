@@ -65,8 +65,8 @@ class Supplayers extends StatelessWidget {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: MaterialButton(
-                onPressed: () {Nevigator(bool: true,context: context,page: InputSupplayers());},
-                child:const  Text("Add invoice", style: TextStyle(color: Colors.white)),
+                onPressed: () {Nevigator(bool: true,context: context,page:  InputSupplayers(title:value==null?"Add Suppliers":"Add invoice",));},
+                child: value==null?const Text("Add Suppliers", style:  TextStyle(color: Colors.white)):const Text("Add invoice", style:  TextStyle(color: Colors.white)),
                 color: Colors.grey.shade900,
               ),
             ),
@@ -78,7 +78,7 @@ class Supplayers extends StatelessWidget {
               ),
               child: MaterialButton(
                 onPressed: () {},
-                child:const  Text("Edit invoice", style: TextStyle(color: Colors.white)),
+                child:const  Text("Pay fees", style: TextStyle(color: Colors.white)),
                 color: Colors.grey.shade900,
               ),
             ),

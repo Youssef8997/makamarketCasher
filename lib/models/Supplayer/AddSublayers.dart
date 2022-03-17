@@ -8,7 +8,8 @@ import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class InputSupplayers extends StatelessWidget {
-  const InputSupplayers({Key? key}) : super(key: key);
+ final String title;
+   InputSupplayers({required this.title}) ;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +47,7 @@ class InputSupplayers extends StatelessWidget {
         children: [
           const SizedBox(height: 20,),
           MyTextField(
+            enabled:title=="Add Suppliers"?true:false ,
               Controlr: cuibt.NameOfSupllayers,
               hint: "Pepsi Company",
             label: "Name of Sublayer",
@@ -99,11 +101,13 @@ class InputSupplayers extends StatelessWidget {
               child: MaterialButton(
                 onPressed: () {
                     if (cuibt.SublayersKeyForm.currentState!.validate()) {
+                      if(title=="Add Suppliers") {
                       cuibt.insertIntoSupplayers();
+                    }else
+                    cuibt.insertIntoInvoice();
                     }
                 },
-                child:
-               const  Text("Add invoice", style: TextStyle(color: Colors.white)),
+                child: title=="Add Suppliers"?const Text("Add Suppliers", style:  TextStyle(color: Colors.white)):const Text("Add invoice", style:  TextStyle(color: Colors.white)),
                 color: Colors.grey.shade900,
               ),
             ),
@@ -118,7 +122,7 @@ class InputSupplayers extends StatelessWidget {
         backgroundColor: Colors.transparent,
         centerTitle: true,
         elevation: 0,
-        title: "AddInvoice".text.bold.italic.size(25.0).make().shimmer(
+        title: title.text.bold.italic.size(25.0).make().shimmer(
             duration: const Duration(seconds: 2),
             primaryColor: Colors.black,
             secondaryColor: Colors.white));

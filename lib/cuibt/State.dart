@@ -7,6 +7,7 @@ abstract class CasherState{}
   class CreateDataBaseError extends CasherState{}
   class GetDataProductsSucssesful extends CasherState{}
   class GetDataSupplayersSucssesful extends CasherState{}
+  class GetDataInvoiceSucssesful extends CasherState{}
   class GetDataProductsBaseError extends CasherState{}
   class InsertProductSucssesful extends CasherState{}
   class InsertProductError extends CasherState{}

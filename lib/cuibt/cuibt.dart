@@ -21,6 +21,7 @@ class CasherCuibt extends Cubit<CasherState>{
   late Database dataBase;
   List Products=[];
   List Supplayer=[];
+  List Invoice=[];
   int MyIndex=0;
   bool Search=false;
 
@@ -88,11 +89,11 @@ class CasherCuibt extends Cubit<CasherState>{
       });
     }, onOpen: (dataBase) {
       print("open data base");
-     getDataProducts(dataBase).then((value) {
-       Products = value;
-       Products.forEach((element) {
+      getDataInvoice(dataBase).then((value) {
+       Invoice = value;
+       Invoice.forEach((element) {
         });
-        print(Products);
+        print(Invoice);
         emit(GetDataProductsSucssesful());
       }).catchError((Error) {
         print("the error is ${Error.toString()}");
@@ -106,6 +107,9 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   Future<List<Map>> getDataSupplayers(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Sponsored');
+  }
+  Future<List<Map>> getDataInvoice(dataBase) async {
+    return await dataBase.rawQuery('SELECT*FROM Invoice');
   }
   Future insertIntoProducts() async {
     await dataBase.transaction((txn) {
@@ -148,13 +152,14 @@ class CasherCuibt extends Cubit<CasherState>{
     });
   }
   Future insertIntoInvoice() async {
+    TotalOfInvoice=double.parse(CostOfInvoice.text)-double.parse(PaidOfInvoice.text);
     await dataBase.transaction((txn) {
       txn.rawInsert(
-          'INSERT INTO Invoice(NameOfSuppliers,CostInvoice,PaidInvoice,TotalInvoice,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
+          'INSERT INTO Invoice(NameOfSuppliers,CostInvoice,PaidInvoice,TotalInvoice,LastDate)VALUES("${NameOfSupllayers.text}","${CostOfInvoice.text}","${PaidOfInvoice.text}","$TotalOfInvoice","${DateOfSupllayers.text}")')
           .then((value) {
         print("$value insertetd sucsseffly");
         emit(InsertProductSucssesful());
-        getSponcersAfterChange();
+        getInvoiceAfterChange();
         NameOfSupllayers.clear();
         CostOfInvoice.clear();
         PaidOfInvoice.clear();
@@ -166,7 +171,6 @@ class CasherCuibt extends Cubit<CasherState>{
       return getname();
     });
   }
-
   void getProductsAfterChange() {
     getDataProducts(dataBase).then((value) {
       Products = [];
@@ -181,6 +185,14 @@ class CasherCuibt extends Cubit<CasherState>{
       Supplayer = value;
       print(Supplayer);
       emit(GetDataSupplayersSucssesful());
+    });
+  }
+  void getInvoiceAfterChange() {
+    getDataInvoice(dataBase).then((value) {
+      Invoice = [];
+      Invoice = value;
+      print(Invoice);
+      emit(GetDataInvoiceSucssesful());
     });
   }
   Future<String> getname() async => ("youssef ahmed ");
