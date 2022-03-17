@@ -223,7 +223,7 @@ class AddItem extends StatelessWidget {
                     ),
                     child: MaterialButton(
                       onPressed: () {if (cuibt.kayform.currentState!.validate()) {
-                        cuibt.Update();
+                        cuibt.updateProdcts();
                       }},
                       child: const Text("Edit",
                           style: TextStyle(color: Colors.white)),

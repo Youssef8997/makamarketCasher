@@ -8,9 +8,6 @@ import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class InputSupplayers extends StatelessWidget {
- final String title;
-   InputSupplayers({required this.title}) ;
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
@@ -47,7 +44,6 @@ class InputSupplayers extends StatelessWidget {
         children: [
           const SizedBox(height: 20,),
           MyTextField(
-            enabled:title=="Add Suppliers"?true:false ,
               Controlr: cuibt.NameOfSupllayers,
               hint: "Pepsi Company",
             label: "Name of Sublayer",
@@ -58,10 +54,10 @@ class InputSupplayers extends StatelessWidget {
                return null;
             }
           ),
-          MyTextField(
+            MyTextField(
               Controlr: cuibt.CostOfInvoice,
               hint: "650 LE",
-            label: "Cost of invoice ",
+            label:"Total money",
             validator: (value){
               if(value!.isEmpty){
                 return "Cost must not be Empty";
@@ -72,7 +68,7 @@ class InputSupplayers extends StatelessWidget {
           MyTextField(
               Controlr: cuibt.PaidOfInvoice,
               hint: "400 LE",
-            label: "Paid of Sublayer",
+            label:"Last fees",
             validator: (value){
               if(value!.isEmpty){
                 return "Paid must not be Empty";
@@ -100,14 +96,12 @@ class InputSupplayers extends StatelessWidget {
               ),
               child: MaterialButton(
                 onPressed: () {
-                    if (cuibt.SublayersKeyForm.currentState!.validate()) {
-                      if(title=="Add Suppliers") {
-                      cuibt.insertIntoSupplayers();
-                    }else
-                    cuibt.insertIntoInvoice();
-                    }
+                  if (cuibt.SublayersKeyForm.currentState!.validate()) {
+                    cuibt.insertIntoSupplayers();
+                  }
+
                 },
-                child: title=="Add Suppliers"?const Text("Add Suppliers", style:  TextStyle(color: Colors.white)):const Text("Add invoice", style:  TextStyle(color: Colors.white)),
+                child:const Text("Add Suppliers", style:  TextStyle(color: Colors.white)),
                 color: Colors.grey.shade900,
               ),
             ),
@@ -122,7 +116,7 @@ class InputSupplayers extends StatelessWidget {
         backgroundColor: Colors.transparent,
         centerTitle: true,
         elevation: 0,
-        title: title.text.bold.italic.size(25.0).make().shimmer(
+        title: "Add Suppliers".text.bold.italic.size(25.0).make().shimmer(
             duration: const Duration(seconds: 2),
             primaryColor: Colors.black,
             secondaryColor: Colors.white));

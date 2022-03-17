@@ -4,12 +4,13 @@ import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:untitled6/models/Supplayer/AddSublayers.dart';
+import 'package:untitled6/models/Supplayer/Pay%20fees.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../Compoandis/MyContenar.dart';
 class Supplayers extends StatelessWidget {
+  var scrolllabel = ScrollController();
   @override
-  var value;
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt,CasherState>
       (listener: (context,state){},
@@ -49,10 +50,11 @@ class Supplayers extends StatelessWidget {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton(
+              alignment: AlignmentDirectional.center,
               items: cuibt.Supplayer.map((e) {
-                return DropdownMenuItem(child:Text("${e["Name"]}"),value:e["Name"],);
+                return DropdownMenuItem(child:Text("${e["Name"]}"),value:e["id"],);
               }).toList(),
-              onChanged: (Object? value)=>{},value: value,),
+              onChanged: (Object? value)=>cuibt.ChangeValue(value),value: cuibt.value,),
           ),
         ),
         const Spacer(),
@@ -65,8 +67,8 @@ class Supplayers extends StatelessWidget {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: MaterialButton(
-                onPressed: () {Nevigator(bool: true,context: context,page:  InputSupplayers(title:value==null?"Add Suppliers":"Add invoice",));},
-                child: value==null?const Text("Add Suppliers", style:  TextStyle(color: Colors.white)):const Text("Add invoice", style:  TextStyle(color: Colors.white)),
+                onPressed: () {Nevigator(bool: true,context: context,page:  InputSupplayers());},
+                child: const Text("Add Suppliers", style:  TextStyle(color: Colors.white)),
                 color: Colors.grey.shade900,
               ),
             ),
@@ -77,7 +79,9 @@ class Supplayers extends StatelessWidget {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  Nevigator(bool: true,context: context,page:  PayFees(NameOfSupllayers:cuibt.Supplayer[cuibt.value-1]["Name"],id:cuibt.value,));
+                },
                 child:const  Text("Pay fees", style: TextStyle(color: Colors.white)),
                 color: Colors.grey.shade900,
               ),
@@ -112,5 +116,7 @@ class Supplayers extends StatelessWidget {
       ],
     );
   }
-
+/*feesContainer(){
+    return
+}*/
 }
