@@ -57,7 +57,9 @@ class Supplayers extends StatelessWidget {
               onChanged: (Object? value)=>cuibt.ChangeValue(value),value: cuibt.value,),
           ),
         ),
-        const Spacer(),
+       const SizedBox(height: 20,),
+        feesContainer(Size),
+       const Spacer(),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -78,12 +80,15 @@ class Supplayers extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25.0),
               ),
-              child: MaterialButton(
-                onPressed: () {
-                  Nevigator(bool: true,context: context,page:  PayFees(NameOfSupllayers:cuibt.Supplayer[cuibt.value-1]["Name"],id:cuibt.value,));
-                },
-                child:const  Text("Pay fees", style: TextStyle(color: Colors.white)),
-                color: Colors.grey.shade900,
+              child: AbsorbPointer(
+                absorbing:cuibt.value==null?true:false ,
+                child: MaterialButton(
+                  onPressed: () {
+                    Nevigator(bool: true,context: context,page:  PayFees(NameOfSupllayers:cuibt.Supplayer[cuibt.value-1]["Name"],id:cuibt.value,));
+                  },
+                  child:const  Text("Pay fees", style: TextStyle(color: Colors.white)),
+                  color: cuibt.value==null?Colors.grey:Colors.grey.shade900,
+                ),
               ),
             ),
             const SizedBox(width: 10,),
@@ -116,7 +121,28 @@ class Supplayers extends StatelessWidget {
       ],
     );
   }
-/*feesContainer(){
-    return
-}*/
+feesContainer(Size size){
+   return Row(
+     children: [
+       
+       Container(
+         height: 60,
+         width: size.width*.56,
+         decoration: BoxDecoration(
+           color:Colors.grey[500],
+            borderRadius: BorderRadiusDirectional.circular(50.0),
+           border: Border.all(
+             color: Colors.grey,
+           ),
+           boxShadow: [BoxShadow(
+             offset: Offset(3,5),
+             color: Colors.grey[800]!,
+             blurRadius: 20,
+             spreadRadius: 5,
+           )]
+         ),
+       ),
+     ],
+   );
+}
 }

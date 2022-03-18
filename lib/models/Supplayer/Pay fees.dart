@@ -21,7 +21,7 @@ final int id;
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: _appBar(),
-            body: Body(size,cuibt),
+            body: Body(size,cuibt,context),
           );
         }
     );
@@ -37,7 +37,7 @@ final int id;
             secondaryColor: Colors.white));
   }
 
-  Body(Size size,CasherCuibt cuibt) {
+  Body(Size size,CasherCuibt cuibt,context) {
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
@@ -45,13 +45,13 @@ final int id;
         MyContainer(
             Height: size.height * .8,
             Width: size.width * .6,
-            Child: FeesContant(cuibt))
+            Child: FeesContant(cuibt,context))
 
       ],
     );
   }
 
-  FeesContant(CasherCuibt cuibt) {
+  FeesContant(CasherCuibt cuibt,context) {
     return Form(
       key: cuibt.feesKeyForm,
       child: Column(
@@ -101,7 +101,7 @@ final int id;
 
                 onPressed: () {
                   if (cuibt.feesKeyForm.currentState!.validate()) {
-                    cuibt.insertIntoFees(id);
+                    cuibt.insertIntoFees(id).then((value) => Navigator.pop(context));
                   }
 
                 },

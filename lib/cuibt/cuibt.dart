@@ -79,14 +79,14 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("cash.db", version: 2, onCreate: (dataBase, version) {
+    await openDatabase("youssef.db", version: 2, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name INTEGER,Code TEXT,Price DOUBLE,Number INTEGER,StartDate Text,EndDate Text)');
       dataBase.execute(
-          'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate NUMERIC)');
+          'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
-          'CREATE TABLE Fees (id INTEGER PRIMARY KEY,Name TEXT,Paid DOUBLE,TotalSuppliers DOUBLE,LastDate NUMERIC)')
+          'CREATE TABLE Fees (id INTEGER PRIMARY KEY,Name TEXT,Paid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)')
       .then((value) {
          print("Table is created");
         emit(CreateDataBaseSucssesful());
@@ -109,6 +109,7 @@ class CasherCuibt extends Cubit<CasherState>{
         print("the error is ${Error.toString()}");
         emit(GetDataProductsBaseError());
       });
+
   }
   Future<List<Map>> getDataProducts(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Products');
@@ -148,7 +149,7 @@ class CasherCuibt extends Cubit<CasherState>{
           .then((value) {
         print("$value insertetd sucsseffly");
         emit(InsertProductSucssesful());
-        getSponcersAfterChange();
+        getSuppliersAfterChange();
         NameOfSupllayers.clear();
         CostOfInvoice.clear();
         PaidOfInvoice.clear();
@@ -164,10 +165,13 @@ class CasherCuibt extends Cubit<CasherState>{
     TotalOfSupllayers=Supplayer[id-1]["TotalSuppliers"]-double.parse(paidOfFees.text);
     await dataBase.transaction((txn) {
       txn.rawInsert(
-          'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${value.toString()}","${paidOfFees.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
+          'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${value.toString()}","${paidOfFees.text}","$TotalOfSupllayers","${dateOfFees.text}")')
           .then((value) {
         getFeesAfterChange();
         updateSuppliers(id);
+        paidOfFees.clear();
+        dateOfFees.clear();
+
         print("$value insertetd sucsseffly");
         emit(InsertProductSucssesful());
       }).catchError((error) {
@@ -185,7 +189,7 @@ class CasherCuibt extends Cubit<CasherState>{
       emit(GetDataProductsSucssesful());
     });
   }
-  void getSponcersAfterChange() {
+  void getSuppliersAfterChange() {
     getDataSupplayers(dataBase).then((value) {
       Supplayer = [];
       Supplayer = value;
@@ -240,7 +244,10 @@ var n;
         'UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ', [TotalOfSupllayers, id]);
     dataBase.rawUpdate(
         'UPDATE Suppliers SET LastPaid=? WHERE id=? ', [double.parse(paidOfFees.text), id]);
+    dataBase.rawUpdate(
+        'UPDATE Suppliers SET LastDate=? WHERE id=? ', [dateOfFees.text, id]);
     getFeesAfterChange();
+    getSuppliersAfterChange();
     emit(UpdateProducts());
   }
   void delete()async{
