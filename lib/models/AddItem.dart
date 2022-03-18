@@ -243,7 +243,7 @@ class AddItem extends StatelessWidget {
                     ),
                     child: MaterialButton(
                       onPressed: () {
-                        cuibt.delete();
+                        cuibt.deleteProducts();
                       },
                       child: const Text("Delete",
                           style: TextStyle(color: Colors.white)),

@@ -24,6 +24,7 @@ class CasherCuibt extends Cubit<CasherState>{
   bool Search=false;
   var value;
   bool ItemsSearch=false;
+  bool isMoreThanTotalMoney=false;
   bool DisableInsertButton=true;
   //Controller of AddItem Screen
   var NameOfItem = TextEditingController();
@@ -79,7 +80,7 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("youssef.db", version: 2, onCreate: (dataBase, version) {
+    await openDatabase("yoyo.db", version: 2, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name INTEGER,Code TEXT,Price DOUBLE,Number INTEGER,StartDate Text,EndDate Text)');
@@ -103,6 +104,10 @@ class CasherCuibt extends Cubit<CasherState>{
         Products = [];
         Products = value;
         print(Products);});
+      getDataFees(dataBase).then((value) {
+        fees = [];
+        fees = value;
+        print(fees);});
       print("open data base");
         emit(GetDataProductsSucssesful());
       }).catchError((Error) {
@@ -163,23 +168,30 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   Future insertIntoFees(id) async {
     TotalOfSupllayers=Supplayer[id-1]["TotalSuppliers"]-double.parse(paidOfFees.text);
-    await dataBase.transaction((txn) {
-      txn.rawInsert(
-          'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${value.toString()}","${paidOfFees.text}","$TotalOfSupllayers","${dateOfFees.text}")')
-          .then((value) {
-        getFeesAfterChange();
-        updateSuppliers(id);
-        paidOfFees.clear();
-        dateOfFees.clear();
+    if(TotalOfSupllayers>=0) {
+      await dataBase.transaction((txn) {
+        txn
+            .rawInsert(
+                'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${Supplayer[value - 1]["Name"]}","${paidOfFees.text}","$TotalOfSupllayers","${dateOfFees.text}")')
+            .then((value) {
+          getFeesAfterChange();
+          updateSuppliers(id);
+          paidOfFees.clear();
+          dateOfFees.clear();
 
-        print("$value insertetd sucsseffly");
-        emit(InsertProductSucssesful());
-      }).catchError((error) {
-        print(" the error is ${error.toString()}");
-        emit(InsertProductError());
+          print("$value insertetd sucsseffly");
+          emit(InsertProductSucssesful());
+        }).catchError((error) {
+          print(" the error is ${error.toString()}");
+          emit(InsertProductError());
+        });
+        return getname();
       });
-      return getname();
-    });
+    }else {
+      isMoreThanTotalMoney=true;
+      emit(InsertProductError());
+    }
+
   }
   void getProductsAfterChange() {
     getDataProducts(dataBase).then((value) {
@@ -240,8 +252,8 @@ var n;
     emit(UpdateProducts());
   }
   void updateSuppliers(id){
-    dataBase.rawUpdate(
-        'UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ', [TotalOfSupllayers, id]);
+      dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
+          [TotalOfSupllayers, id]);
     dataBase.rawUpdate(
         'UPDATE Suppliers SET LastPaid=? WHERE id=? ', [double.parse(paidOfFees.text), id]);
     dataBase.rawUpdate(
@@ -250,7 +262,18 @@ var n;
     getSuppliersAfterChange();
     emit(UpdateProducts());
   }
-  void delete()async{
+  void updateSuppliersAfterDelete(id){
+      dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
+          [fees[id-1]["TotalSuppliers"], id]);
+    dataBase.rawUpdate(
+        'UPDATE Suppliers SET LastPaid=? WHERE id=? ', [fees[id-1]["Paid"], id]);
+    dataBase.rawUpdate(
+        'UPDATE Suppliers SET LastDate=? WHERE id=? ', [fees[id-1]["LastDate"], id]);
+    getFeesAfterChange();
+    getSuppliersAfterChange();
+    emit(UpdateProducts());
+  }
+  void deleteProducts()async{
     await dataBase.rawDelete('DELETE FROM Products WHERE id=? ', [id]).then((value) =>getProductsAfterChange());
    CodeOfItem.clear();
     NameOfItem.clear();
@@ -258,6 +281,15 @@ var n;
    PriceOfItem.clear();
    EndDate.clear();
     StartDate.clear();
+    id=null;
+    emit(DeleteProducts());
+  }
+  void deleteFees(id)async{
+    await dataBase.rawDelete('DELETE FROM fees WHERE id=? ', [id]).then((value)
+    {
+      getFeesAfterChange();
+      updateSuppliersAfterDelete(id);
+    });
     id=null;
     emit(DeleteProducts());
   }

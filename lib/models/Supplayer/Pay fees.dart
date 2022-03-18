@@ -1,3 +1,4 @@
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
@@ -101,7 +102,14 @@ final int id;
 
                 onPressed: () {
                   if (cuibt.feesKeyForm.currentState!.validate()) {
-                    cuibt.insertIntoFees(id).then((value) => Navigator.pop(context));
+                    cuibt.insertIntoFees(id).then((value)
+                    {
+                      if(cuibt.isMoreThanTotalMoney) {
+                        settingDialog(context, cuibt);
+                      }else {
+                        Navigator.pop(context);
+                      }
+                    });
                   }
 
                 },
@@ -113,6 +121,31 @@ final int id;
         ],
       ),
     );
+  }
+  settingDialog(context,CasherCuibt cuibt) {
+    var size=MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return BlurryContainer(
+            height: 100,
+            width: 100,
+            blur: 6,
+            child: AlertDialog(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              content:Center(
+
+                  child:Text("You cant pay more than debit money ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w900),)
+
+              ),
+              actions: [
+                MaterialButton(onPressed: (){Navigator.pop(context);cuibt.isMoreThanTotalMoney=false;},child: const Text("Okay"),)
+              ],
+            ),
+          );
+        });
   }
 
 }
