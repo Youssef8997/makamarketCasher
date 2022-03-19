@@ -7,6 +7,7 @@ import 'package:untitled6/models/Supplayer/AddSublayers.dart';
 import 'package:untitled6/models/Supplayer/Pay%20fees.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../../Compoandis/MyContenar.dart';
+import 'Add Money.dart';
 
 class Supplayers extends StatelessWidget {
   var scrolllabel = ScrollController();
@@ -129,16 +130,21 @@ int? indexl;
             const SizedBox(
               width: 10,
             ),
-            Container(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-              child: MaterialButton(
-                onPressed: () {},
-                child: const Text("Increases money",
-                    style: TextStyle(color: Colors.white)),
-                color: Colors.grey.shade900,
+            AbsorbPointer(
+              absorbing: cuibt.value == null ? true : false,
+              child: Container(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                child: MaterialButton(
+                  onPressed: () {Nevigator(page: AddMoney(NameOfSupllayers: cuibt.Supplayer[cuibt.value - 1]
+                  ["Name"],id: cuibt.value, ),context: context,bool: true);},
+                  child: const Text("Increases money",
+                      style: TextStyle(color: Colors.white)),
+                  color: cuibt.value == null ? Colors.grey : Colors.grey.shade900,
+
+                ),
               ),
             ),
 

@@ -15,11 +15,11 @@ class InputSupplayers extends StatelessWidget {
         builder: (context, state) {
           var cuibt = CasherCuibt.get(context);
           var size = MediaQuery.of(context).size;
-          return AddSup(size, cuibt);
+          return AddSup(size, cuibt,context);
         });
   }
 
-  Widget AddSup(Size size, CasherCuibt cuibt) {
+  Widget AddSup(Size size, CasherCuibt cuibt,context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: _appBar(),
@@ -30,13 +30,13 @@ class InputSupplayers extends StatelessWidget {
           MyContainer(
               Height: size.height * .8,
               Width: size.width * .6,
-              Child: AddSuplayyerContant(cuibt))
+              Child: AddSuplayyerContant(cuibt,context))
         ],
       ),
     );
   }
 
-  Widget AddSuplayyerContant(CasherCuibt cuibt) {
+  Widget AddSuplayyerContant(CasherCuibt cuibt,context) {
     return Form(
       key: cuibt.SublayersKeyForm,
       child: Column(
@@ -97,7 +97,7 @@ class InputSupplayers extends StatelessWidget {
               child: MaterialButton(
                 onPressed: () {
                   if (cuibt.SublayersKeyForm.currentState!.validate()) {
-                    cuibt.insertIntoSupplayers();
+                    cuibt.insertIntoSupplayers().then((value) => Navigator.pop(context));
                   }
 
                 },

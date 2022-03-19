@@ -6,13 +6,13 @@ import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class Store extends StatelessWidget {
-  var value;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>
       (listener: (context, state) {},
         builder: (context, state) {
         var size=MediaQuery.of(context).size;
+        var cuibt=CasherCuibt.get(context);
           return Center(
             child: MyContainer(
                 Height: size.height*.8,
@@ -42,9 +42,9 @@ class Store extends StatelessWidget {
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton(
-                        items: [
-                          DropdownMenuItem(child: Text("dffddf"),value: "ddd",)
-                        ],onChanged: (Object? value)=>{},value: value,),
+                        items: cuibt.Products.map((e) {
+                          return DropdownMenuItem(child: Text("${e["Name"]}"),value:e["id"],);
+                        }).toList(),onChanged: (Object? value)=>cuibt.ChangeStoreValue(value),value: cuibt.storeValue,),
                     ),
                   ),
 

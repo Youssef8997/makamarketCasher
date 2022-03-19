@@ -23,6 +23,7 @@ class CasherCuibt extends Cubit<CasherState>{
   int MyIndex=0;
   bool Search=false;
   var value;
+  var storeValue;
   bool ItemsSearch=false;
   bool isMoreThanTotalMoney=false;
   bool DisableInsertButton=true;
@@ -52,6 +53,8 @@ class CasherCuibt extends Cubit<CasherState>{
   var paidOfFees=TextEditingController();
   var dateOfFees=TextEditingController();
   var feesKeyForm = GlobalKey<FormState>();
+  //Add money
+  var increesKeyForm = GlobalKey<FormState>();
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -76,6 +79,10 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void ChangeValue(valuee){
     value=valuee;
+    emit(ChangeValuee());
+  }
+  void ChangeStoreValue(valuee){
+    storeValue=valuee;
     emit(ChangeValuee());
   }
   void Crdatab() async {
@@ -262,14 +269,11 @@ var n;
     getSuppliersAfterChange();
     emit(UpdateProducts());
   }
-  void updateSuppliersAfterDelete(id){
-      dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
-          [fees[id-1]["TotalSuppliers"], id]);
-    dataBase.rawUpdate(
-        'UPDATE Suppliers SET LastPaid=? WHERE id=? ', [fees[id-1]["Paid"], id]);
-    dataBase.rawUpdate(
-        'UPDATE Suppliers SET LastDate=? WHERE id=? ', [fees[id-1]["LastDate"], id]);
-    getFeesAfterChange();
+  void updateSuppliersAfterAdd(id){
+    var totalSuppliersAfterAdd=Supplayer[id-1]["TotalSuppliers"]+double.parse(paidOfFees.text);
+      dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ', [totalSuppliersAfterAdd, id]);
+    paidOfFees.clear();
+    dateOfFees.clear();
     getSuppliersAfterChange();
     emit(UpdateProducts());
   }
@@ -281,15 +285,6 @@ var n;
    PriceOfItem.clear();
    EndDate.clear();
     StartDate.clear();
-    id=null;
-    emit(DeleteProducts());
-  }
-  void deleteFees(id)async{
-    await dataBase.rawDelete('DELETE FROM fees WHERE id=? ', [id]).then((value)
-    {
-      getFeesAfterChange();
-      updateSuppliersAfterDelete(id);
-    });
     id=null;
     emit(DeleteProducts());
   }
