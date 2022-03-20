@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
@@ -12,15 +13,13 @@ import '../cuibt/State.dart';
 
 class CasherPage extends StatelessWidget {
 
-  var NameController = TextEditingController();
-  var numberController = TextEditingController();
-  var CodeController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
         listener: (context, state) {},
         builder: (context, state) {
           var size = MediaQuery.of(context).size;
+          var cuibt=CasherCuibt.get(context);
           return Stack(children: [
 
             NumberOfOrder(),
@@ -63,7 +62,7 @@ class CasherPage extends StatelessWidget {
                   width: CasherCuibt.get(context).Search
                       ? size.width * .48
                       : size.width * .9,
-                  child: CasherTable(context),
+                  child: CasherTable(context,cuibt),
                 ),
               ),
             ),
@@ -75,12 +74,12 @@ class CasherPage extends StatelessWidget {
                   alignment: Alignment.centerRight,
                 )),
              //bottom Container
-             BottomContainer(size, context)
+             BottomContainer(size, context,cuibt)
           ]);
         });
   }
 
-  Padding BottomContainer(Size size, BuildContext context) {
+  Padding BottomContainer(Size size, BuildContext context,CasherCuibt cuibt) {
     return Padding(
              padding: const EdgeInsets.only(top:30),
              child: Align(
@@ -88,28 +87,40 @@ class CasherPage extends StatelessWidget {
               child: MyContainer(
                 Height: size.height*.118,
                 Width: CasherCuibt.get(context).Search?(size.width)-10 :size.width * .9,
-                 Child:CasheeRow() ,
+                 Child:TextFormRow(cuibt) ,
               ),
           ),
            );
   }
 
-  Row CasheeRow() {
-    return Row(
-                  children: [
-                    const Text("Code:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
-                    const SizedBox(width: 5,),
-                    Expanded(child: MyTextField(Controlr: CodeController, hint:"Write code of Product",)),
-                    const SizedBox( width: 5),
-                    const Text("Name:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
-                    const SizedBox(width: 5,),
-                    Expanded(child: MyTextField(Controlr: NameController, hint:"Write name of Product")),
-                    const SizedBox( width: 5),
-                    const Text("Name:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
-                    const SizedBox(width: 5,),
-                    Expanded(child: MyTextField(Controlr: numberController, hint:"Write number of Product")),
-                  ],
-                );
+  Shortcuts TextFormRow(CasherCuibt cuibt) {
+    return Shortcuts(
+      shortcuts:{
+        LogicalKeySet(LogicalKeyboardKey.enter):EnterButton(),
+        LogicalKeySet(LogicalKeyboardKey.space):EnterButton(),
+      } ,
+      child: Actions(
+        actions: {
+          EnterButton:CallbackAction<EnterButton>(onInvoke: (intent)=>cuibt.searchItemFound())
+        },
+        child: Row(
+                      children: [
+                        const Text("Code:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
+                        const SizedBox(width: 5,),
+                        Expanded(child: MyTextField(Controlr: cuibt.CodeOfProduct, hint:"Write code of Product",)),
+                        const SizedBox( width: 5),
+                        const Text("Name:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
+                        const SizedBox(width: 5,),
+                        Expanded(child: MyTextField(Controlr: cuibt.NameOfProduct, hint:"Write name of Product")),
+                        const SizedBox( width: 5),
+                        const Text("Name:",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 19,fontStyle: FontStyle.italic)),
+                        const SizedBox(width: 5,),
+                        Expanded(child: MyTextField(Controlr: cuibt.NumberOfProduct, hint:"Write number of Product")),
+                        MaterialButton(onPressed: ()=>cuibt.delet(),child: Text("Enter"),)
+                      ],
+                    ),
+      ),
+    );
   }
 
   SearchCountenar(context, Size size) {
@@ -127,12 +138,12 @@ class CasherPage extends StatelessWidget {
                const SizedBox(
                   height: 20,
                 ),
-                MyTextField(Controlr: NameController, label: "Name", hint: ""),
+                MyTextField(Controlr: cuibt.NameOfProduct, label: "Name", hint: ""),
                 const SizedBox(
                   height: 15,
                 ),
                 MyTextField(
-                    Controlr: CodeController,
+                    Controlr: cuibt.CodeOfProduct,
                     label: "Code Of Item",
                     hint: "0300**************"),
               ],
@@ -195,7 +206,7 @@ class CasherPage extends StatelessWidget {
     );
   }
 
-  CasherTable(context) {
+  CasherTable(context,CasherCuibt cuibt) {
     return DataTable(
         dataTextStyle:
             TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
@@ -228,33 +239,17 @@ class CasherPage extends StatelessWidget {
             label: Text("total"),
           ),
         ],
-        rows: [
-          DataRow(cells: [
-            const DataCell(
-              Text("11111"),
-            ),
-            const DataCell(Text("name")),
-            DataCell(SelectableText("cost")),
-            DataCell(SelectableText("${CasherCuibt.get(context).n}"),
-                onDoubleTap: () {
-              CasherCuibt.get(context).d();
-            }),
-            const DataCell(Text("total")),
-          ]),
-          DataRow(cells: [
-            DataCell(Text("11111")),
-            DataCell(Text("name")),
-            DataCell(Text("cost")),
-            DataCell(Text("number")),
+        rows:cuibt.orders.map((e) {
+          return DataRow(cells: [
+            DataCell(Text("${e["Code"]}")),
+            DataCell(Text("${e["Name"]}")),
+            DataCell(Text("${e["Price"]}")),
+            DataCell(Text("1")),
             DataCell(Text("total")),
-          ]),
-          DataRow(cells: [
-            DataCell(Text("11111")),
-            DataCell(Text("name")),
-            DataCell(Text("cost")),
-            DataCell(Text("number")),
-            DataCell(Text("total")),
-          ]),
-        ]);
+          ]);
+
+        }).toList()
+    );
   }
 }
+class EnterButton extends Intent{}

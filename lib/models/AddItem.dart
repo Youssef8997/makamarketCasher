@@ -199,11 +199,9 @@ class AddItem extends StatelessWidget {
                   child: MaterialButton(
                     onPressed: () {
                       cuibt.SureItemNotFound().then((value) {
-                      if (cuibt.kayform.currentState!.validate()) {
-            if(cuibt.DisableInsertButton) {
-              cuibt.insertIntoProducts();
-            }
-            else print("this is ${cuibt.DisableInsertButton}");
+                      if (cuibt.kayform.currentState!.validate()&&cuibt.DisableInsertButton) {
+                         cuibt.insertIntoProducts();
+
                       }});
                     },
                     child:
@@ -324,7 +322,6 @@ class AddItem extends StatelessWidget {
                     onChanged: (value) {
                       cuibt.cahnge();
                     }),
-             
                 SizedBox(
                   height: 30,
                 ),

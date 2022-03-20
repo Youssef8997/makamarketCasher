@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
+import 'package:untitled6/models/Casherpage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -41,33 +43,39 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
               borderRadius: const BorderRadius.all(Radius.circular(16)),
             ),
-            child: Scaffold(
-              extendBodyBehindAppBar: true,
-              appBar: AppBar(
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-                leading: IconButton(
-                  color: Colors.teal,
-                  onPressed: _handleMenuButtonPressed,
-                  icon: ValueListenableBuilder<AdvancedDrawerValue>(
-                    valueListenable: _advancedDrawerController,
-                    builder: (_, value, __) {
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        child: Icon(
-                          value.visible ? Icons.clear : Icons.menu,
-                          key: ValueKey<bool>(value.visible),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+            child: Shortcuts(
+              shortcuts:{LogicalKeySet(LogicalKeyboardKey.tab):ReturnToPage()} ,
+              child: Actions(
+                actions: {ReturnToPage:CallbackAction<ReturnToPage>(onInvoke: (intent)=>cuibt.ChangePage())},
+                child: Scaffold(
+                  extendBodyBehindAppBar: true,
+                  appBar: AppBar(
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    leading: IconButton(
+                      color: Colors.teal,
+                      onPressed: _handleMenuButtonPressed,
+                      icon: ValueListenableBuilder<AdvancedDrawerValue>(
+                        valueListenable: _advancedDrawerController,
+                        builder: (_, value, __) {
+                          return AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            child: Icon(
+                              value.visible ? Icons.clear : Icons.menu,
+                              key: ValueKey<bool>(value.visible),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
 
+                  ),
+                  body: Stack(children: [
+                    Wallpaper(size),
+                    cuibt.body[cuibt.MyIndex]
+                  ] ),
+                ),
               ),
-              body: Stack(children: [
-                Wallpaper(size),
-                cuibt.body[cuibt.MyIndex]
-              ] ),
             ),
             drawer: SafeArea(
               child: ListTileTheme(
@@ -193,3 +201,4 @@ class _HomeScreenState extends State<HomeScreen> {
     _advancedDrawerController.showDrawer();
   }
 }
+class ReturnToPage extends Intent{}

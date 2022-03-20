@@ -17,3 +17,5 @@ abstract class CasherState{}
   class UpdateProducts extends CasherState{}
   class DeleteProducts extends CasherState{}
   class sureItemNotFound extends CasherState{}
+  class returnToPage extends CasherState{}
+  class InsertIntoOrder extends CasherState{}

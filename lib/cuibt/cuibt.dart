@@ -1,4 +1,6 @@
 
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,6 +21,7 @@ class CasherCuibt extends Cubit<CasherState>{
   late Database dataBase;
   List Products=[];
   List Supplayer=[];
+  List orders=[];
   List fees=[];
   int MyIndex=0;
   bool Search=false;
@@ -55,6 +58,11 @@ class CasherCuibt extends Cubit<CasherState>{
   var feesKeyForm = GlobalKey<FormState>();
   //Add money
   var increesKeyForm = GlobalKey<FormState>();
+  // CashierPage
+  var NameOfProduct = TextEditingController();
+  var NumberOfProduct = TextEditingController();
+  var CodeOfProduct = TextEditingController();
+  bool Found=true;
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -106,7 +114,7 @@ class CasherCuibt extends Cubit<CasherState>{
       getDataSupplayers(dataBase).then((value) {
         Supplayer = [];
         Supplayer = value;
-        print(Supplayer);});
+       });
       getDataProducts(dataBase).then((value) {
         Products = [];
         Products = value;
@@ -114,7 +122,7 @@ class CasherCuibt extends Cubit<CasherState>{
       getDataFees(dataBase).then((value) {
         fees = [];
         fees = value;
-        print(fees);});
+        });
       print("open data base");
         emit(GetDataProductsSucssesful());
       }).catchError((Error) {
@@ -291,17 +299,41 @@ var n;
 
    Future SureItemNotFound()async{
     for (var element in Products) {
-      if("${element["Code"]}".contains("${CodeOfItem.text}")){
-        DisableInsertButton=false;
+      if("${element["Code"]}".contains(CodeOfItem.text)){
+       DisableInsertButton=false;
         print("this is cuibt $DisableInsertButton");
         emit(sureItemNotFound());
       }else {
         DisableInsertButton = true;
+        emit(sureItemNotFound());
       }
 
       emit(sureItemNotFound());
     }
 
   }
+void ChangePage(){
+    MyIndex=0;
+    emit(returnToPage());
+}
+void searchItemFound(){
+  for (var i=0;i<Products.length;i++) {
+    if("${Products[i]["Code"]}"==CodeOfProduct.text){
+      print(Products[i]);
+      orders.add(Products[i]);
+      emit(InsertIntoOrder());
+    }else {
+      Found=false;
+      emit(InsertIntoOrder());
+    }
 
+}
+}
+void delet(){
+
+      orders.clear();
+      emit(InsertIntoOrder());
+
+
+}
 }
