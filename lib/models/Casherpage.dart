@@ -104,9 +104,12 @@ class CasherPage extends StatelessWidget {
           EnterButton:
               CallbackAction<EnterButton>(onInvoke: (intent) {
                 cuibt.GetItem();
+                cuibt.NInserted=false;
+                cuibt.cahnge();
                 if(cuibt.AlertChangeNum) {
               settingDialog(context,"This item is found,Change the number of this item",cuibt);
               cuibt.AlertChangeNum=false;
+              cuibt.NInserted=false;
               cuibt.cahnge();
             }
                 if(cuibt.AlertItemNFound) {

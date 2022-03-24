@@ -68,8 +68,8 @@ class CasherCuibt extends Cubit<CasherState>{
 double? price;
 int? Index;
   double total=0.0;
-  int i=0;
   bool selected=false;
+  bool NInserted=true;
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -331,22 +331,24 @@ void ChangePageIntoAddItem(){
     emit(ReturnToPage());
 }
 void GetItem(){
+    NInserted=true;
     if(DChangeNumberItem) {
-      for (i = 0; i < Products.length; i++) {
-        if (orders.isEmpty||"${orders[i]["Code"]}" != CodeOfProduct.text) {
+      for (var i = 0; i < Products.length; i++) {
+        if (orders.isEmpty||orders.every((element) =>"${element["Code"]}"!=CodeOfProduct.text)){
           if ("${Products[i]["Code"]}" == CodeOfProduct.text) {
             if(Index==null) {
               orders.add(Products[i]);
-              CodeOfProduct.clear();
-              NameOfProduct.clear();
-              NumberOfProduct.clear();
+              NInserted=false;
             }else {
-              orders.insert(Index!, Products[i]);}
+              orders.insert(Index!, Products[i]);
+              NInserted=false;
+              break;
+            }
             CodeOfProduct.clear();
             NameOfProduct.clear();
             NumberOfProduct.clear();
             emit(InsertIntoOrder());
-          } else {
+          } else if(NInserted) {
             AlertItemNFound=true;
             emit(InsertIntoOrder());
           }
