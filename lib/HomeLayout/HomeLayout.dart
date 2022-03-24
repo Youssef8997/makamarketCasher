@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   body: Stack(children: [
                     Wallpaper(size),
-                    cuibt.body[cuibt.MyIndex]
+                    cuibt.body[cuibt.bodyIndex]
                   ] ),
                 ),
               ),
@@ -91,10 +91,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     ),
                     ListTile(
-                      selected: cuibt.MyIndex==1?true:false,
+                      selected: cuibt.bodyIndex==1?true:false,
                       selectedColor: Colors.cyan,
                       onTap: () {
-                        if(cuibt.MyIndex!=1)
+                        if(cuibt.bodyIndex!=1)
                         cuibt.ChangeMyIndex(1);
                       _advancedDrawerController.hideDrawer();
                       },
@@ -102,10 +102,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: Text('اضافه صنف',style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                     ListTile(
-                      selected: cuibt.MyIndex==2?true:false,
+                      selected: cuibt.bodyIndex==2?true:false,
                       selectedColor: Colors.cyan,
                       onTap: () {
-                        if(cuibt.MyIndex!=2)
+                        if(cuibt.bodyIndex!=2)
                         cuibt.ChangeMyIndex(2);
                         _advancedDrawerController.hideDrawer();
                         },
@@ -119,10 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: const Text('جرد الاصناف'),
                     ),
                     ListTile(
-                      selected: cuibt.MyIndex==3?true:false,
+                      selected: cuibt.bodyIndex==3?true:false,
                       selectedColor: Colors.cyan,
                       onTap: () {
-                        if(cuibt.MyIndex!=3)
+                        if(cuibt.bodyIndex!=3)
                         cuibt.ChangeMyIndex(3);
                         _advancedDrawerController.hideDrawer();
                         },
@@ -135,9 +135,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: const Text('الموردين'),
                     ),
                     ListTile(
-                      selected: cuibt.MyIndex==4?true:false,
+                      selected: cuibt.bodyIndex==4?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {    if(cuibt.MyIndex!=4)
+                      onTap: () {    if(cuibt.bodyIndex!=4)
                         cuibt.ChangeMyIndex(4);
                       _advancedDrawerController.hideDrawer();},
                       leading:const CircleAvatar(
@@ -150,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: const Text('مرتجع'),
                     ),
                     ListTile(
-                      selected: cuibt.MyIndex==5?true:false,
+                      selected: cuibt.bodyIndex==5?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {    if(cuibt.MyIndex!=5)
+                      onTap: () {    if(cuibt.bodyIndex!=5)
                         cuibt.ChangeMyIndex(5);
                       _advancedDrawerController.hideDrawer();},
                       leading:const CircleAvatar(
@@ -165,9 +165,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: const Text('تصفير ورديه'),
                     ),
                     ListTile(
-                      selected: cuibt.MyIndex==6?true:false,
+                      selected: cuibt.bodyIndex==6?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {    if(cuibt.MyIndex!=6)
+                      onTap: () {    if(cuibt.bodyIndex!=6)
                         cuibt.ChangeMyIndex(6);
                       _advancedDrawerController.hideDrawer();},
                       leading:const CircleAvatar(

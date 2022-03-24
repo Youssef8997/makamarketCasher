@@ -12,13 +12,15 @@ abstract class CasherState{}
   class GetDataProductsBaseError extends CasherState{}
   class InsertProductSucssesful extends CasherState{}
   class InsertProductError extends CasherState{}
-  class setstate extends CasherState{}
+  class SetState extends CasherState{}
   class InsertValueIntoControlar extends CasherState{}
   class UpdateProducts extends CasherState{}
   class DeleteProducts extends CasherState{}
-  class sureItemNotFound extends CasherState{}
-  class sureItemFound extends CasherState{}
-  class returnToPage extends CasherState{}
+  class SureItemNotFound extends CasherState{}
+  class SureItemFound extends CasherState{}
+  class ReturnToPage extends CasherState{}
   class InsertIntoOrder extends CasherState{}
-  class InsertIntoCasher extends CasherState{}
+  class DeleteItemOrder extends CasherState{}
+  class InsertIntoCashier extends CasherState{}
   class UpdateNumItem extends CasherState{}
+  class ChangeSelected extends CasherState{}

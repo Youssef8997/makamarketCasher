@@ -22,7 +22,7 @@ class CasherCuibt extends Cubit<CasherState>{
   List Supplayer=[];
   List orders=[];
   List fees=[];
-  int MyIndex=0;
+  int bodyIndex=0;
   bool Search=false;
   var value;
   var storeValue;
@@ -69,6 +69,7 @@ double? price;
 int? Index;
   double total=0.0;
   int i=0;
+  bool selected=false;
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -79,7 +80,7 @@ int? Index;
     Store(),
   ];
   void ChangeMyIndex(value){
-    MyIndex=value;
+    bodyIndex=value;
     emit(ChangeIndex());
   }
   void AddItemChangeSearch(){
@@ -247,7 +248,7 @@ int? Index;
   }
   Future<String> getname() async => ("youssef ahmed ");
   void cahnge(){
-   emit(setstate());
+   emit(SetState());
   }
 var n;
   void d(){
@@ -313,7 +314,7 @@ var n;
      for (var i=0;i<Products.length;i++){
      if("${Products[i]["Code"]}"==CodeOfItem.text){
         DisableInsertButton=false;
-        emit(sureItemFound());
+        emit(SureItemFound());
       }else {
         print("${CodeOfItem.text}:true");
       }
@@ -321,13 +322,13 @@ var n;
     }
   }
 void ChangePageIntoCashier(){
-    MyIndex=0;
-    emit(returnToPage());
+    bodyIndex=0;
+    emit(ReturnToPage());
 }
 void ChangePageIntoAddItem(){
-    MyIndex=1;
+    bodyIndex=1;
     AlertItemNFound=false;
-    emit(returnToPage());
+    emit(ReturnToPage());
 }
 void GetItem(){
     if(DChangeNumberItem) {
@@ -336,7 +337,11 @@ void GetItem(){
           if ("${Products[i]["Code"]}" == CodeOfProduct.text) {
             if(Index==null) {
               orders.add(Products[i]);
-            }else {orders.insert(Index!, Products[i]);}
+              CodeOfProduct.clear();
+              NameOfProduct.clear();
+              NumberOfProduct.clear();
+            }else {
+              orders.insert(Index!, Products[i]);}
             CodeOfProduct.clear();
             NameOfProduct.clear();
             NumberOfProduct.clear();
@@ -359,11 +364,12 @@ void GetItem(){
       UpdeteNumAfterChange();
     }
   }
-void delet(){
-      orders.clear();
-      emit(InsertIntoOrder());
+void delete(){
+      orders.removeAt(Index!);
+      print("i work");
+      emit(DeleteItemOrder());
 }
-void EditNumber({NameOFItem, codeOFItem, NumberOFItem,Price,id,index}){
+void InsertValueItem({NameOFItem, codeOFItem, NumberOFItem,Price,id,index}){
 NameOfProduct.text=NameOFItem;
 CodeOfProduct.text=codeOFItem;
 NumberOfProduct.text=NumberOFItem;
@@ -371,7 +377,7 @@ DChangeNumberItem=false;
 idOfChange=id;
 price=Price;
 Index=index;
-emit(InsertIntoCasher());
+emit(InsertIntoCashier());
 }
 void UpdeteNumAfterChange(){
   dataBase.rawUpdate(
@@ -387,6 +393,11 @@ void UpdeteNumAfterChange(){
     Index=null;
   });
   emit(UpdateNumItem());
+}
+void changeSelected(bool){
+    selected=bool;
+    emit(ChangeSelected());
+
 }
 
 }

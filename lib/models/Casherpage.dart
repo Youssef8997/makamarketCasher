@@ -97,7 +97,7 @@ class CasherPage extends StatelessWidget {
       shortcuts: {
         LogicalKeySet(LogicalKeyboardKey.enter): EnterButton(),
         LogicalKeySet(LogicalKeyboardKey.space): EnterButton(),
-        LogicalKeySet(LogicalKeyboardKey.delete): RemoveItem(),
+        LogicalKeySet(LogicalKeyboardKey.equal): RemoveItem(),
       },
       child: Actions(
         actions: {
@@ -111,8 +111,11 @@ class CasherPage extends StatelessWidget {
             }
                 if(cuibt.AlertItemNFound) {
               settingDialog(context,"This item not found",cuibt);
-            }
-          })
+              cuibt.AlertItemNFound=false;
+              cuibt.cahnge();
+                }
+          }),
+          RemoveItem: CallbackAction<RemoveItem>(onInvoke: (intent)=>cuibt.delete())
         },
         child: Row(
           children: [
@@ -301,13 +304,13 @@ class CasherPage extends StatelessWidget {
           var e=r.value;
           int index=r.key;
           return DataRow(
-              onLongPress: () {
-                cuibt.EditNumber(
-                    codeOFItem: "${e["Code"]}",
-                    NameOFItem: "${e["Name"]}",
-                    NumberOFItem: "${e["Num"]}",
-                    id: e["id"],
-                    Price:e["Price"],
+              onSelectChanged: (select){
+                cuibt.InsertValueItem(
+                  codeOFItem: "${e["Code"]}",
+                  NameOFItem: "${e["Name"]}",
+                  NumberOFItem: "${e["Num"]}",
+                  id: e["id"],
+                  Price:e["Price"],
                   index: index,
                 );
               },
@@ -332,7 +335,7 @@ class CasherPage extends StatelessWidget {
             width: 300,
             blur: 6,
             child: AlertDialog(
-
+actionsAlignment: MainAxisAlignment.center,
               clipBehavior: Clip.antiAliasWithSaveLayer,
               backgroundColor: Colors.white60,
               elevation: 2,
@@ -341,7 +344,6 @@ class CasherPage extends StatelessWidget {
                 MaterialButton(
                   color: Colors.blueGrey[700],
                   onPressed: (){
-
                   Navigator.pop(context);
                 },child:const Text("Okay",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
                 if(text=="This item not found")
