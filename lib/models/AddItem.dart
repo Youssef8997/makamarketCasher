@@ -198,11 +198,9 @@ class AddItem extends StatelessWidget {
                   ),
                   child: MaterialButton(
                     onPressed: () {
-                      cuibt.SureItemNotFound().then((value) {
-                      if (cuibt.kayform.currentState!.validate()&&cuibt.DisableInsertButton) {
-                         cuibt.insertIntoProducts();
-
-                      }});
+                      if (cuibt.kayform.currentState!.validate()) {
+                            cuibt.insertIntoProducts();
+                        }
                     },
                     child:
                         Text("Insert", style: TextStyle(color: Colors.white)),
@@ -383,7 +381,7 @@ class AddItem extends StatelessWidget {
               Text("${e["Price"]}"),
 
             ),
-            DataCell(Text("${e["Number"]}")),
+            DataCell(Text("${e["NumberInStore"]}")),
             DataCell(Text("${e["EndDate"]}")),
           ]);
         }).toList());

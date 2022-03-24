@@ -1,6 +1,5 @@
 
 // ignore_for_file: non_constant_identifier_names
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
@@ -62,7 +61,14 @@ class CasherCuibt extends Cubit<CasherState>{
   var NameOfProduct = TextEditingController();
   var NumberOfProduct = TextEditingController();
   var CodeOfProduct = TextEditingController();
-  bool Found=true;
+  bool DChangeNumberItem=true;
+  bool AlertChangeNum=false;
+  bool AlertItemNFound=false;
+  int? idOfChange;
+double? price;
+int? Index;
+  double total=0.0;
+  int i=0;
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -95,10 +101,10 @@ class CasherCuibt extends Cubit<CasherState>{
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("yoyo.db", version: 2, onCreate: (dataBase, version) {
+    await openDatabase("INDOMY.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
-          'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name INTEGER,Code TEXT,Price DOUBLE,Number INTEGER,StartDate Text,EndDate Text)');
+          'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name INTEGER,Code TEXT,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num INTEGER,TotalMoney DOUBLE)');
       dataBase.execute(
           'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
@@ -141,25 +147,32 @@ class CasherCuibt extends Cubit<CasherState>{
     return await dataBase.rawQuery('SELECT*FROM Fees');
   }
   Future insertIntoProducts() async {
-    await dataBase.transaction((txn) {
-      txn.rawInsert(
-          'INSERT INTO Products(Name,Code,Price,Number,StartDate,EndDate)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text }","${EndDate.text}")')
-          .then((value) {
-        print("$value insertetd sucsseffly");
-        emit(InsertProductSucssesful());
-        getProductsAfterChange();
-        NameOfItem.clear();
-        CodeOfItem.clear();
-        PriceOfItem.clear();
-        NumberOfItem.clear();
-        StartDate.clear();
-        EndDate.clear();
-      }).catchError((error) {
-        print(" the error is ${error.toString()}");
-        emit(InsertProductError());
+    DisableInsertButton=true;
+     SureItemNotFound();
+    if(DisableInsertButton) {
+      await dataBase.transaction((txn) {
+        txn
+            .rawInsert(
+                'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}")')
+            .then((value) {
+          print("$value insertetd sucsseffly");
+          emit(InsertProductSucssesful());
+          getProductsAfterChange();
+          NameOfItem.clear();
+          CodeOfItem.clear();
+          PriceOfItem.clear();
+          NumberOfItem.clear();
+          StartDate.clear();
+          EndDate.clear();
+        }).catchError((error) {
+          print(" the error is ${error.toString()}");
+          emit(InsertProductError());
+        });
+        return getname();
       });
-      return getname();
-    });
+    }else {
+      print("I cant do this");
+    }
   }
   Future insertIntoSupplayers() async {
     TotalOfSupllayers=double.parse(CostOfInvoice.text);
@@ -296,44 +309,84 @@ var n;
     id=null;
     emit(DeleteProducts());
   }
-
-   Future SureItemNotFound()async{
-    for (var element in Products) {
-      if("${element["Code"]}".contains(CodeOfItem.text)){
-       DisableInsertButton=false;
-        print("this is cuibt $DisableInsertButton");
-        emit(sureItemNotFound());
+  Future SureItemNotFound()async{
+     for (var i=0;i<Products.length;i++){
+     if("${Products[i]["Code"]}"==CodeOfItem.text){
+        DisableInsertButton=false;
+        emit(sureItemFound());
       }else {
-        DisableInsertButton = true;
-        emit(sureItemNotFound());
+        print("${CodeOfItem.text}:true");
       }
 
-      emit(sureItemNotFound());
     }
-
   }
-void ChangePage(){
+void ChangePageIntoCashier(){
     MyIndex=0;
     emit(returnToPage());
 }
-void searchItemFound(){
-  for (var i=0;i<Products.length;i++) {
-    if("${Products[i]["Code"]}"==CodeOfProduct.text){
-      print(Products[i]);
-      orders.add(Products[i]);
-      emit(InsertIntoOrder());
-    }else {
-      Found=false;
-      emit(InsertIntoOrder());
+void ChangePageIntoAddItem(){
+    MyIndex=1;
+    AlertItemNFound=false;
+    emit(returnToPage());
+}
+void GetItem(){
+    if(DChangeNumberItem) {
+      for (i = 0; i < Products.length; i++) {
+        if (orders.isEmpty||"${orders[i]["Code"]}" != CodeOfProduct.text) {
+          if ("${Products[i]["Code"]}" == CodeOfProduct.text) {
+            if(Index==null) {
+              orders.add(Products[i]);
+            }else {orders.insert(Index!, Products[i]);}
+            CodeOfProduct.clear();
+            NameOfProduct.clear();
+            NumberOfProduct.clear();
+            emit(InsertIntoOrder());
+          } else {
+            AlertItemNFound=true;
+            emit(InsertIntoOrder());
+          }
+        }else{
+          AlertChangeNum=true;
+          emit(InsertIntoOrder());
+        }
+      }
+      total = 0.0;
+      for (int l = 0; l < orders.length; l++) {
+        total = orders[l]["TotalMoney"] + total;
+      }
     }
-
-}
-}
+    else{
+      UpdeteNumAfterChange();
+    }
+  }
 void delet(){
-
       orders.clear();
       emit(InsertIntoOrder());
-
-
 }
+void EditNumber({NameOFItem, codeOFItem, NumberOFItem,Price,id,index}){
+NameOfProduct.text=NameOFItem;
+CodeOfProduct.text=codeOFItem;
+NumberOfProduct.text=NumberOFItem;
+DChangeNumberItem=false;
+idOfChange=id;
+price=Price;
+Index=index;
+emit(InsertIntoCasher());
+}
+void UpdeteNumAfterChange(){
+  dataBase.rawUpdate(
+      'UPDATE Products SET Num=? WHERE id=? ', [NumberOfProduct.text,idOfChange]);
+  dataBase.rawUpdate(
+      'UPDATE Products SET TotalMoney=? WHERE id=? ',[double.parse(NumberOfProduct.text)*price!, idOfChange]);
+      orders.removeAt(Index!);
+  DChangeNumberItem=true;
+  getDataProducts(dataBase).then((value) {
+    Products = [];
+    Products = value;
+    GetItem();
+    Index=null;
+  });
+  emit(UpdateNumItem());
+}
+
 }

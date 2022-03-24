@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Shortcuts(
               shortcuts:{LogicalKeySet(LogicalKeyboardKey.tab):ReturnToPage()} ,
               child: Actions(
-                actions: {ReturnToPage:CallbackAction<ReturnToPage>(onInvoke: (intent)=>cuibt.ChangePage())},
+                actions: {ReturnToPage:CallbackAction<ReturnToPage>(onInvoke: (intent)=>cuibt.ChangePageIntoCashier())},
                 child: Scaffold(
                   extendBodyBehindAppBar: true,
                   appBar: AppBar(
