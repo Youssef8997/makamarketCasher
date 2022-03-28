@@ -67,6 +67,7 @@ class CasherCuibt extends Cubit<CasherState>{
   int? idOfChange;
 double? price;
 int? Index;
+FocusNode foucs=FocusNode();
   double total=0.0;
   bool selected=false;
   bool NInserted=true;
@@ -339,16 +340,24 @@ void GetItem(){
             if(Index==null) {
               orders.add(Products[i]);
               NInserted=false;
+              CodeOfProduct.clear();
+              NameOfProduct.clear();
+              NumberOfProduct.clear();
+              AlertItemNFound=false;
+              emit(InsertIntoOrder());
+              break;
             }else {
               orders.insert(Index!, Products[i]);
               NInserted=false;
+              CodeOfProduct.clear();
+              NameOfProduct.clear();
+              NumberOfProduct.clear();
+              AlertItemNFound=false;
+              emit(InsertIntoOrder());
               break;
             }
-            CodeOfProduct.clear();
-            NameOfProduct.clear();
-            NumberOfProduct.clear();
-            emit(InsertIntoOrder());
-          } else if(NInserted) {
+
+          } else{
             AlertItemNFound=true;
             emit(InsertIntoOrder());
           }
@@ -366,11 +375,6 @@ void GetItem(){
       UpdeteNumAfterChange();
     }
   }
-void delete(){
-      orders.removeAt(Index!);
-      print("i work");
-      emit(DeleteItemOrder());
-}
 void InsertValueItem({NameOFItem, codeOFItem, NumberOFItem,Price,id,index}){
 NameOfProduct.text=NameOFItem;
 CodeOfProduct.text=codeOFItem;
@@ -381,6 +385,18 @@ price=Price;
 Index=index;
 emit(InsertIntoCashier());
 }
+  void deleteItemFOrders(context){
+    orders.removeAt(Index!);
+    DChangeNumberItem=true;
+    total = 0.0;
+    for (int l = 0; l < orders.length; l++) {
+      total = orders[l]["TotalMoney"] + total;
+    }
+    CodeOfProduct.clear();
+    NameOfProduct.clear();
+    NumberOfProduct.clear();
+    emit(DeleteItemOrder());
+  }
 void UpdeteNumAfterChange(){
   dataBase.rawUpdate(
       'UPDATE Products SET Num=? WHERE id=? ', [NumberOfProduct.text,idOfChange]);

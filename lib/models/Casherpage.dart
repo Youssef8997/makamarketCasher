@@ -94,13 +94,20 @@ class CasherPage extends StatelessWidget {
 
   Shortcuts TextFormRow(CasherCuibt cuibt,context) {
     return Shortcuts(
+      manager: ShortcutManager(shortcuts: {LogicalKeySet(LogicalKeyboardKey.digit0): RemoveItem(),}, ),
       shortcuts: {
+        LogicalKeySet(LogicalKeyboardKey.delete): RemoveItem(),
         LogicalKeySet(LogicalKeyboardKey.enter): EnterButton(),
         LogicalKeySet(LogicalKeyboardKey.space): EnterButton(),
-        LogicalKeySet(LogicalKeyboardKey.equal): RemoveItem(),
+
       },
       child: Actions(
         actions: {
+          RemoveItem:
+          CallbackAction<RemoveItem>(onInvoke: (intent) {
+            cuibt.deleteItemFOrders(context);
+      }),
+
           EnterButton:
               CallbackAction<EnterButton>(onInvoke: (intent) {
                 cuibt.GetItem();
@@ -118,7 +125,7 @@ class CasherPage extends StatelessWidget {
               cuibt.cahnge();
                 }
           }),
-          RemoveItem: CallbackAction<RemoveItem>(onInvoke: (intent)=>cuibt.delete())
+
         },
         child: Row(
           children: [
@@ -132,6 +139,7 @@ class CasherPage extends StatelessWidget {
             ),
             Expanded(
                 child: MyTextField(
+
               Controlr: cuibt.CodeOfProduct,
               hint: "Write code of Product",
             )),
@@ -159,6 +167,7 @@ class CasherPage extends StatelessWidget {
             ),
             Expanded(
                 child: MyTextField(
+                    Focusnode: cuibt.foucs,
                     Controlr: cuibt.NumberOfProduct,
                     hint: "Write number of Product")),
           ],
@@ -316,6 +325,8 @@ class CasherPage extends StatelessWidget {
                   Price:e["Price"],
                   index: index,
                 );
+FocusScope.of(context).requestFocus(cuibt.foucs);
+                cuibt.cahnge();
               },
               cells: [
                 DataCell(Text("${e["Code"]}")),

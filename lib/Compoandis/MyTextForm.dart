@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,keybordtype,isobsr=false,validator,OnTap,enabled,onChanged}) {
+Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,keybordtype,isobsr=false,validator,OnTap,enabled,onChanged,Focusnode}) {
   return Container(
     height: 50,
     clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -9,6 +9,7 @@ Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,k
       borderRadius: BorderRadius.circular(25.0),
     ),
     child: TextFormField(
+      focusNode: Focusnode,
       enabled: enabled,
       onTap: OnTap,
 onChanged: onChanged,
