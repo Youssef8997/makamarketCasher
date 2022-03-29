@@ -418,8 +418,7 @@ void changeSelected(bool){
 
 }
 void compareTextSearch(){
-    String text="y";
-    print("thi is ${"yoyo".contains(text)}");
+    print("thi is ${"yoyo".startsWith("lf")}");
 
 }
 

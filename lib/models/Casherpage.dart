@@ -222,6 +222,7 @@ class CasherPage extends StatelessWidget {
     return InkWell(
 onTap: (){
   cuibt.AddItemChangeSearch();
+
   
 },
       child: Container(
@@ -376,7 +377,8 @@ actionsAlignment: MainAxisAlignment.center,
             label: Text("EndDate"),
           ),
         ],
-        rows: cuibt.Products.skipWhile((value)=> value["Name"]!=cuibt.NameOfSearch.text
+        //for each and put what give true in another list and show it
+        rows: cuibt.Products.skipWhile((value)=>value["Name"].toString().startsWith(cuibt.NameOfSearch.text)
         ).map((e) {
           return DataRow(
               onLongPress: (){
