@@ -12,6 +12,7 @@ import '../cuibt/State.dart';
 
 class CasherPage extends StatelessWidget {
   @override
+  var scrolllabel = ScrollController();
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
         listener: (context, state) {},
@@ -23,15 +24,15 @@ class CasherPage extends StatelessWidget {
             TotalOfMoney(cuibt),
             //SearchRightBottom
             Padding(
-              padding:  EdgeInsets.only(right:10,left:CasherCuibt.get(context).Search?30:0),
+              padding:  EdgeInsets.only(left:CasherCuibt.get(context).Search?100:10,bottom: 10,top: 10,right: 10),
               child: AnimatedAlign(
                   duration: const Duration(milliseconds: 500),
                   alignment: CasherCuibt.get(context).Search
                       ? AlignmentDirectional.center
-                      : AlignmentDirectional.centerEnd,
+                      : AlignmentDirectional.centerStart,
                   child: RotatedBox(
-                    child: SearchButton(CasherCuibt.get(context)),
                     quarterTurns: 5,
+                    child: SearchButton(CasherCuibt.get(context)),
                   )),
             ),
             //CashierConte
@@ -44,7 +45,7 @@ class CasherPage extends StatelessWidget {
                     ? Alignment.centerLeft
                     : Alignment.center,
                 child: AnimatedContainer(
-                  padding: const EdgeInsetsDirectional.all(10),
+                  padding: const EdgeInsets.only(left: 10,top: 10,bottom: 10,),
                   duration: const Duration(milliseconds: 700),
                   curve: Curves.fastLinearToSlowEaseIn,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -59,16 +60,19 @@ class CasherPage extends StatelessWidget {
                   width: CasherCuibt.get(context).Search
                       ? size.width * .48
                       : size.width * .9,
-                  child: CasherTable(context, cuibt),
+                  child: casherTable(context, cuibt),
                 ),
               ),
             ),
             //searchConte
             Padding(
                 padding: const EdgeInsetsDirectional.only(end: 15,bottom: 20),
-                child: Align(
-                  child: SearchCountenar(context, size),
-                  alignment: Alignment.centerRight,
+                child: AbsorbPointer(
+                  absorbing: false,
+                  child: Align(
+                    child: SearchCountenar(context, size),
+                    alignment: Alignment.centerRight,
+                  ),
                 )),
             //bottom Container
             BottomContainer(size, context, cuibt)
@@ -76,18 +80,15 @@ class CasherPage extends StatelessWidget {
         });
   }
 
-  Padding BottomContainer(Size size, BuildContext context, CasherCuibt cuibt) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 30),
-      child: Align(
-        alignment: AlignmentDirectional.bottomCenter,
-        child: MyContainer(
-          Height: size.height * .118,
-          Width: CasherCuibt.get(context).Search
-              ? (size.width) - 10
-              : size.width * .9,
-          Child: TextFormRow(cuibt,context),
-        ),
+  Align BottomContainer(Size size, BuildContext context, CasherCuibt cuibt) {
+    return Align(
+      alignment: AlignmentDirectional.bottomCenter,
+      child: MyContainer(
+        Height: size.height * .118,
+        Width: CasherCuibt.get(context).Search
+            ? (size.width) - 10
+            : size.width * .9,
+        Child: TextFormRow(cuibt,context),
       ),
     );
   }
@@ -176,35 +177,6 @@ class CasherPage extends StatelessWidget {
     );
   }
 
-  SearchCountenar(context, Size size) {
-    var cuibt = CasherCuibt.get(context);
-    return AnimatedOpacity(
-      opacity: cuibt.Search ? 1 : 0,
-      duration: const Duration(milliseconds: 700),
-      curve: Curves.fastOutSlowIn,
-      child: MyContainer(
-          Height: size.height * .76,
-          Width: size.width * .4,
-          Child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                MyTextField(
-                    Controlr: cuibt.NameOfProduct, label: "Name", hint: ""),
-                const SizedBox(
-                  height: 15,
-                ),
-                MyTextField(
-                    Controlr: cuibt.CodeOfProduct,
-                    label: "Code Of Item",
-                    hint: "0300**************"),
-              ],
-            ),
-          )),
-    );
-  }
 
   Positioned NumberOfOrder() {
     return Positioned(
@@ -246,40 +218,37 @@ class CasherPage extends StatelessWidget {
     );
   }
 
-  Container SearchButton(CasherCuibt cuibt) {
-    return Container(
-      height: 40,
-      width: 100,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-      alignment: AlignmentDirectional.center,
-      child: MaterialButton(
-        onPressed: () {
-          cuibt.AddItemChangeSearch();
-        },
-        child: Column(
+  Widget SearchButton(CasherCuibt cuibt) {
+    return InkWell(
+onTap: (){
+  cuibt.AddItemChangeSearch();
+  
+},
+      child: Container(
+        height: 40,
+        width: 100,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
+          color: Colors.white70,
+        ),
+        alignment: AlignmentDirectional.center,
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(cuibt.Search ? Icons.clear : Icons.search,
-                    color: Colors.grey[900]),
-                const SizedBox(width: 5),
-                cuibt.Search
-                    ? const Text("Close", style: TextStyle(color: Colors.black))
-                    : const Text("Search",
-                        style: TextStyle(color: Colors.black)),
-              ],
-            ),
+            Icon(cuibt.Search ? Icons.clear : Icons.search,
+                color: Colors.grey[900]),
+            const SizedBox(width: 5),
+            cuibt.Search
+                ? const Text("Close", style: TextStyle(color: Colors.black))
+                : const Text("Search",
+                    style: TextStyle(color: Colors.black)),
           ],
         ),
-        color: Colors.white70,
       ),
     );
   }
 
-  CasherTable(context, CasherCuibt cuibt) {
+  casherTable(context, CasherCuibt cuibt) {
     return DataTable(
         dataTextStyle:
             TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
@@ -372,6 +341,95 @@ actionsAlignment: MainAxisAlignment.center,
             ),
           );
         });
+  }
+  searchCasherTable(context) {
+    var cuibt = CasherCuibt.get(context);
+    return DataTable(
+        dataTextStyle:
+        TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        headingTextStyle: const TextStyle(
+          fontWeight: FontWeight.w900,
+          color: Colors.black,
+          fontSize: 20,
+          fontStyle: FontStyle.italic,
+        ),
+        columnSpacing: 60,
+        horizontalMargin: 10,
+        border: TableBorder.all(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(15),
+            width: 2),
+        columns: const [
+          DataColumn(
+            label: Text("Code"),
+          ),
+          DataColumn(
+            label: Text("Name"),
+          ),
+          DataColumn(
+            label: Text("Price"),
+          ),
+          DataColumn(
+            label: Text("Number"),
+          ),
+          DataColumn(
+            label: Text("EndDate"),
+          ),
+        ],
+        rows: cuibt.Products.skipWhile((value)=> value["Name"]!=cuibt.NameOfSearch.text
+        ).map((e) {
+          return DataRow(
+              onLongPress: (){
+                cuibt.insertValueIntoControlar(e);
+
+              },
+              cells: [
+                DataCell(Text("${e["Code"]}")),
+                DataCell(Text("${e["Name"]}"),
+                ),
+                DataCell(
+                  Text("${e["Price"]}"),
+
+                ),
+                DataCell(Text("${e["NumberInStore"]}")),
+                DataCell(Text("${e["EndDate"]}")),
+              ]);
+        }).toList());
+  }
+  SearchCountenar(context, size) {
+    var cuibt = CasherCuibt.get(context);
+    return AnimatedOpacity(
+      opacity: cuibt.Search ? 1 : 0,
+      duration: Duration(milliseconds: 600),
+      child: AbsorbPointer(
+        absorbing: !cuibt.Search,
+        child: MyContainer(
+          Height: size.height * .75,
+          Width: size.width * .4,
+          Child: Scrollbar(
+            controller: scrolllabel,
+            child: ListView(
+              physics: BouncingScrollPhysics(),
+              controller: scrolllabel,
+              children: [
+
+                MyTextField(
+                    Controlr: cuibt.NameOfSearch,
+                    label: "Name",
+                    hint: "Pepsi",
+                    onChanged: (value) {
+                      cuibt.cahnge();
+                    }),
+                SizedBox(
+                  height: 30,
+                ),
+                searchCasherTable(context)
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
 }

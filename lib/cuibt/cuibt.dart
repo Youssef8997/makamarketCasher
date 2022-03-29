@@ -417,5 +417,10 @@ void changeSelected(bool){
     emit(ChangeSelected());
 
 }
+void compareTextSearch(){
+    String text="y";
+    print("thi is ${"yoyo".contains(text)}");
+
+}
 
 }

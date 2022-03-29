@@ -304,7 +304,6 @@ class AddItem extends StatelessWidget {
           Width: size.width * .4,
           Child: Scrollbar(
             controller: scrolllabel,
-            isAlwaysShown: true,
             child: ListView(
               physics: BouncingScrollPhysics(),
               controller: scrolllabel,
