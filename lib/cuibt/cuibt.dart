@@ -103,10 +103,10 @@ FocusNode foucs=FocusNode();
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("INDOMY.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("Yoyo.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
-          'CREATE TABLE Products (id INTEGER PRIMARY KEY,Name INTEGER,Code TEXT,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num INTEGER,TotalMoney DOUBLE)');
+          'CREATE TABLE Products (Name INTEGER,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num INTEGER,TotalMoney DOUBLE)');
       dataBase.execute(
           'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
@@ -141,6 +141,9 @@ FocusNode foucs=FocusNode();
   }
   Future<List<Map>> getDataProducts(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Products');
+  }
+  Future<List<Map>> getItemProducts(dataBase,key) async {
+    return await dataBase.rawQuery('SELECT*FROM Products WHERE Code=?',[key]);
   }
   Future<List<Map>> getDataSupplayers(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Suppliers');
@@ -332,40 +335,36 @@ void ChangePageIntoAddItem(){
     emit(ReturnToPage());
 }
 void GetItem(){
-    NInserted=true;
     if(DChangeNumberItem) {
-      for (var i = 0; i < Products.length; i++) {
         if (orders.isEmpty||orders.every((element) =>"${element["Code"]}"!=CodeOfProduct.text)){
-          if ("${Products[i]["Code"]}" == CodeOfProduct.text) {
-            if(Index==null) {
-              orders.add(Products[i]);
-              NInserted=false;
+        getItemProducts(dataBase,CodeOfProduct.text).then((value){
+          if(value.isNotEmpty) {
+            if (Index == null) {
+              orders.add(value.single);
+              print(orders);
               CodeOfProduct.clear();
               NameOfProduct.clear();
               NumberOfProduct.clear();
-              AlertItemNFound=false;
               emit(InsertIntoOrder());
-              break;
-            }else {
-              orders.insert(Index!, Products[i]);
-              NInserted=false;
+            } else if (Index != null) {
+              orders.insert(Index!, value.single);
+              NInserted = false;
               CodeOfProduct.clear();
               NameOfProduct.clear();
               NumberOfProduct.clear();
-              AlertItemNFound=false;
+              Index=null;
               emit(InsertIntoOrder());
-              break;
             }
-
-          } else{
+          }else {
             AlertItemNFound=true;
-            emit(InsertIntoOrder());
+          emit(InsertIntoOrder());
           }
+        });
         }else{
           AlertChangeNum=true;
           emit(InsertIntoOrder());
         }
-      }
+
       total = 0.0;
       for (int l = 0; l < orders.length; l++) {
         total = orders[l]["TotalMoney"] + total;
@@ -378,7 +377,6 @@ void GetItem(){
 void InsertValueItem({NameOFItem, codeOFItem, NumberOFItem,Price,id,index}){
 NameOfProduct.text=NameOFItem;
 CodeOfProduct.text=codeOFItem;
-NumberOfProduct.text=NumberOFItem;
 DChangeNumberItem=false;
 idOfChange=id;
 price=Price;
@@ -399,9 +397,9 @@ emit(InsertIntoCashier());
   }
 void UpdeteNumAfterChange(){
   dataBase.rawUpdate(
-      'UPDATE Products SET Num=? WHERE id=? ', [NumberOfProduct.text,idOfChange]);
+      'UPDATE Products SET Num=? WHERE Code=? ', [NumberOfProduct.text,CodeOfProduct.text]);
   dataBase.rawUpdate(
-      'UPDATE Products SET TotalMoney=? WHERE id=? ',[double.parse(NumberOfProduct.text)*price!, idOfChange]);
+      'UPDATE Products SET TotalMoney=? WHERE Code=? ',[double.parse(NumberOfProduct.text)*price!, CodeOfProduct.text]);
       orders.removeAt(Index!);
   DChangeNumberItem=true;
   getDataProducts(dataBase).then((value) {

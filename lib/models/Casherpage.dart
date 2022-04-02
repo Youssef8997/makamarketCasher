@@ -111,13 +111,10 @@ class CasherPage extends StatelessWidget {
 
           EnterButton:
               CallbackAction<EnterButton>(onInvoke: (intent) {
-                cuibt.GetItem();
-                cuibt.NInserted=false;
-                cuibt.cahnge();
+                cuibt.GetItemtrue();
                 if(cuibt.AlertChangeNum) {
               settingDialog(context,"This item is found,Change the number of this item",cuibt);
               cuibt.AlertChangeNum=false;
-              cuibt.NInserted=false;
               cuibt.cahnge();
             }
                 if(cuibt.AlertItemNFound) {
@@ -329,6 +326,9 @@ actionsAlignment: MainAxisAlignment.center,
                   color: Colors.blueGrey[700],
                   onPressed: (){
                   Navigator.pop(context);
+                  if(text=="This item not found")
+                    cuibt.AlertItemNFound=false;
+                  cuibt.cahnge();
                 },child:const Text("Okay",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
                 if(text=="This item not found")
                   MaterialButton(
