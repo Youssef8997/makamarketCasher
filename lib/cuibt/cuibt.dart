@@ -19,6 +19,7 @@ class CasherCuibt extends Cubit<CasherState>{
   var databaseFactory = databaseFactoryFfi;
   late Database dataBase;
   List Products=[];
+  List SearchProducts=[];
   List Supplayer=[];
   List orders=[];
   List fees=[];
@@ -103,10 +104,10 @@ FocusNode foucs=FocusNode();
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("Yoyo.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("ssss.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
-          'CREATE TABLE Products (Name INTEGER,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num INTEGER,TotalMoney DOUBLE)');
+          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num INTEGER,TotalMoney DOUBLE)');
       dataBase.execute(
           'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
@@ -145,6 +146,10 @@ FocusNode foucs=FocusNode();
   Future<List<Map>> getItemProducts(dataBase,key) async {
     return await dataBase.rawQuery('SELECT*FROM Products WHERE Code=?',[key]);
   }
+  Future<List<Map>> getItemSProducts(dataBase,value) async {
+    return await dataBase.rawQuery('SELECT*FROM Products WHERE Name like ?',["${value}%"]);
+  }
+
   Future<List<Map>> getDataSupplayers(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Suppliers');
   }
@@ -152,32 +157,33 @@ FocusNode foucs=FocusNode();
     return await dataBase.rawQuery('SELECT*FROM Fees');
   }
   Future insertIntoProducts() async {
-    DisableInsertButton=true;
-     SureItemNotFound();
-    if(DisableInsertButton) {
-      await dataBase.transaction((txn) {
-        txn
-            .rawInsert(
-                'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}")')
-            .then((value) {
-          print("$value insertetd sucsseffly");
-          emit(InsertProductSucssesful());
-          getProductsAfterChange();
-          NameOfItem.clear();
-          CodeOfItem.clear();
-          PriceOfItem.clear();
-          NumberOfItem.clear();
-          StartDate.clear();
-          EndDate.clear();
-        }).catchError((error) {
-          print(" the error is ${error.toString()}");
-          emit(InsertProductError());
-        });
-        return getname();
-      });
-    }else {
-      print("I cant do this");
-    }
+     SureItemNotFound().then((value) async{
+       if(DisableInsertButton) {
+         await dataBase.transaction((txn) {
+           txn
+               .rawInsert(
+               'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}")')
+               .then((value) {
+             print("$value insertetd sucsseffly");
+             emit(InsertProductSucssesful());
+             getProductsAfterChange();
+             NameOfItem.clear();
+             CodeOfItem.clear();
+             PriceOfItem.clear();
+             NumberOfItem.clear();
+             StartDate.clear();
+             EndDate.clear();
+           }).catchError((error) {
+             print(" the error is ${error.toString()}");
+             emit(InsertProductError());
+           });
+           return getname();
+         });
+       }else {
+         print("I cant do this");
+       }
+     });
+
   }
   Future insertIntoSupplayers() async {
     TotalOfSupllayers=double.parse(CostOfInvoice.text);
@@ -263,7 +269,7 @@ var n;
     NameOfItem.text=e["Name"];
     CodeOfItem.text=e["Code"];
     PriceOfItem.text=e["Price"].toString();
-    NumberOfItem.text=e["Number"].toString();
+    NumberOfItem.text=e["NumberInStore"].toString();
     StartDate.text=e["StartDate"].toString();
     EndDate.text=e["EndDate"].toString();
     id=e["id"];
@@ -272,16 +278,17 @@ var n;
   }
   void updateProdcts(){
     dataBase.rawUpdate(
-        'UPDATE Products SET Price=? WHERE id=? ', [PriceOfItem.text, id]);
+        'UPDATE Products SET Price=? WHERE Code=? ', [PriceOfItem.text, CodeOfItem.text]);
       dataBase.rawUpdate(
-          'UPDATE Products SET Number=? WHERE id=? ', [NumberOfItem.text, id]);
+          'UPDATE Products SET NumberInStore=? WHERE Code=? ', [NumberOfItem.text, CodeOfItem.text]);
       dataBase.rawUpdate(
-          'UPDATE Products SET Name=? WHERE id=? ', [NameOfItem.text, id]);
+          'UPDATE Products SET Name=? WHERE Code=? ', [NameOfItem.text, CodeOfItem.text]);
       dataBase.rawUpdate(
-          'UPDATE Products SET StartDate=? WHERE id=? ', [StartDate.text, id]);
+          'UPDATE Products SET StartDate=? WHERE Code=? ', [StartDate.text, CodeOfItem.text]);
       dataBase.rawUpdate(
-          'UPDATE Products SET EndDate=? WHERE id=? ', [EndDate.text, id]);
+          'UPDATE Products SET EndDate=? WHERE Code=? ', [EndDate.text, CodeOfItem.text]);
     getProductsAfterChange();
+    getSearchItem(NameOfSearch.text);
     emit(UpdateProducts());
   }
   void updateSuppliers(id){
@@ -304,7 +311,10 @@ var n;
     emit(UpdateProducts());
   }
   void deleteProducts()async{
-    await dataBase.rawDelete('DELETE FROM Products WHERE id=? ', [id]).then((value) =>getProductsAfterChange());
+    await dataBase.rawDelete('DELETE FROM Products WHERE Code=? ', [CodeOfItem.text]).then((value) {
+      getProductsAfterChange();
+      getSearchItem(NameOfSearch.text);
+    });
    CodeOfItem.clear();
     NameOfItem.clear();
     NumberOfItem.clear();
@@ -315,15 +325,22 @@ var n;
     emit(DeleteProducts());
   }
   Future SureItemNotFound()async{
-     for (var i=0;i<Products.length;i++){
-     if("${Products[i]["Code"]}"==CodeOfItem.text){
-        DisableInsertButton=false;
-        emit(SureItemFound());
-      }else {
-        print("${CodeOfItem.text}:true");
-      }
+    getItemProducts(dataBase,CodeOfItem.text).then((value) {
 
-    }
+      if(value.isNotEmpty)
+        {
+          DisableInsertButton=false;
+          print("$DisableInsertButton it isss");
+          emit(SureItemFound());
+        }
+      else {
+        DisableInsertButton=true;
+      }
+      emit(SureItemFound());
+    });
+
+
+
   }
 void ChangePageIntoCashier(){
     bodyIndex=0;
@@ -415,9 +432,16 @@ void changeSelected(bool){
     emit(ChangeSelected());
 
 }
-void compareTextSearch(){
-    print("thi is ${"yoyo".startsWith("lf")}");
+void getSearchItem(valuee){
+  getItemSProducts(dataBase, valuee).then((value)
+      {
+      if(valuee==" ")
+        {SearchProducts=[];}
+        SearchProducts=[];
+        SearchProducts=value;
 
+        emit(GetSearchItem());
+      }
+  );
 }
-
 }

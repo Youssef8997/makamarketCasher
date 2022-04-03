@@ -111,7 +111,7 @@ class CasherPage extends StatelessWidget {
 
           EnterButton:
               CallbackAction<EnterButton>(onInvoke: (intent) {
-                cuibt.GetItemtrue();
+                cuibt.GetItem();
                 if(cuibt.AlertChangeNum) {
               settingDialog(context,"This item is found,Change the number of this item",cuibt);
               cuibt.AlertChangeNum=false;
@@ -378,8 +378,7 @@ actionsAlignment: MainAxisAlignment.center,
           ),
         ],
         //for each and put what give true in another list and show it
-        rows: cuibt.Products.skipWhile((value)=>value["Name"].toString().startsWith(cuibt.NameOfSearch.text)
-        ).map((e) {
+        rows: cuibt.SearchProducts.map((e) {
           return DataRow(
               onLongPress: (){
                 cuibt.insertValueIntoControlar(e);
@@ -420,7 +419,7 @@ actionsAlignment: MainAxisAlignment.center,
                     label: "Name",
                     hint: "Pepsi",
                     onChanged: (value) {
-                      cuibt.cahnge();
+                      cuibt.getSearchItem(value);
                     }),
                 SizedBox(
                   height: 30,

@@ -25,14 +25,14 @@ class AddItem extends StatelessWidget {
                 child: Column(
                   children: [
                     MyName(context),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     if (!cuibt.Search) MakaMarketName()
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               SearchButton(cuibt),
@@ -97,7 +97,7 @@ class AddItem extends StatelessWidget {
   AddItemCoulmn(context) {
     var cuibt = CasherCuibt.get(context);
     return SingleChildScrollView(
-      padding: EdgeInsetsDirectional.all(20),
+      padding: const EdgeInsetsDirectional.all(20),
       child: Form(
         key: cuibt.kayform,
         child: Column(
@@ -122,6 +122,7 @@ class AddItem extends StatelessWidget {
             MyTextField(
               onChanged: (value){
                 cuibt.SureItemNotFound();
+
               },
                 Controlr: cuibt.CodeOfItem,
                 label: "Code Of Item",
@@ -158,7 +159,7 @@ class AddItem extends StatelessWidget {
                   }
                   return null;
                 }),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             MyTextField(
@@ -184,7 +185,7 @@ class AddItem extends StatelessWidget {
                   }
                   return null;
                 }),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Row(
@@ -200,10 +201,13 @@ class AddItem extends StatelessWidget {
                     onPressed: () {
                       if (cuibt.kayform.currentState!.validate()) {
                             cuibt.insertIntoProducts();
+                            if(cuibt.DisableInsertButton.toggle()) {
+                          settingDialog(context);
                         }
+                      }
                     },
                     child:
-                        Text("Insert", style: TextStyle(color: Colors.white)),
+                        const Text("Insert", style: TextStyle(color: Colors.white)),
                     color: Colors.grey.shade900,
                   ),
                 ),
@@ -296,7 +300,7 @@ class AddItem extends StatelessWidget {
     var cuibt = CasherCuibt.get(context);
     return AnimatedOpacity(
       opacity: cuibt.Search ? 1 : 0,
-      duration: Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 600),
       child: AbsorbPointer(
         absorbing: !cuibt.Search,
         child: MyContainer(
@@ -305,11 +309,11 @@ class AddItem extends StatelessWidget {
           Child: Scrollbar(
             controller: scrolllabel,
             child: ListView(
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               controller: scrolllabel,
               children: [
                 Center(child: TitleOfContenar("Search of Item")),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 MyTextField(
@@ -317,9 +321,11 @@ class AddItem extends StatelessWidget {
                     label: "Name",
                     hint: "",
                     onChanged: (value) {
-                      cuibt.cahnge();
+
+                      cuibt.getSearchItem(value);
+
                     }),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 CasherTable(context)
@@ -335,7 +341,7 @@ class AddItem extends StatelessWidget {
     var cuibt = CasherCuibt.get(context);
     return DataTable(
         dataTextStyle:
-            TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+            const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         headingTextStyle: const TextStyle(
           fontWeight: FontWeight.w900,
           color: Colors.black,
@@ -365,12 +371,10 @@ class AddItem extends StatelessWidget {
             label: Text("EndDate"),
           ),
         ],
-        rows: cuibt.Products.skipWhile((value)=> value["Name"]!=cuibt.NameOfSearch.text
-            ).map((e) {
+        rows: cuibt.SearchProducts.map((e) {
           return DataRow(
               onLongPress: (){
                 cuibt.insertValueIntoControlar(e);
-
               },
               cells: [
             DataCell(Text("${e["Code"]}")),
@@ -384,6 +388,32 @@ class AddItem extends StatelessWidget {
             DataCell(Text("${e["EndDate"]}")),
           ]);
         }).toList());
+  }
+  settingDialog(context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return BlurryContainer(
+            height: 800,
+            width: 300,
+            blur: 6,
+            child: AlertDialog(
+              actionsAlignment: MainAxisAlignment.center,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              backgroundColor: Colors.white60,
+              elevation: 2,
+              content: const Text("This item is already found",style: const TextStyle(fontWeight: FontWeight.w900)),
+              actions: [
+                MaterialButton(
+                  color: Colors.blueGrey[700],
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },child:const Text("Okay",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
+
+              ],
+            ),
+          );
+        });
   }
 
 

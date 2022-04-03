@@ -7,7 +7,7 @@ import 'package:untitled6/cuibt/cuibt.dart';
 
 class Items extends StatelessWidget {
 
-
+  var scrolllabel = ScrollController();
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
@@ -31,7 +31,9 @@ class Items extends StatelessWidget {
                 Controlr: cuibt.NameController,
                 hint: "",
                 label: "Search",
-                    onChanged: (value){cuibt.cahnge();}
+                    onChanged: (value){
+                  cuibt.getSearchItem(value);}
+
 
               )),
               SizedBox(
@@ -83,12 +85,16 @@ class Items extends StatelessWidget {
     return MyContainer(
       Height: Size.height * 0.9,
       Width: Size.width * 0.9,
-      Child: Column(
+      Child: Scrollbar(
+        controller:scrolllabel,
+        child: ListView(
+          controller:scrolllabel ,
         children: [
           SearchButton(cuibt),
           const SizedBox(height: 30),
           CasherTable(context,Size)
         ],
+        ),
       ),
     );
   }
@@ -97,7 +103,7 @@ class Items extends StatelessWidget {
     var cuibt=CasherCuibt.get(context);
     return Container(
       height:size.height*.7,
-      width: size.width*.8,
+      width: size.width*.9,
       child: DataTable(
 
           dataTextStyle:
@@ -131,33 +137,14 @@ class Items extends StatelessWidget {
               label: Text("EndDate"),
             ),
           ],
-          rows:cuibt.Products.skipWhile((value) => "${value["Name"]}"!=cuibt.NameController.text||value["Code"]!=cuibt.NameController.text).map((e){
+          rows:cuibt.SearchProducts.map((e){
             return DataRow(cells: [
               DataCell(Text("${e["Code"]}")),
               DataCell(Text("${e["Name"]}")),
               DataCell(Text("${e["Price"]}")),
-              DataCell(Text("${e["Number"]}")),
+              DataCell(Text("${e["NumberInStore"]}")),
               DataCell(Text("${e["EndDate"]}")),
             ]);
-          /*  if("${e["Name"]}"==cuibt.NameController.text||e["Code"]==cuibt.NameController.text) {
-              print("${e["Name"]}".matchAsPrefix(cuibt.NameOfSearch.text)?.groupCount.toString());
-              return DataRow(cells: [
-                DataCell(Text("${e["Code"]}")),
-                DataCell(Text("${e["Name"]}")),
-                DataCell(Text("${e["Price"]}")),
-                DataCell(Text("${e["Number"]}")),
-                DataCell(Text("${e["EndDate"]}")),
-              ]);
-            } else  {
-              return const DataRow(cells: [
-                DataCell(Text("")),
-                DataCell(Text("")),
-                DataCell(Text("")),
-                DataCell(Text("")),
-                DataCell(Text("")),
-
-              ],);
-            }*/
           } ).toList()
 
 
@@ -166,11 +153,3 @@ class Items extends StatelessWidget {
   }
  
 }
-/*
-cuibt.Products.skipWhile((value) =>"${["Name"]}"==cuibt.NameController.text).map((e) => DataRow(cells: [
-DataCell(Text("${e["Code"]}")),
-DataCell(Text("${e["Name"]}")),
-DataCell(Text("${e["Price"]}")),
-DataCell(Text("${e["Number"]}")),
-DataCell(Text("${e["EndDate"]}")),
-]) ).toList()*/

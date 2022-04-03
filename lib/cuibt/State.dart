@@ -24,3 +24,4 @@ abstract class CasherState{}
   class InsertIntoCashier extends CasherState{}
   class UpdateNumItem extends CasherState{}
   class ChangeSelected extends CasherState{}
+  class GetSearchItem extends CasherState{}
