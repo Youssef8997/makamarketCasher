@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:untitled6/cuibt/State.dart';
+import 'package:untitled6/lib/Shered%20preference/Shered.dart';
 import 'package:untitled6/models/AddItem.dart';
 import 'package:untitled6/models/Store.dart';
 import 'package:untitled6/models/Casherpage.dart';
@@ -13,6 +14,7 @@ import 'package:untitled6/models/Items.dart';
 import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
+import 'lib/Shered preference/Shered.dart';
 class CasherCuibt extends Cubit<CasherState>{
   CasherCuibt() : super(initState());
   static CasherCuibt get(context) => BlocProvider.of(context);
@@ -72,6 +74,7 @@ FocusNode foucs=FocusNode();
   double total=0.0;
   bool selected=false;
   bool NInserted=true;
+  var NumberOfOrder=sherdprefrence.getdate(key: "NumberOfOrder")??1;
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -104,10 +107,12 @@ FocusNode foucs=FocusNode();
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("ssss.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("hh.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
-          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num INTEGER,TotalMoney DOUBLE)');
+          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,NumberInStore INTEGER)');
+      dataBase.execute(
+          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
       dataBase.execute(
           'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
@@ -146,8 +151,11 @@ FocusNode foucs=FocusNode();
   Future<List<Map>> getItemProducts(dataBase,key) async {
     return await dataBase.rawQuery('SELECT*FROM Products WHERE Code=?',[key]);
   }
-  Future<List<Map>> getItemSProducts(dataBase,value) async {
+  Future<List<Map>> getItemSProductsSearch(dataBase,value) async {
     return await dataBase.rawQuery('SELECT*FROM Products WHERE Name like ?',["${value}%"]);
+  }
+  Future<List<Map>> getOrders(dataBase,value) async {
+    return await dataBase.rawQuery('SELECT*FROM Orders WHERE NumberOrder = ?',["$value"]);
   }
 
   Future<List<Map>> getDataSupplayers(dataBase) async {
@@ -164,7 +172,6 @@ FocusNode foucs=FocusNode();
                .rawInsert(
                'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}")')
                .then((value) {
-             print("$value insertetd sucsseffly");
              emit(InsertProductSucssesful());
              getProductsAfterChange();
              NameOfItem.clear();
@@ -260,11 +267,6 @@ FocusNode foucs=FocusNode();
   void cahnge(){
    emit(SetState());
   }
-var n;
-  void d(){
-    n=2;
-    emit(ChangeSearchAbilty());
-  }
   void insertValueIntoControlar(e){
     NameOfItem.text=e["Name"];
     CodeOfItem.text=e["Code"];
@@ -289,6 +291,16 @@ var n;
           'UPDATE Products SET EndDate=? WHERE Code=? ', [EndDate.text, CodeOfItem.text]);
     getProductsAfterChange();
     getSearchItem(NameOfSearch.text);
+    emit(UpdateProducts());
+  }
+  void updateProdctsARecord({Number,Code,price}){
+    dataBase.rawUpdate(
+        'UPDATE Products SET Num=? WHERE Code=? ', [1, Code]);
+      dataBase.rawUpdate(
+          'UPDATE Products SET NumberInStore=? WHERE Code=? ', [Number, Code]);
+    dataBase.rawUpdate(
+        'UPDATE Products SET TotalMoney=? WHERE Code=? ', [price, Code]);
+    getProductsAfterChange();
     emit(UpdateProducts());
   }
   void updateSuppliers(id){
@@ -433,15 +445,35 @@ void changeSelected(bool){
 
 }
 void getSearchItem(valuee){
-  getItemSProducts(dataBase, valuee).then((value)
+  getItemSProductsSearch(dataBase, valuee).then((value)
       {
-      if(valuee==" ")
-        {SearchProducts=[];}
         SearchProducts=[];
         SearchProducts=value;
-
         emit(GetSearchItem());
       }
   );
 }
+  void RecordOrder()async  {
+    print("dddd");
+     for (var e in orders) {
+       return await dataBase.transaction((txn) {
+         txn.rawInsert(
+/*
+             'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
+*/
+         'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]},"${e["TotalMoney"]}","$NumberOfOrder")')
+             .then((value) {
+           print(value);
+           print("value inserted ");
+           orders=[];
+           NumberOfOrder=sherdprefrence.setdate(key: "NumberOfOrder", value: NumberOfOrder+1);
+           updateProdctsARecord(Code: e["code"],Number: e["NumberInStore"]-1,price: e["price"]);
+         }).catchError((error) {
+           print(error);
+         });
+         return getname();
+       } );
+     }
+    emit(InsertProductError());
+  }
 }

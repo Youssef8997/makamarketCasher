@@ -100,6 +100,7 @@ class CasherPage extends StatelessWidget {
         LogicalKeySet(LogicalKeyboardKey.delete): RemoveItem(),
         LogicalKeySet(LogicalKeyboardKey.enter): EnterButton(),
         LogicalKeySet(LogicalKeyboardKey.space): EnterButton(),
+        LogicalKeySet(LogicalKeyboardKey.insert): RecordOrder(),
 
       },
       child: Actions(
@@ -123,7 +124,10 @@ class CasherPage extends StatelessWidget {
               cuibt.cahnge();
                 }
           }),
-
+          RecordOrder:
+          CallbackAction<RecordOrder>(onInvoke: (intent) {
+         cuibt.RecordOrder();
+          }),
         },
         child: Row(
           children: [
@@ -437,3 +441,4 @@ actionsAlignment: MainAxisAlignment.center,
 
 class EnterButton extends Intent {}
 class RemoveItem extends Intent {}
+class RecordOrder extends Intent {}

@@ -5,9 +5,10 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:untitled6/spalsh%20Screen/SpalshScreen.dart';
-
+import 'lib/Shered preference/Shered.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await sherdprefrence.init();
   sqfliteFfiInit();
   // Change the default factory
   databaseFactory = databaseFactoryFfi;

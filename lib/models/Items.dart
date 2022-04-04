@@ -50,35 +50,31 @@ class Items extends StatelessWidget {
               )
             ],
           )
-        : Positioned(
-            top: 40,
-            right: 30,
-            child: Container(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-              child: MaterialButton(
-                color: Colors.blueGrey[700],
-                onPressed: () {
-                  cuibt.ItemSChangeSearch();
-                },
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        Icon(Icons.search, color: Colors.teal),
-                        SizedBox(width: 5),
-                        Text("Search",
-                            style: TextStyle(color: Colors.blueGrey)),
-                      ],
-                    ),
+        : Container(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(25.0),
+          ),
+          child: MaterialButton(
+            color: Colors.blueGrey[700],
+            onPressed: () {
+              cuibt.ItemSChangeSearch();
+            },
+            child: Column(
+              children: [
+                Row(
+                  children: const [
+                    Icon(Icons.search, color: Colors.teal),
+                    SizedBox(width: 5),
+                    Text("Search",
+                        style: TextStyle(color: Colors.blueGrey)),
                   ],
                 ),
-              ),
+              ],
             ),
-          );
+          ),
+        );
   }
 
   ItemsOfContenar(Size,CasherCuibt cuibt,context ) {

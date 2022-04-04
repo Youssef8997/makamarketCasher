@@ -1,6 +1,7 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:untitled6/Compoandis/MyContenar.dart';
 import 'package:untitled6/Compoandis/MyTextForm.dart';
 import 'package:untitled6/cuibt/State.dart';
@@ -163,6 +164,19 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
+
+                OnTap: (){
+                  showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(DateTime.now().year-1),
+                    lastDate: DateTime.now(),
+                  ).then((value) {
+                    value ??= DateTime.now();
+                    cuibt.StartDate.text =DateFormat.yMMMd().format(value);
+
+                  });
+                },
                 Controlr: cuibt.StartDate,
                 label: "data Of firstdata",
                 hint: "3-10-2022",
@@ -176,6 +190,18 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
+              OnTap: (){
+                showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.parse('2027-11-07'),
+                ).then((value) {
+                  value ??= DateTime.now();
+                    cuibt.EndDate.text =DateFormat.yMMMd().format(value);
+
+                });
+              },
                 Controlr: cuibt.EndDate,
                 label: "EndDate",
                 hint: "3-10-2023",
