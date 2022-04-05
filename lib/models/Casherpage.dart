@@ -20,7 +20,7 @@ class CasherPage extends StatelessWidget {
           var size = MediaQuery.of(context).size;
           var cuibt = CasherCuibt.get(context);
           return Stack(children: [
-            NumberOfOrder(),
+            NumberOfOrder(cuibt),
             TotalOfMoney(cuibt),
             //SearchRightBottom
             Padding(
@@ -179,7 +179,7 @@ class CasherPage extends StatelessWidget {
   }
 
 
-  Positioned NumberOfOrder() {
+  Positioned NumberOfOrder(CasherCuibt cuibt) {
     return Positioned(
       left: 50,
       child: Padding(
@@ -190,9 +190,9 @@ class CasherPage extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.white70, borderRadius: BorderRadius.circular(20)),
             alignment: AlignmentDirectional.center,
-            child: const SelectableText(
-              "1000",
-              style: TextStyle(
+            child:SelectableText(
+              "${cuibt.NumberOfOrder}",
+              style: const TextStyle(
                   fontWeight: FontWeight.w800, fontStyle: FontStyle.italic),
             )),
       ),
@@ -288,6 +288,7 @@ onTap: (){
           int index=r.key;
           return DataRow(
               onSelectChanged: (select){
+                print(index);
                 cuibt.InsertValueItem(
                   codeOFItem: "${e["Code"]}",
                   NameOFItem: "${e["Name"]}",

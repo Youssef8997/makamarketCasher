@@ -24,6 +24,7 @@ class CasherCuibt extends Cubit<CasherState>{
   List SearchProducts=[];
   List Supplayer=[];
   List orders=[];
+  List Recordedorders=[];
   List fees=[];
   int bodyIndex=0;
   bool Search=false;
@@ -69,12 +70,12 @@ class CasherCuibt extends Cubit<CasherState>{
   bool AlertItemNFound=false;
   int? idOfChange;
 double? price;
-int? Index;
+int? Index=null;
 FocusNode foucs=FocusNode();
   double total=0.0;
   bool selected=false;
   bool NInserted=true;
-  var NumberOfOrder=sherdprefrence.getdate(key: "NumberOfOrder")??1;
+  var NumberOfOrder=1;
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -107,10 +108,10 @@ FocusNode foucs=FocusNode();
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("hh.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("ccc.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
-          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,NumberInStore INTEGER)');
+          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER)');
       dataBase.execute(
           'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
       dataBase.execute(
@@ -125,6 +126,7 @@ FocusNode foucs=FocusNode();
         emit(CreateDataBaseError());
       });
     }, onOpen: (dataBase) {
+
       getDataSupplayers(dataBase).then((value) {
         Supplayer = [];
         Supplayer = value;
@@ -137,6 +139,12 @@ FocusNode foucs=FocusNode();
         fees = [];
         fees = value;
         });
+      getAllOrders(dataBase).then((value) {
+        Recordedorders=[];
+        Recordedorders=value;
+        print(Recordedorders);
+        NumberOfOrder=(Recordedorders[Recordedorders.length-1]["NumberOrder"])+1;
+      });
       print("open data base");
         emit(GetDataProductsSucssesful());
       }).catchError((Error) {
@@ -156,6 +164,9 @@ FocusNode foucs=FocusNode();
   }
   Future<List<Map>> getOrders(dataBase,value) async {
     return await dataBase.rawQuery('SELECT*FROM Orders WHERE NumberOrder = ?',["$value"]);
+  }
+  Future<List<Map>> getAllOrders(dataBase) async {
+    return await dataBase.rawQuery('SELECT*FROM Orders');
   }
 
   Future<List<Map>> getDataSupplayers(dataBase) async {
@@ -191,6 +202,32 @@ FocusNode foucs=FocusNode();
        }
      });
 
+  }
+  Future RecordOrder() async {
+    for (var e in orders) {
+      await dataBase.transaction((txn) {
+        txn
+            .rawInsert(
+          //          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER)');
+            'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]}","${"TotalMoney"}","$NumberOfOrder")')
+            .then((value) {
+          updateProdctsARecord(Code: e["code"],Number: e["NumberInStore"]-e["Num"],price: e["price"]);
+          orders=[];
+          emit(RecordOrderSucssful());
+        }).catchError((error) {
+          print(" the error is ${error.toString()}");
+          emit(RecordOrderError());
+        });
+        return getname();
+      });
+    }
+    getAllOrders(dataBase).then((value) {
+      Recordedorders=[];
+      Recordedorders=value;
+      NumberOfOrder=(Recordedorders[Recordedorders.length-1]["NumberOrder"])+1;
+    });
+
+    emit(RecordOrderSucssful());
   }
   Future insertIntoSupplayers() async {
     TotalOfSupllayers=double.parse(CostOfInvoice.text);
@@ -370,7 +407,6 @@ void GetItem(){
           if(value.isNotEmpty) {
             if (Index == null) {
               orders.add(value.single);
-              print(orders);
               CodeOfProduct.clear();
               NameOfProduct.clear();
               NumberOfProduct.clear();
@@ -393,14 +429,12 @@ void GetItem(){
           AlertChangeNum=true;
           emit(InsertIntoOrder());
         }
-
-      total = 0.0;
-      for (int l = 0; l < orders.length; l++) {
-        total = orders[l]["TotalMoney"] + total;
-      }
     }
     else{
       UpdeteNumAfterChange();
+    }
+    for (int l = 0; l<orders.length; l++) {
+      total = orders[l]["TotalMoney"]+total;
     }
   }
 void InsertValueItem({NameOFItem, codeOFItem, NumberOFItem,Price,id,index}){
@@ -435,7 +469,6 @@ void UpdeteNumAfterChange(){
     Products = [];
     Products = value;
     GetItem();
-    Index=null;
   });
   emit(UpdateNumItem());
 }
@@ -453,27 +486,5 @@ void getSearchItem(valuee){
       }
   );
 }
-  void RecordOrder()async  {
-    print("dddd");
-     for (var e in orders) {
-       return await dataBase.transaction((txn) {
-         txn.rawInsert(
-/*
-             'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
-*/
-         'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]},"${e["TotalMoney"]}","$NumberOfOrder")')
-             .then((value) {
-           print(value);
-           print("value inserted ");
-           orders=[];
-           NumberOfOrder=sherdprefrence.setdate(key: "NumberOfOrder", value: NumberOfOrder+1);
-           updateProdctsARecord(Code: e["code"],Number: e["NumberInStore"]-1,price: e["price"]);
-         }).catchError((error) {
-           print(error);
-         });
-         return getname();
-       } );
-     }
-    emit(InsertProductError());
-  }
+
 }
