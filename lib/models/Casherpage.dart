@@ -172,6 +172,34 @@ class CasherPage extends StatelessWidget {
                     Focusnode: cuibt.foucs,
                     Controlr: cuibt.NumberOfProduct,
                     hint: "Write number of Product")),
+            if(cuibt.Search)
+              const SizedBox(width: 5),
+            if(cuibt.Search)
+            const Text("ReciteNum:",
+                style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 19,
+                    fontStyle: FontStyle.italic)),
+            if(cuibt.Search)
+              const SizedBox(
+              width: 5,
+            ),
+            if(cuibt.Search)
+              Expanded(
+                child: MyTextField(
+                    Controlr: cuibt.NumOrders,
+                    hint: "150",
+                  onChanged: (Text){
+                      cuibt.getOrders(Text).then((value) {
+                        cuibt.Recordedorders=[];
+                        cuibt.Recordedorders=value;
+                        cuibt.calcTotalOfRecite();
+                        if(value.isNotEmpty) {
+                          orderDialog(context,cuibt);
+                        }
+                      });
+                  }
+                )),
           ],
         ),
       ),
@@ -223,7 +251,6 @@ class CasherPage extends StatelessWidget {
     return InkWell(
 onTap: (){
   cuibt.AddItemChangeSearch();
-
   
 },
       child: Container(
@@ -342,6 +369,90 @@ actionsAlignment: MainAxisAlignment.center,
                       cuibt.ChangePageIntoAddItem();
                       Navigator.pop(context);
                     },child:const Text("Add item",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
+
+              ],
+            ),
+          );
+        });
+  }
+   orderDialog(context,CasherCuibt cuibt)  {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return BlurryContainer(
+            height: 800,
+            width: 300,
+            blur: 6,
+            child: AlertDialog(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              backgroundColor: Colors.white60,
+              elevation: 30,
+              title: Text("Number Order: ${cuibt.NumOrders.text}",style:const TextStyle(fontWeight: FontWeight.bold,
+                fontSize: 20,
+                fontStyle: FontStyle.italic
+              )),
+              content: DataTable(
+              dataTextStyle:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+              headingTextStyle: const TextStyle(
+                fontWeight: FontWeight.w900,
+                color: Colors.black,
+                fontSize: 20,
+                fontStyle: FontStyle.italic,
+              ),
+              columnSpacing: 40,
+              horizontalMargin: 10,
+              border: TableBorder.all(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(20),
+                  width: 2),
+              columns: const [
+                DataColumn(
+                  label: Text("Name"),
+                ),
+                DataColumn(
+                  label: Text("Price"),
+                ),
+                DataColumn(
+                  label: Text("Number"),
+                ),
+                DataColumn(
+                  label: Text("Total money"),
+                ),
+              ],
+              //for each and put what give true in another list and show it
+              rows: cuibt.Recordedorders.map((e) {
+                return DataRow(
+                    onLongPress: (){
+                    },
+                    cells: [
+                      DataCell(Text("${e["Name"]}"),
+                      ),
+                      DataCell(
+                        Text("${e["Price"]}"),
+
+                      ),
+                      DataCell(Text("${e["Num"]}")),
+                      DataCell(Text("${e["TotalMoney"]}")),
+                    ]);
+              }).toList()),
+              actions: [
+                MaterialButton(
+                  color: Colors.blueGrey[700],
+                  onPressed: (){
+                  Navigator.pop(context);
+                },child:const Text("Okay",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
+                const SizedBox(width: 80,),
+                Container(
+                  alignment: AlignmentDirectional.center,
+                  height: 50,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[700],
+                    borderRadius: BorderRadiusDirectional.circular(20),
+                  ),
+                  child: Text("Total:${cuibt.TotalOfRecite}",style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
+                )
 
               ],
             ),

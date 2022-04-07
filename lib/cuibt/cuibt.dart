@@ -25,6 +25,7 @@ class CasherCuibt extends Cubit<CasherState>{
   List Supplayer=[];
   List orders=[];
   List Recordedorders=[];
+  double TotalOfRecite=0.0;
   List fees=[];
   int bodyIndex=0;
   bool Search=false;
@@ -65,6 +66,7 @@ class CasherCuibt extends Cubit<CasherState>{
   var NameOfProduct = TextEditingController();
   var NumberOfProduct = TextEditingController();
   var CodeOfProduct = TextEditingController();
+  var NumOrders = TextEditingController();
   bool DChangeNumberItem=true;
   bool AlertChangeNum=false;
   bool AlertItemNFound=false;
@@ -91,7 +93,6 @@ FocusNode foucs=FocusNode();
   }
   void AddItemChangeSearch(){
     Search=!Search;
-
     emit(ChangeSearchAbilty());
   }
   void ItemSChangeSearch(){
@@ -162,7 +163,7 @@ FocusNode foucs=FocusNode();
   Future<List<Map>> getItemSProductsSearch(dataBase,value) async {
     return await dataBase.rawQuery('SELECT*FROM Products WHERE Name like ?',["${value}%"]);
   }
-  Future<List<Map>> getOrders(dataBase,value) async {
+  Future<List<Map>> getOrders(value) async {
     return await dataBase.rawQuery('SELECT*FROM Orders WHERE NumberOrder = ?',["$value"]);
   }
   Future<List<Map>> getAllOrders(dataBase) async {
@@ -209,10 +210,11 @@ FocusNode foucs=FocusNode();
         txn
             .rawInsert(
           //          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER)');
-            'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]}","${"TotalMoney"}","$NumberOfOrder")')
+            'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder")')
             .then((value) {
           updateProdctsARecord(Code: e["code"],Number: e["NumberInStore"]-e["Num"],price: e["price"]);
           orders=[];
+          total=0.0;
           emit(RecordOrderSucssful());
         }).catchError((error) {
           print(" the error is ${error.toString()}");
@@ -407,12 +409,14 @@ void GetItem(){
           if(value.isNotEmpty) {
             if (Index == null) {
               orders.add(value.single);
+              total = value.single["TotalMoney"]+total;
               CodeOfProduct.clear();
               NameOfProduct.clear();
               NumberOfProduct.clear();
               emit(InsertIntoOrder());
             } else if (Index != null) {
               orders.insert(Index!, value.single);
+              total = value.single["TotalMoney"]+total;
               NInserted = false;
               CodeOfProduct.clear();
               NameOfProduct.clear();
@@ -431,11 +435,10 @@ void GetItem(){
         }
     }
     else{
+
       UpdeteNumAfterChange();
     }
-    for (int l = 0; l<orders.length; l++) {
-      total = orders[l]["TotalMoney"]+total;
-    }
+
   }
 void InsertValueItem({NameOFItem, codeOFItem, NumberOFItem,Price,id,index}){
 NameOfProduct.text=NameOFItem;
@@ -463,13 +466,10 @@ void UpdeteNumAfterChange(){
       'UPDATE Products SET Num=? WHERE Code=? ', [NumberOfProduct.text,CodeOfProduct.text]);
   dataBase.rawUpdate(
       'UPDATE Products SET TotalMoney=? WHERE Code=? ',[double.parse(NumberOfProduct.text)*price!, CodeOfProduct.text]);
-      orders.removeAt(Index!);
+  total=total-orders[Index!]["TotalMoney"];
+  orders.removeAt(Index!);
   DChangeNumberItem=true;
-  getDataProducts(dataBase).then((value) {
-    Products = [];
-    Products = value;
-    GetItem();
-  });
+  GetItem();
   emit(UpdateNumItem());
 }
 void changeSelected(bool){
@@ -486,5 +486,11 @@ void getSearchItem(valuee){
       }
   );
 }
-
+void calcTotalOfRecite(){
+  TotalOfRecite=0.0;
+  for (var element in Recordedorders) {
+    TotalOfRecite=element["TotalMoney"]+TotalOfRecite;
+  }
+  emit(calcRiciet());
+}
 }
