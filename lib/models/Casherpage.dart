@@ -190,15 +190,11 @@ class CasherPage extends StatelessWidget {
                     Controlr: cuibt.NumOrders,
                     hint: "150",
                   onChanged: (Text){
-                      cuibt.getOrders(Text).then((value) {
-                        cuibt.Recordedorders=[];
-                        cuibt.Recordedorders=value;
-                        cuibt.calcTotalOfRecite();
-                        if(value.isNotEmpty) {
-                          orderDialog(context,cuibt);
+                    cuibt.getRecite(Text);
+                        if(cuibt.Recordedorders.isNotEmpty) {
+                          orderDialog(context, cuibt);
                         }
-                      });
-                  }
+                      }
                 )),
           ],
         ),
@@ -268,7 +264,7 @@ onTap: (){
                 color: Colors.grey[900]),
             const SizedBox(width: 5),
             cuibt.Search
-                ? const Text("Close", style: TextStyle(color: Colors.black))
+                ? const Text("Close", style: TextStyle(color: Colors.black,))
                 : const Text("Search",
                     style: TextStyle(color: Colors.black)),
           ],
@@ -280,7 +276,7 @@ onTap: (){
   casherTable(context, CasherCuibt cuibt) {
     return DataTable(
         dataTextStyle:
-            TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+           const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         headingTextStyle: const TextStyle(
           fontWeight: FontWeight.w900,
           color: Colors.black,

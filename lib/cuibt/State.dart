@@ -28,3 +28,5 @@ abstract class CasherState{}
   class RecordOrderSucssful extends CasherState{}
   class RecordOrderError extends CasherState{}
   class calcRiciet extends CasherState{}
+class GetRecites extends CasherState{}
+class GetReciteError extends CasherState{}

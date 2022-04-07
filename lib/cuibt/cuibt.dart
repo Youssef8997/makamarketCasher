@@ -72,7 +72,8 @@ class CasherCuibt extends Cubit<CasherState>{
   bool AlertItemNFound=false;
   int? idOfChange;
 double? price;
-int? Index=null;
+int? Index;
+
 FocusNode foucs=FocusNode();
   double total=0.0;
   bool selected=false;
@@ -492,5 +493,15 @@ void calcTotalOfRecite(){
     TotalOfRecite=element["TotalMoney"]+TotalOfRecite;
   }
   emit(calcRiciet());
+}
+void getRecite(Text){
+  getOrders(Text).then((value)
+      {
+        Recordedorders=[];
+        Recordedorders=value;
+        calcTotalOfRecite();
+        emit(GetRecites());
+      }
+  );
 }
 }
