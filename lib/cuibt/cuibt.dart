@@ -9,7 +9,7 @@ import 'package:untitled6/lib/Shered%20preference/Shered.dart';
 import 'package:untitled6/models/AddItem.dart';
 import 'package:untitled6/models/Store.dart';
 import 'package:untitled6/models/Casherpage.dart';
-import 'package:untitled6/models/Empoloye.dart';
+import 'package:untitled6/models/Empoloyee/AttindANDLivingEmpo.dart';
 import 'package:untitled6/models/Items.dart';
 import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
@@ -84,12 +84,15 @@ FocusNode foucs=FocusNode();
   var NameOfEmpolyees=TextEditingController();
   var  SalaryOfEmpolyees=TextEditingController();
   var  HireDateOfEmpolyees=TextEditingController();
+  var AddEmpoKey = GlobalKey<FormState>();
+
   //employee
   var AttendanceDate=TextEditingController();
   var delayTime=TextEditingController();
   var LeavingDate=TextEditingController();
   var OverTime=TextEditingController();
   var DataTimeDay=TextEditingController();
+var ShowDateEmpolye=false;
   //UI
   List<Widget>body=[
     CasherPage(),
@@ -162,7 +165,7 @@ FocusNode foucs=FocusNode();
         print(recordedOrders);
         if(value.isNotEmpty) NumberOfOrder=((recordedOrders[recordedOrders.length-1]["NumberOrder"])+1)??1;
       });
-      PutDataEmpolyee();
+      GetDataEmpolyee(dataBase);
 
       print("open data base");
         emit(GetDataProductsSuccessfully());
@@ -193,13 +196,14 @@ FocusNode foucs=FocusNode();
   Future<List<Map>> getDataFees(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Fees');
   }
-  Future<List<Map>> getDataEmployee() async {
+  Future<List<Map>> getDataEmployee(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Employee');
   }
-  void PutDataEmpolyee(){
-    getDataEmployee().then((value) {
+  void GetDataEmpolyee(dataBase){
+    getDataEmployee(dataBase).then((value) {
       employee = [];
       employee = value;
+      print(employee);
     });
   }
 Future<List<Map>> getdateAttendEmployee(id,date) async {
@@ -316,10 +320,10 @@ Future<List<Map>> getdateAttendEmployee(id,date) async {
     await dataBase.transaction((txn) {
       txn
           .rawInsert(
-          'INSERT INTO Employees(Name,Salary,HireDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}")')
+          'INSERT INTO Employee(Name,Salary,HireDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}")')
           .then((value) {
         print("$value insertetd sucsseffly");
-        PutDataEmpolyee();
+        GetDataEmpolyee(dataBase);
         NameOfEmpolyees.clear();
         SalaryOfEmpolyees.clear();
         HireDateOfEmpolyees.clear();
@@ -576,5 +580,10 @@ void getRecite(Text){
         emit(GetRecites());
       }
   );
+}
+var valueEmpo;
+void ChangeValueOFEmpo(value){
+  valueEmpo=value;
+  emit(ChangeEmpo());
 }
 }

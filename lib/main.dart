@@ -8,7 +8,6 @@ import 'package:untitled6/spalsh%20Screen/SpalshScreen.dart';
 import 'lib/Shered preference/Shered.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await sherdprefrence.init();
   sqfliteFfiInit();
   // Change the default factory
   databaseFactory = databaseFactoryFfi;

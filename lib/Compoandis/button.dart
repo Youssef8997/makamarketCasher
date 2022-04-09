@@ -7,7 +7,7 @@ Widget myButton({OnPreesed,required child}) {
       borderRadius: BorderRadius.circular(25.0),
     ),
     child: MaterialButton(
-      onPressed: ()=>OnPreesed,
+      onPressed:OnPreesed,
       child:child,
       color: Colors.grey.shade900,
     ),
