@@ -14,7 +14,6 @@ import 'package:untitled6/models/Items.dart';
 import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
-import 'lib/Shered preference/Shered.dart';
 class CasherCuibt extends Cubit<CasherState>{
   CasherCuibt() : super(initState());
   static CasherCuibt get(context) => BlocProvider.of(context);
@@ -24,7 +23,9 @@ class CasherCuibt extends Cubit<CasherState>{
   List SearchProducts=[];
   List Supplayer=[];
   List orders=[];
-  List Recordedorders=[];
+  List recordedOrders=[];
+  List employee=[];
+  List DateEmployee=[];
   double TotalOfRecite=0.0;
   List fees=[];
   int bodyIndex=0;
@@ -79,6 +80,17 @@ FocusNode foucs=FocusNode();
   bool selected=false;
   bool NInserted=true;
   var NumberOfOrder=1;
+  //Add Employee
+  var NameOfEmpolyees=TextEditingController();
+  var  SalaryOfEmpolyees=TextEditingController();
+  var  HireDateOfEmpolyees=TextEditingController();
+  //employee
+  var AttendanceDate=TextEditingController();
+  var delayTime=TextEditingController();
+  var LeavingDate=TextEditingController();
+  var OverTime=TextEditingController();
+  var DataTimeDay=TextEditingController();
+  //UI
   List<Widget>body=[
     CasherPage(),
     AddItem(),
@@ -110,7 +122,7 @@ FocusNode foucs=FocusNode();
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("ccc.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("Cashier.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER)');
@@ -119,16 +131,19 @@ FocusNode foucs=FocusNode();
       dataBase.execute(
           'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
-          'CREATE TABLE Fees (id INTEGER PRIMARY KEY,Name TEXT,Paid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)')
+          'CREATE TABLE Fees (id INTEGER PRIMARY KEY,Name TEXT,Paid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
+      dataBase.execute(
+          'CREATE TABLE Employee (id INTEGER PRIMARY KEY,Name TEXT,Salary DOUBLE,HireDate Text)');
+      dataBase.execute(
+          'CREATE TABLE EmployeeAttendance (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,DataTimeDay TEXT)')
       .then((value) {
          print("Table is created");
-        emit(CreateDataBaseSucssesful());
+        emit(CreateDataBaseSuccessfully());
       }).catchError((error) {
         print("error is${error.toString()}");
         emit(CreateDataBaseError());
       });
     }, onOpen: (dataBase) {
-
       getDataSupplayers(dataBase).then((value) {
         Supplayer = [];
         Supplayer = value;
@@ -142,13 +157,15 @@ FocusNode foucs=FocusNode();
         fees = value;
         });
       getAllOrders(dataBase).then((value) {
-        Recordedorders=[];
-        Recordedorders=value;
-        print(Recordedorders);
-        NumberOfOrder=(Recordedorders[Recordedorders.length-1]["NumberOrder"])+1;
+        recordedOrders=[];
+        recordedOrders=value;
+        print(recordedOrders);
+        if(value.isNotEmpty) NumberOfOrder=((recordedOrders[recordedOrders.length-1]["NumberOrder"])+1)??1;
       });
+      PutDataEmpolyee();
+
       print("open data base");
-        emit(GetDataProductsSucssesful());
+        emit(GetDataProductsSuccessfully());
       }).catchError((Error) {
         print("the error is ${Error.toString()}");
         emit(GetDataProductsBaseError());
@@ -170,12 +187,29 @@ FocusNode foucs=FocusNode();
   Future<List<Map>> getAllOrders(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Orders');
   }
-
   Future<List<Map>> getDataSupplayers(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Suppliers');
   }
   Future<List<Map>> getDataFees(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Fees');
+  }
+  Future<List<Map>> getDataEmployee() async {
+    return await dataBase.rawQuery('SELECT*FROM Employee');
+  }
+  void PutDataEmpolyee(){
+    getDataEmployee().then((value) {
+      employee = [];
+      employee = value;
+    });
+  }
+Future<List<Map>> getdateAttendEmployee(id,date) async {
+    return await dataBase.rawQuery('SELECT*FROM EmployeeAttendance WHERE id = ? AND AttendanceDate = ?',["$id","$date"]);
+  }
+  void getEmployeeDate(id,date){
+    getdateAttendEmployee(id,date).then((value) {
+      DateEmployee = [];
+      DateEmployee = value;
+    });
   }
   Future insertIntoProducts() async {
      SureItemNotFound().then((value) async{
@@ -185,7 +219,7 @@ FocusNode foucs=FocusNode();
                .rawInsert(
                'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}")')
                .then((value) {
-             emit(InsertProductSucssesful());
+             emit(InsertProductSuccessfully());
              getProductsAfterChange();
              NameOfItem.clear();
              CodeOfItem.clear();
@@ -210,13 +244,12 @@ FocusNode foucs=FocusNode();
       await dataBase.transaction((txn) {
         txn
             .rawInsert(
-          //          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER)');
             'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder")')
             .then((value) {
           updateProdctsARecord(Code: e["code"],Number: e["NumberInStore"]-e["Num"],price: e["price"]);
           orders=[];
           total=0.0;
-          emit(RecordOrderSucssful());
+          emit(RecordOrderSuccessfullyl());
         }).catchError((error) {
           print(" the error is ${error.toString()}");
           emit(RecordOrderError());
@@ -225,12 +258,12 @@ FocusNode foucs=FocusNode();
       });
     }
     getAllOrders(dataBase).then((value) {
-      Recordedorders=[];
-      Recordedorders=value;
-      NumberOfOrder=(Recordedorders[Recordedorders.length-1]["NumberOrder"])+1;
+      recordedOrders=[];
+      recordedOrders=value;
+      NumberOfOrder=(recordedOrders[recordedOrders.length-1]["NumberOrder"])+1;
     });
 
-    emit(RecordOrderSucssful());
+    emit(RecordOrderSuccessfullyl());
   }
   Future insertIntoSupplayers() async {
     TotalOfSupllayers=double.parse(CostOfInvoice.text);
@@ -239,7 +272,7 @@ FocusNode foucs=FocusNode();
           'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
           .then((value) {
         print("$value insertetd sucsseffly");
-        emit(InsertProductSucssesful());
+        emit(InsertProductSuccessfully());
         getSuppliersAfterChange();
         NameOfSupllayers.clear();
         CostOfInvoice.clear();
@@ -266,7 +299,7 @@ FocusNode foucs=FocusNode();
           dateOfFees.clear();
 
           print("$value insertetd sucsseffly");
-          emit(InsertProductSucssesful());
+          emit(InsertProductSuccessfully());
         }).catchError((error) {
           print(" the error is ${error.toString()}");
           emit(InsertProductError());
@@ -279,12 +312,51 @@ FocusNode foucs=FocusNode();
     }
 
   }
+  Future insertIntoEmpolyees() async {
+    await dataBase.transaction((txn) {
+      txn
+          .rawInsert(
+          'INSERT INTO Employees(Name,Salary,HireDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}")')
+          .then((value) {
+        print("$value insertetd sucsseffly");
+        PutDataEmpolyee();
+        NameOfEmpolyees.clear();
+        SalaryOfEmpolyees.clear();
+        HireDateOfEmpolyees.clear();
+        emit(InsertEmployeeSuccessfully());
+
+      }).catchError((error) {
+        print(" the error is ${error.toString()}");
+        emit(InsertEmployeeError());
+      });
+      return getname();
+    });
+  }
+  Future insertIntoEmployeeAttendance({required id,required salary}) async {
+      return dataBase.transaction((txn) {
+        txn
+            .rawInsert(
+          //(
+          // (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,TotalTime TEXT,TotalSalary DOUBLE,DataTimeDay TEXT)')
+            'INSERT INTO EmployeeAttendance(id,AttendanceDate,delayTime,LeavingDate,OverTime,DataTimeDay)VALUES''("$id","${AttendanceDate.text}","${delayTime.text}","${LeavingDate.text}","${OverTime.text}","${DateTime.now()}")')
+            .then((value) {
+          print("$value insertetd sucsseffly");
+          getEmployeeDate(id,DateTime.now());
+          emit(InsertDateEmployeeSuccessfully());
+        }).catchError((error) {
+          print(" the error is ${error.toString()}");
+          emit(InsertDateEmployeeError());
+        });
+        return getname();
+      });
+
+  }
   void getProductsAfterChange() {
     getDataProducts(dataBase).then((value) {
       Products = [];
       Products = value;
       print(Products);
-      emit(GetDataProductsSucssesful());
+      emit(GetDataProductsSuccessfully());
     });
   }
   void getSuppliersAfterChange() {
@@ -292,7 +364,7 @@ FocusNode foucs=FocusNode();
       Supplayer = [];
       Supplayer = value;
       print(Supplayer);
-      emit(GetDataSupplayersSucssesful());
+      emit(GetDataSupplayersSuccessfully());
     });
   }
   void getFeesAfterChange() {
@@ -300,7 +372,7 @@ FocusNode foucs=FocusNode();
       fees = [];
       fees = value;
       print(fees);
-      emit(GetDataSupplayersSucssesful());
+      emit(GetDataSupplayersSuccessfully());
     });
   }
   Future<String> getname() async => ("youssef ahmed ");
@@ -426,8 +498,9 @@ void GetItem(){
               emit(InsertIntoOrder());
             }
           }else {
+            print("item not found");
             AlertItemNFound=true;
-          emit(InsertIntoOrder());
+          emit(ErrorInsertIOrder());
           }
         });
         }else{
@@ -489,7 +562,7 @@ void getSearchItem(valuee){
 }
 void calcTotalOfRecite(){
   TotalOfRecite=0.0;
-  for (var element in Recordedorders) {
+  for (var element in recordedOrders) {
     TotalOfRecite=element["TotalMoney"]+TotalOfRecite;
   }
   emit(calcRiciet());
@@ -497,8 +570,8 @@ void calcTotalOfRecite(){
 void getRecite(Text){
   getOrders(Text).then((value)
       {
-        Recordedorders=[];
-        Recordedorders=value;
+        recordedOrders=[];
+        recordedOrders=value;
         calcTotalOfRecite();
         emit(GetRecites());
       }

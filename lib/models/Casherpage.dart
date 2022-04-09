@@ -1,13 +1,10 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/Compoandis/MyContenar.dart';
 import 'package:untitled6/Compoandis/MyTextForm.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
-import 'package:untitled6/models/AddItem.dart';
 import '../cuibt/State.dart';
 
 class CasherPage extends StatelessWidget {
@@ -118,7 +115,7 @@ class CasherPage extends StatelessWidget {
               cuibt.AlertChangeNum=false;
               cuibt.cahnge();
             }
-                if(cuibt.AlertItemNFound) {
+                else if (cuibt.AlertItemNFound) {
               settingDialog(context,"This item not found",cuibt);
               cuibt.AlertItemNFound=false;
               cuibt.cahnge();
@@ -191,7 +188,7 @@ class CasherPage extends StatelessWidget {
                     hint: "150",
                   onChanged: (Text){
                     cuibt.getRecite(Text);
-                        if(cuibt.Recordedorders.isNotEmpty) {
+                        if(cuibt.recordedOrders.isNotEmpty) {
                           orderDialog(context, cuibt);
                         }
                       }
@@ -417,7 +414,7 @@ actionsAlignment: MainAxisAlignment.center,
                 ),
               ],
               //for each and put what give true in another list and show it
-              rows: cuibt.Recordedorders.map((e) {
+              rows: cuibt.recordedOrders.map((e) {
                 return DataRow(
                     onLongPress: (){
                     },

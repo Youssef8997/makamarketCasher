@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:untitled6/Compoandis/MyTextForm.dart';
+import 'package:untitled6/Compoandis/button.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -67,7 +68,6 @@ class _EmpoloyeState extends State<Empoloye> {
         Center(child: TitleOfContenar("Employee")),
         ListTiled(),
         if (ListTileSelect == 1)
-
           Column(
             children: [
             const SizedBox(height: 20,),
@@ -83,7 +83,7 @@ class _EmpoloyeState extends State<Empoloye> {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton(
-                    items: [
+                    items:const [
                       DropdownMenuItem(child: Text("dffddf"),value: "ddd",)
                     ],onChanged: (Object? value)=>{},value: value,),
                 ),
@@ -108,7 +108,16 @@ class _EmpoloyeState extends State<Empoloye> {
             ],
           )
         else
-          Column()
+          Column(),
+Spacer(),
+        Row(
+           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children:  [
+            myButton(child:const  Text("Add employee",style: TextStyle(color: Colors.white)),OnPreesed:{},),
+            myButton(child:const  Text("Remove employee",style: TextStyle(color: Colors.white)),OnPreesed:{},),
+           myButton(child:const Text("Edit Information",style: TextStyle(color: Colors.white)),OnPreesed:{},),
+          ],
+        )
       ],
     );
   }
