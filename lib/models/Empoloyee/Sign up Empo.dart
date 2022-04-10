@@ -98,6 +98,35 @@ class SignUpEmpo extends StatelessWidget {
                 return null;
               }
           ),
+          MyTextField(
+              OnTap: () {
+                showTimePicker(
+                  confirmText: "Confirm",
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                ).then((value) {
+                  cuibt.AttendanceDateOfEmpolyees.text = value!.format(context);
+                });
+              },
+              Controlr: cuibt.AttendanceDateOfEmpolyees,
+              hint: cuibt.AttendanceDateOfEmpolyees.text,
+              label: "Time of Attending",
+              Prefix: const Icon(Icons.watch_later)),
+          MyTextField(
+              OnTap: () {
+                showTimePicker(
+                  confirmText: "Confirm",
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                ).then((value) {
+                  cuibt.LeavingDateOfEmpolyees.text = value!.format(context);
+                });
+              },
+              Controlr: cuibt.LeavingDateOfEmpolyees,
+              hint: cuibt.LeavingDateOfEmpolyees.text,
+              label: "Time of Leaving",
+              Prefix: const Icon(Icons.watch_later)),
+
           Center(
             child: Container(
 

@@ -84,6 +84,8 @@ FocusNode foucs=FocusNode();
   var NameOfEmpolyees=TextEditingController();
   var  SalaryOfEmpolyees=TextEditingController();
   var  HireDateOfEmpolyees=TextEditingController();
+  var AttendanceDateOfEmpolyees=TextEditingController();
+  var  LeavingDateOfEmpolyees=TextEditingController();
   var AddEmpoKey = GlobalKey<FormState>();
 
   //employee
@@ -92,7 +94,7 @@ FocusNode foucs=FocusNode();
   var LeavingDate=TextEditingController();
   var OverTime=TextEditingController();
   var DataTimeDay=TextEditingController();
-var ShowDateEmpolye=false;
+var ShowDateEmpolye=true;
   //UI
   List<Widget>body=[
     CasherPage(),
@@ -136,7 +138,7 @@ var ShowDateEmpolye=false;
       dataBase.execute(
           'CREATE TABLE Fees (id INTEGER PRIMARY KEY,Name TEXT,Paid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
-          'CREATE TABLE Employee (id INTEGER PRIMARY KEY,Name TEXT,Salary DOUBLE,HireDate Text)');
+          'CREATE TABLE Employee (id INTEGER PRIMARY KEY,Name TEXT,Salary DOUBLE,HireDate Text,AttendanceDate Text,LeavingDate Text)');
       dataBase.execute(
           'CREATE TABLE EmployeeAttendance (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,DataTimeDay TEXT)')
       .then((value) {
@@ -198,6 +200,9 @@ var ShowDateEmpolye=false;
   }
   Future<List<Map>> getDataEmployee(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Employee');
+  }
+  Future<List<Map>> getDataEmployeeEspcially(dataBase,id) async {
+    return await dataBase.rawQuery('SELECT*FROM Employee WHERE id=?',[id]);
   }
   void GetDataEmpolyee(dataBase){
     getDataEmployee(dataBase).then((value) {
@@ -320,7 +325,7 @@ Future<List<Map>> getdateAttendEmployee(id,date) async {
     await dataBase.transaction((txn) {
       txn
           .rawInsert(
-          'INSERT INTO Employee(Name,Salary,HireDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}")')
+          'INSERT INTO Employee(Name,Salary,HireDate,AttendanceDate,LeavingDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}","${AttendanceDateOfEmpolyees.text}","${LeavingDateOfEmpolyees.text}")')
           .then((value) {
         print("$value insertetd sucsseffly");
         GetDataEmpolyee(dataBase);
