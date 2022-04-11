@@ -2,6 +2,7 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:untitled6/cuibt/State.dart';
@@ -127,7 +128,7 @@ var ShowDateEmpolye=true;
   }
   void Crdatab() async {
    dataBase =
-    await openDatabase("Cashier.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("yoyo.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER)');
@@ -140,7 +141,7 @@ var ShowDateEmpolye=true;
       dataBase.execute(
           'CREATE TABLE Employee (id INTEGER PRIMARY KEY,Name TEXT,Salary DOUBLE,HireDate Text,AttendanceDate Text,LeavingDate Text)');
       dataBase.execute(
-          'CREATE TABLE EmployeeAttendance (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,DataTimeDay TEXT)')
+          'CREATE TABLE EmployeeAttendance (id INTEGER,AttendanceDate TEXT,LeavingDate Text,DataTimeDay TEXT)')
       .then((value) {
          print("Table is created");
         emit(CreateDataBaseSuccessfully());
@@ -212,12 +213,15 @@ var ShowDateEmpolye=true;
     });
   }
 Future<List<Map>> getdateAttendEmployee(id,date) async {
-    return await dataBase.rawQuery('SELECT*FROM EmployeeAttendance WHERE id = ? AND AttendanceDate = ?',["$id","$date"]);
+    return await dataBase.rawQuery('SELECT*FROM EmployeeAttendance WHERE id = ?',["$id"]);
   }
   void getEmployeeDate(id,date){
+    print("im in getEmployeeDate");
     getdateAttendEmployee(id,date).then((value) {
       DateEmployee = [];
       DateEmployee = value;
+      print(DateEmployee);
+      emit(InsertDateEmployeeError());
     });
   }
   Future insertIntoProducts() async {
@@ -333,7 +337,6 @@ Future<List<Map>> getdateAttendEmployee(id,date) async {
         SalaryOfEmpolyees.clear();
         HireDateOfEmpolyees.clear();
         emit(InsertEmployeeSuccessfully());
-
       }).catchError((error) {
         print(" the error is ${error.toString()}");
         emit(InsertEmployeeError());
@@ -342,12 +345,13 @@ Future<List<Map>> getdateAttendEmployee(id,date) async {
     });
   }
   Future insertIntoEmployeeAttendance({required id,required salary}) async {
+
       return dataBase.transaction((txn) {
         txn
             .rawInsert(
           //(
           // (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,TotalTime TEXT,TotalSalary DOUBLE,DataTimeDay TEXT)')
-            'INSERT INTO EmployeeAttendance(id,AttendanceDate,delayTime,LeavingDate,OverTime,DataTimeDay)VALUES''("$id","${AttendanceDate.text}","${delayTime.text}","${LeavingDate.text}","${OverTime.text}","${DateTime.now()}")')
+            'INSERT INTO EmployeeAttendance(id,AttendanceDate,LeavingDate,DataTimeDay)VALUES''("$id","${AttendanceDate.text}","${LeavingDate.text}","${DateFormat.yMMMd().format(DateTime.now())}")')
             .then((value) {
           print("$value insertetd sucsseffly");
           getEmployeeDate(id,DateTime.now());
@@ -359,7 +363,7 @@ Future<List<Map>> getdateAttendEmployee(id,date) async {
         return getname();
       });
 
-  }
+        }
   void getProductsAfterChange() {
     getDataProducts(dataBase).then((value) {
       Products = [];

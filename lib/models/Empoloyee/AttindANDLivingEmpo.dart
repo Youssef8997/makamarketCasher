@@ -173,6 +173,9 @@ double Sallry=0;
               child: const Text("Show last date",
                   style: TextStyle(color: Colors.white)),
               OnPreesed: () {
+                print(cuibt.valueEmpo);
+                cuibt.getEmployeeDate(cuibt.valueEmpo,DateTime.now());
+
                 setState(() {
                   cuibt.ShowDateEmpolye = !cuibt.ShowDateEmpolye;
                 });
@@ -253,7 +256,7 @@ double Sallry=0;
                   ),
                 ],
               ),
-              SizedBox(
+             const SizedBox(
                 height: 5,
               ),
               Row(
@@ -264,18 +267,7 @@ double Sallry=0;
                         fontSize: 19, fontWeight: FontWeight.w500),
                   ),
                   const Spacer(),
-                  if(e["delayTime"]!=null)
-                  Text(
-                    "delay Time:  ${e["delayTime"]}",
-                    style: const TextStyle(
-                        fontSize: 19, fontWeight: FontWeight.w800),
-                  )
-                  else
-                    Text(
-                      "Over Time:  ${e["OverTime"]}",
-                      style: const TextStyle(
-                          fontSize: 19, fontWeight: FontWeight.w800),
-                    ),
+             
                 ],
               )
             ],
