@@ -18,7 +18,6 @@ class Empoloye extends StatefulWidget {
 
 class _EmpoloyeState extends State<Empoloye> {
   int ListTileSelect = 1;
-double Sallry=0;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
@@ -78,7 +77,7 @@ double Sallry=0;
                     fontWeight: FontWeight.bold,
                   ),
                   items: cuibt.employee.map((e) {
-                    return DropdownMenuItem<String>(
+                    return DropdownMenuItem(
                       value: e["id"].toString(),
                       child: Text("  ${e["Name"]}"),
                     );
@@ -86,9 +85,7 @@ double Sallry=0;
                   onChanged: (Object? value)
                       {
                         cuibt.ChangeValueOFEmpo(value);
-                        cuibt.getDataEmployeeEspcially(cuibt.dataBase, value).then((value){
-                          Sallry=value.single["Sallry"];
-                        });
+
                       },
                   value: cuibt.valueEmpo,
 
@@ -150,7 +147,7 @@ double Sallry=0;
             myButton(
               child: const Text("Record Attendance",
                   style: TextStyle(color: Colors.white)),
-              OnPreesed: () {cuibt.insertIntoEmployeeAttendance(id:cuibt.valueEmpo, salary:Sallry);},
+              OnPreesed: () {cuibt.insertIntoEmployeeAttendance(id:cuibt.valueEmpo);},
             ),
             myButton(
               child:
@@ -162,8 +159,9 @@ double Sallry=0;
             myButton(
               child: const Text("Remove employee",
                   style: TextStyle(color: Colors.white)),
-              OnPreesed: () {},
-            ),
+              OnPreesed: () {
+                cuibt.DeleteEmpo(cuibt.valueEmpo);
+              },            ),
             myButton(
               child: const Text("Edit Information",
                   style: TextStyle(color: Colors.white)),
@@ -225,7 +223,7 @@ double Sallry=0;
             quarterTurns: 1,
             child: Text(
               "${e["DataTimeDay"]}",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             )),
         Container(
           padding: const EdgeInsetsDirectional.only(start: 15, end: 15),

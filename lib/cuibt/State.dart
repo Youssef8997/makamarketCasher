@@ -37,4 +37,6 @@ class InsertEmployeeError extends CasherState{}
 class InsertDateEmployeeError extends CasherState{}
 class InsertDateEmployeeSuccessfully extends CasherState{}
 class ChangeEmpo extends CasherState{}
+class GetEmployeeSuccessfully extends CasherState{}
+class deleteEmpo extends CasherState{}
 
