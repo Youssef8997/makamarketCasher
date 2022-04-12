@@ -152,7 +152,20 @@ class AddItem extends StatelessWidget {
             ),
             MyTextField(
                 Controlr: cuibt.NumberOfItem,
-                label: "Number Of Item",
+                label: "Number Of Item in store",
+                hint: "20",
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "      Number must not be empty";
+                  }
+                  return null;
+                }),
+            const SizedBox(
+              height: 20,
+            ),
+            MyTextField(
+                Controlr: cuibt.NumberInPlace,
+                label: "Number Of Item in place",
                 hint: "20",
                 validator: (value) {
                   if (value!.isEmpty) {

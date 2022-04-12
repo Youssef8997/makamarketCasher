@@ -46,6 +46,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var EndDate = TextEditingController();
   var NameOfSearch = TextEditingController();
   var CodeOfSearch = TextEditingController();
+  var NumberInPlace = TextEditingController();
   var kayform = GlobalKey<FormState>();
   int? id;
 
@@ -66,6 +67,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var paidOfFees = TextEditingController();
   var dateOfFees = TextEditingController();
   var feesKeyForm = GlobalKey<FormState>();
+  double payedMoney=0.0;
 
   //Add money
   var increesKeyForm = GlobalKey<FormState>();
@@ -81,7 +83,8 @@ class CasherCuibt extends Cubit<CasherState> {
   int? idOfChange;
   double? price;
   int? Index;
-
+double AllMoneyGet=0.0;
+double totalMoney=0.0;
   FocusNode foucs = FocusNode();
   double total = 0.0;
   bool selected = false;
@@ -143,12 +146,12 @@ class CasherCuibt extends Cubit<CasherState> {
 
   void Crdatab() async {
     dataBase =
-    await openDatabase("yoyo.db", version: 1, onCreate: (dataBase, version) {
+    await openDatabase("kk.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
-          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER)');
+          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE)');
       dataBase.execute(
-          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
+          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,NumberInPlace INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
       dataBase.execute(
           'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
@@ -264,10 +267,10 @@ class CasherCuibt extends Cubit<CasherState> {
         await dataBase.transaction((txn) {
           txn
               .rawInsert(
-              'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney)VALUES("${NameOfItem
+              'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney,NumberInPlace)VALUES("${NameOfItem
                   .text}","${CodeOfItem.text}","${PriceOfItem
                   .text}","${NumberOfItem.text}","${StartDate.text}","${EndDate
-                  .text}","1","${double.parse(PriceOfItem.text)}")')
+                  .text}","1","${double.parse(PriceOfItem.text)}","${NumberInPlace.text}")')
               .then((value) {
             emit(InsertProductSuccessfully());
             getProductsAfterChange();
@@ -290,12 +293,14 @@ class CasherCuibt extends Cubit<CasherState> {
   }
 
   Future RecordOrder() async {
+    AllMoneyGet=AllMoneyGet+total;
+    totalMoney=AllMoneyGet-payedMoney;
     for (var e in orders) {
       await dataBase.transaction((txn) {
         txn
             .rawInsert(
-            'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime
-                .now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder")')
+            'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder,AllMoney)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime
+                .now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder","$AllMoneyGet")')
             .then((value) {
           updateProdctsARecord(Code: e["code"],
               Number: e["NumberInStore"] - e["Num"],
@@ -313,8 +318,7 @@ class CasherCuibt extends Cubit<CasherState> {
     getAllOrders(dataBase).then((value) {
       recordedOrders = [];
       recordedOrders = value;
-      NumberOfOrder =
-          (recordedOrders[recordedOrders.length - 1]["NumberOrder"]) + 1;
+      NumberOfOrder = (recordedOrders[recordedOrders.length - 1]["NumberOrder"]) + 1;
     });
 
     emit(RecordOrderSuccessfullyl());
@@ -344,8 +348,9 @@ class CasherCuibt extends Cubit<CasherState> {
   }
 
   Future insertIntoFees(id) async {
-    TotalOfSupllayers =
-        Supplayer[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
+    payedMoney=payedMoney+double.parse(paidOfFees.text);
+    totalMoney=AllMoneyGet-payedMoney;
+    TotalOfSupllayers = Supplayer[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
     if (TotalOfSupllayers >= 0) {
       await dataBase.transaction((txn) {
         txn

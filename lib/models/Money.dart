@@ -11,6 +11,7 @@ class Money extends StatelessWidget {
         listener: (context, state) {},
         builder: (context, state) {
           var size = MediaQuery.of(context).size;
+          var cuibt=CasherCuibt.get(context);
           return Center(
               child: MyContainer(
                   Height: size.height * .8,
@@ -19,11 +20,11 @@ class Money extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
-                      ShowMoney(money:1000,size: size,text:"Money input",boolen: false ),
+                      ShowMoney(money:cuibt.AllMoneyGet,size: size,text:"Money input",boolen: false ),
                       const SizedBox(height: 10),
-                      ShowMoney(money:1000,size: size,text:"Money out",boolen: true ),
+                      ShowMoney(money:cuibt.payedMoney,size: size,text:"Money out",boolen: true ),
                       const SizedBox(height: 10),
-                      ShowMoney(money:1000,size: size,text:"Money In box",boolen: false ),
+                      ShowMoney(money:cuibt.totalMoney,size: size,text:"Money In box",boolen: false ),
                       const SizedBox(height: 50),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

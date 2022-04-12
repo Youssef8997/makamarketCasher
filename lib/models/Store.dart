@@ -33,7 +33,7 @@ class Store extends StatelessWidget {
                   Container(
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     height: 50,
-                    width: size.width*.7,
+                    width: size.width*.8,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25.0),
                         border: Border.all(color: Colors.black,
@@ -43,7 +43,7 @@ class Store extends StatelessWidget {
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton(
                         items: cuibt.Products.map((e) {
-                          return DropdownMenuItem(child: Text("${e["Name"]}"),value:e["id"],);
+                          return DropdownMenuItem(child: Text("   ${e["Name"]}"),value:e["Code"].toString(),);
                         }).toList(),onChanged: (Object? value)=>cuibt.ChangeStoreValue(value),value: cuibt.storeValue,),
                     ),
                   ),
