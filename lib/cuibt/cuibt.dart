@@ -16,7 +16,6 @@ import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 class CasherCuibt extends Cubit<CasherState> {
   CasherCuibt() : super(initState());
-
   static CasherCuibt get(context) => BlocProvider.of(context);
   var databaseFactory = databaseFactoryFfi;
   late Database dataBase;

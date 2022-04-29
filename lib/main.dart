@@ -31,4 +31,11 @@ class MyApp extends StatelessWidget {
   }
   }
 
-
+// reviews selles and buys
+// review the store and products
+//give nitfocithion when some one get somesthing from store
+//*********************** product is almost finished,from the shop or store
+// review about suppliers
+//review about users
+//HOW many of selles and what is important products and what he do with the cashier
+// review about empo
