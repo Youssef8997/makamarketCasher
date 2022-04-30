@@ -5,10 +5,13 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:untitled6/spalsh%20Screen/SpalshScreen.dart';
+import 'package:firedart/firedart.dart';
+
+import 'Compoandis/Comp.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  Firestore.initialize(projectId);
   sqfliteFfiInit();
-  // Change the default factory
   databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
 }

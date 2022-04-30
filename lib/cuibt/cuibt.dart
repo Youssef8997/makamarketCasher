@@ -1,5 +1,8 @@
-
 // ignore_for_file: non_constant_identifier_names
+import 'dart:developer';
+
+import 'package:firedart/auth/firebase_auth.dart';
+import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +17,8 @@ import 'package:untitled6/models/Items.dart';
 import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
+import 'package:untitled6/module/user_module.dart';
+
 class CasherCuibt extends Cubit<CasherState> {
   CasherCuibt() : super(initState());
   static CasherCuibt get(context) => BlocProvider.of(context);
@@ -66,7 +71,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var paidOfFees = TextEditingController();
   var dateOfFees = TextEditingController();
   var feesKeyForm = GlobalKey<FormState>();
-  double payedMoney=0.0;
+  double payedMoney = 0.0;
 
   //Add money
   var increesKeyForm = GlobalKey<FormState>();
@@ -82,8 +87,8 @@ class CasherCuibt extends Cubit<CasherState> {
   int? idOfChange;
   double? price;
   int? Index;
-double AllMoneyGet=0.0;
-double totalMoney=0.0;
+  double AllMoneyGet = 0.0;
+  double totalMoney = 0.0;
   FocusNode foucs = FocusNode();
   double total = 0.0;
   bool selected = false;
@@ -105,10 +110,10 @@ double totalMoney=0.0;
   var OverTime = TextEditingController();
   var DataTimeDay = TextEditingController();
   var ShowDateEmpolye = true;
-  double Sallry=0;
+  double Sallry = 0;
 
   //UI
-  List<Widget>body = [
+  List<Widget> body = [
     CasherPage(),
     AddItem(),
     Items(),
@@ -145,7 +150,7 @@ double totalMoney=0.0;
 
   void Crdatab() async {
     dataBase =
-    await openDatabase("kk.db", version: 1, onCreate: (dataBase, version) {
+        await openDatabase("kk.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE)');
@@ -157,8 +162,9 @@ double totalMoney=0.0;
           'CREATE TABLE Fees (id INTEGER PRIMARY KEY,Name TEXT,Paid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
           'CREATE TABLE Employee (id INTEGER PRIMARY KEY,Name TEXT,Salary DOUBLE,HireDate Text,AttendanceDate Text,LeavingDate Text)');
-      dataBase.execute(
-          'CREATE TABLE EmployeeAttendance (id INTEGER,AttendanceDate TEXT,LeavingDate Text,DataTimeDay TEXT)')
+      dataBase
+          .execute(
+              'CREATE TABLE EmployeeAttendance (id INTEGER,AttendanceDate TEXT,LeavingDate Text,DataTimeDay TEXT)')
           .then((value) {
         print("Table is created");
         emit(CreateDataBaseSuccessfully());
@@ -174,7 +180,6 @@ double totalMoney=0.0;
       getDataProducts(dataBase).then((value) {
         Products = [];
         Products = value;
-        print(Products);
       });
       getDataFees(dataBase).then((value) {
         fees = [];
@@ -183,14 +188,14 @@ double totalMoney=0.0;
       getAllOrders(dataBase).then((value) {
         recordedOrders = [];
         recordedOrders = value;
-        print(recordedOrders);
-        if (value.isNotEmpty) NumberOfOrder =
-            ((recordedOrders[recordedOrders.length - 1]["NumberOrder"]) + 1) ??
-                1;
+        if (value.isNotEmpty)
+          NumberOfOrder = ((recordedOrders[recordedOrders.length - 1]
+                      ["NumberOrder"]) +
+                  1) ??
+              1;
       });
       GetDataEmpolyee(dataBase);
 
-      print("open data base");
       emit(GetDataProductsSuccessfully());
     }).catchError((Error) {
       print("the error is ${Error.toString()}");
@@ -207,13 +212,13 @@ double totalMoney=0.0;
   }
 
   Future<List<Map>> getItemSProductsSearch(dataBase, value) async {
-    return await dataBase.rawQuery(
-        'SELECT*FROM Products WHERE Name like ?', ["${value}%"]);
+    return await dataBase
+        .rawQuery('SELECT*FROM Products WHERE Name like ?', ["${value}%"]);
   }
 
   Future<List<Map>> getOrders(value) async {
-    return await dataBase.rawQuery(
-        'SELECT*FROM Orders WHERE NumberOrder = ?', ["$value"]);
+    return await dataBase
+        .rawQuery('SELECT*FROM Orders WHERE NumberOrder = ?', ["$value"]);
   }
 
   Future<List<Map>> getAllOrders(dataBase) async {
@@ -240,14 +245,13 @@ double totalMoney=0.0;
     getDataEmployee(dataBase).then((value) {
       employee = [];
       employee = value;
-      print(employee);
       emit(GetEmployeeSuccessfully());
     });
   }
 
   Future<List<Map>> getdateAttendEmployee(id, date) async {
-    return await dataBase.rawQuery(
-        'SELECT*FROM EmployeeAttendance WHERE id = ?', ["$id"]);
+    return await dataBase
+        .rawQuery('SELECT*FROM EmployeeAttendance WHERE id = ?', ["$id"]);
   }
 
   void getEmployeeDate(id, date) {
@@ -266,10 +270,7 @@ double totalMoney=0.0;
         await dataBase.transaction((txn) {
           txn
               .rawInsert(
-              'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney,NumberInPlace)VALUES("${NameOfItem
-                  .text}","${CodeOfItem.text}","${PriceOfItem
-                  .text}","${NumberOfItem.text}","${StartDate.text}","${EndDate
-                  .text}","1","${double.parse(PriceOfItem.text)}","${NumberInPlace.text}")')
+                  'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney,NumberInPlace)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}","${NumberInPlace.text}")')
               .then((value) {
             emit(InsertProductSuccessfully());
             getProductsAfterChange();
@@ -292,16 +293,16 @@ double totalMoney=0.0;
   }
 
   Future RecordOrder() async {
-    AllMoneyGet=AllMoneyGet+total;
-    totalMoney=AllMoneyGet-payedMoney;
+    AllMoneyGet = AllMoneyGet + total;
+    totalMoney = AllMoneyGet - payedMoney;
     for (var e in orders) {
       await dataBase.transaction((txn) {
         txn
             .rawInsert(
-            'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder,AllMoney)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime
-                .now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder","$AllMoneyGet")')
+                'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder,AllMoney)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder","$AllMoneyGet")')
             .then((value) {
-          updateProdctsARecord(Code: e["code"],
+          updateProdctsARecord(
+              Code: e["code"],
               Number: e["NumberInStore"] - e["Num"],
               price: e["price"]);
           orders = [];
@@ -317,7 +318,8 @@ double totalMoney=0.0;
     getAllOrders(dataBase).then((value) {
       recordedOrders = [];
       recordedOrders = value;
-      NumberOfOrder = (recordedOrders[recordedOrders.length - 1]["NumberOrder"]) + 1;
+      NumberOfOrder =
+          (recordedOrders[recordedOrders.length - 1]["NumberOrder"]) + 1;
     });
 
     emit(RecordOrderSuccessfullyl());
@@ -326,10 +328,9 @@ double totalMoney=0.0;
   Future insertIntoSupplayers() async {
     TotalOfSupllayers = double.parse(CostOfInvoice.text);
     await dataBase.transaction((txn) {
-      txn.rawInsert(
-          'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers
-              .text}","${PaidOfInvoice
-              .text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
+      txn
+          .rawInsert(
+              'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
           .then((value) {
         print("$value insertetd sucsseffly");
         emit(InsertProductSuccessfully());
@@ -347,16 +348,15 @@ double totalMoney=0.0;
   }
 
   Future insertIntoFees(id) async {
-    payedMoney=payedMoney+double.parse(paidOfFees.text);
-    totalMoney=AllMoneyGet-payedMoney;
-    TotalOfSupllayers = Supplayer[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
+    payedMoney = payedMoney + double.parse(paidOfFees.text);
+    totalMoney = AllMoneyGet - payedMoney;
+    TotalOfSupllayers =
+        Supplayer[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
     if (TotalOfSupllayers >= 0) {
       await dataBase.transaction((txn) {
         txn
             .rawInsert(
-            'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${Supplayer[value -
-                1]["Name"]}","${paidOfFees
-                .text}","$TotalOfSupllayers","${dateOfFees.text}")')
+                'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${Supplayer[value - 1]["Name"]}","${paidOfFees.text}","$TotalOfSupllayers","${dateOfFees.text}")')
             .then((value) {
           getFeesAfterChange();
           updateSuppliers(id);
@@ -381,10 +381,7 @@ double totalMoney=0.0;
     await dataBase.transaction((txn) {
       txn
           .rawInsert(
-          'INSERT INTO Employee(Name,Salary,HireDate,AttendanceDate,LeavingDate)VALUES("${NameOfEmpolyees
-              .text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees
-              .text}","${AttendanceDateOfEmpolyees
-              .text}","${LeavingDateOfEmpolyees.text}")')
+              'INSERT INTO Employee(Name,Salary,HireDate,AttendanceDate,LeavingDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}","${AttendanceDateOfEmpolyees.text}","${LeavingDateOfEmpolyees.text}")')
           .then((value) {
         print("$value insertetd sucsseffly");
         GetDataEmpolyee(dataBase);
@@ -404,11 +401,10 @@ double totalMoney=0.0;
     return dataBase.transaction((txn) {
       txn
           .rawInsert(
-        //(
-        // (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,TotalTime TEXT,TotalSalary DOUBLE,DataTimeDay TEXT)')
-          'INSERT INTO EmployeeAttendance(id,AttendanceDate,LeavingDate,DataTimeDay)VALUES''("$id","${AttendanceDate
-              .text}","${LeavingDate.text}","${DateFormat.yMMMd().format(
-              DateTime.now())}")')
+              //(
+              // (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,TotalTime TEXT,TotalSalary DOUBLE,DataTimeDay TEXT)')
+              'INSERT INTO EmployeeAttendance(id,AttendanceDate,LeavingDate,DataTimeDay)VALUES'
+              '("$id","${AttendanceDate.text}","${LeavingDate.text}","${DateFormat.yMMMd().format(DateTime.now())}")')
           .then((value) {
         print("$value insertetd sucsseffly");
         getEmployeeDate(id, DateTime.now());
@@ -467,20 +463,15 @@ double totalMoney=0.0;
   }
 
   void updateProdcts() {
-    dataBase.rawUpdate(
-        'UPDATE Products SET Price=? WHERE Code=? ',
+    dataBase.rawUpdate('UPDATE Products SET Price=? WHERE Code=? ',
         [PriceOfItem.text, CodeOfItem.text]);
-    dataBase.rawUpdate(
-        'UPDATE Products SET NumberInStore=? WHERE Code=? ',
+    dataBase.rawUpdate('UPDATE Products SET NumberInStore=? WHERE Code=? ',
         [NumberOfItem.text, CodeOfItem.text]);
-    dataBase.rawUpdate(
-        'UPDATE Products SET Name=? WHERE Code=? ',
+    dataBase.rawUpdate('UPDATE Products SET Name=? WHERE Code=? ',
         [NameOfItem.text, CodeOfItem.text]);
-    dataBase.rawUpdate(
-        'UPDATE Products SET StartDate=? WHERE Code=? ',
+    dataBase.rawUpdate('UPDATE Products SET StartDate=? WHERE Code=? ',
         [StartDate.text, CodeOfItem.text]);
-    dataBase.rawUpdate(
-        'UPDATE Products SET EndDate=? WHERE Code=? ',
+    dataBase.rawUpdate('UPDATE Products SET EndDate=? WHERE Code=? ',
         [EndDate.text, CodeOfItem.text]);
     getProductsAfterChange();
     getSearchItem(NameOfSearch.text);
@@ -488,8 +479,7 @@ double totalMoney=0.0;
   }
 
   void updateProdctsARecord({Number, Code, price}) {
-    dataBase.rawUpdate(
-        'UPDATE Products SET Num=? WHERE Code=? ', [1, Code]);
+    dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ', [1, Code]);
     dataBase.rawUpdate(
         'UPDATE Products SET NumberInStore=? WHERE Code=? ', [Number, Code]);
     dataBase.rawUpdate(
@@ -501,8 +491,7 @@ double totalMoney=0.0;
   void updateSuppliers(id) {
     dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
         [TotalOfSupllayers, id]);
-    dataBase.rawUpdate(
-        'UPDATE Suppliers SET LastPaid=? WHERE id=? ',
+    dataBase.rawUpdate('UPDATE Suppliers SET LastPaid=? WHERE id=? ',
         [double.parse(paidOfFees.text), id]);
     dataBase.rawUpdate(
         'UPDATE Suppliers SET LastDate=? WHERE id=? ', [dateOfFees.text, id]);
@@ -512,8 +501,8 @@ double totalMoney=0.0;
   }
 
   void updateSuppliersAfterAdd(id) {
-    var totalSuppliersAfterAdd = Supplayer[id - 1]["TotalSuppliers"] +
-        double.parse(paidOfFees.text);
+    var totalSuppliersAfterAdd =
+        Supplayer[id - 1]["TotalSuppliers"] + double.parse(paidOfFees.text);
     dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
         [totalSuppliersAfterAdd, id]);
     paidOfFees.clear();
@@ -544,8 +533,7 @@ double totalMoney=0.0;
         DisableInsertButton = false;
         print("$DisableInsertButton it isss");
         emit(SureItemFound());
-      }
-      else {
+      } else {
         DisableInsertButton = true;
       }
       emit(SureItemFound());
@@ -565,8 +553,9 @@ double totalMoney=0.0;
 
   void GetItem() {
     if (DChangeNumberItem) {
-      if (orders.isEmpty || orders.every((element) => "${element["Code"]}" !=
-          CodeOfProduct.text)) {
+      if (orders.isEmpty ||
+          orders
+              .every((element) => "${element["Code"]}" != CodeOfProduct.text)) {
         getItemProducts(dataBase, CodeOfProduct.text).then((value) {
           if (value.isNotEmpty) {
             if (Index == null) {
@@ -596,8 +585,7 @@ double totalMoney=0.0;
         AlertChangeNum = true;
         emit(InsertIntoOrder());
       }
-    }
-    else {
+    } else {
       UpdeteNumAfterChange();
     }
   }
@@ -627,11 +615,9 @@ double totalMoney=0.0;
   }
 
   void UpdeteNumAfterChange() {
-    dataBase.rawUpdate(
-        'UPDATE Products SET Num=? WHERE Code=? ',
+    dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
         [NumberOfProduct.text, CodeOfProduct.text]);
-    dataBase.rawUpdate(
-        'UPDATE Products SET TotalMoney=? WHERE Code=? ',
+    dataBase.rawUpdate('UPDATE Products SET TotalMoney=? WHERE Code=? ',
         [double.parse(NumberOfProduct.text) * price!, CodeOfProduct.text]);
     total = total - orders[Index!]["TotalMoney"];
     orders.removeAt(Index!);
@@ -650,8 +636,7 @@ double totalMoney=0.0;
       SearchProducts = [];
       SearchProducts = value;
       emit(GetSearchItem());
-    }
-    );
+    });
   }
 
   void calcTotalOfRecite() {
@@ -668,14 +653,12 @@ double totalMoney=0.0;
       recordedOrders = value;
       calcTotalOfRecite();
       emit(GetRecites());
-    }
-    );
+    });
   }
 
   var valueEmpo;
 
   void ChangeValueOFEmpo(value) {
-
     valueEmpo = value;
     print("$valueEmpo");
     emit(ChangeEmpo());
@@ -684,23 +667,68 @@ double totalMoney=0.0;
   void DeleteEmpo(id) async {
     print("value");
 
-    await dataBase.rawDelete(
-        'DELETE FROM Employee WHERE id=? ', [id])
-        .then((value) {
-          print("$value");
+    await dataBase
+        .rawDelete('DELETE FROM Employee WHERE id=? ', [id]).then((value) {
+      print("$value");
       DeleteEmpoAttends(id);
       emit(deleteEmpo());
-    })
-        .catchError((error) {
+    }).catchError((error) {
       print(error);
     });
   }
+
   void DeleteEmpoAttends(id) async {
-    await dataBase.rawDelete(
-        'DELETE FROM EmployeeAttendance WHERE id=? ', [id])
+    await dataBase
+        .rawDelete('DELETE FROM EmployeeAttendance WHERE id=? ', [id])
         .then((value) {})
         .catchError((error) {
-      print(error);
+          print(error);
+        });
+  }
+
+  void createUserProfile({
+    required String name,
+    required String email,
+    required String phone,
+    required String pass,
+    required String uid,
+    required String nameShop,
+  }) {
+    UserModule? user = UserModule(
+        phone: phone,
+        name: name,
+        email: email,
+        shopName: nameShop,
+        uid: uid,
+        password: pass);
+    Firestore.instance
+        .collection("Users")
+        .document(uid)
+        .set(user.toJson())
+        .then((value) {
+      log("create New user");
+      emit(CreateBaseUserProfileTr());
+    }).catchError((onError) {
+      print(onError);
+      emit(CreateBaseUserProfileFa());
+    });
+  }
+
+  void createNewUser({
+    required String name,
+    required String email,
+    required String phone,
+    required String pass,
+    required String nameShop,
+  }) {
+    FirebaseAuth.instance
+        .signUp(email, pass)
+        .then((value) {
+      createUserProfile(email: email,name: name,uid: value.id,phone: phone,pass: pass,nameShop:nameShop);
+    })
+        .catchError((onError) {
+          print(onError);
+          emit(CreateBaseUserProfileFa());
     });
   }
 }

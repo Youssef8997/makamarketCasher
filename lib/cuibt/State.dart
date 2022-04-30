@@ -39,4 +39,7 @@ class InsertDateEmployeeSuccessfully extends CasherState{}
 class ChangeEmpo extends CasherState{}
 class GetEmployeeSuccessfully extends CasherState{}
 class deleteEmpo extends CasherState{}
+//FirebaseState
+class CreateBaseUserProfileTr extends CasherState{}
+class CreateBaseUserProfileFa extends CasherState{}
 
