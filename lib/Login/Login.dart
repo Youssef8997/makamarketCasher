@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/HomeLayout/HomeLayout.dart';
+import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
+
+import '../cuibt/State.dart';
 
 class Login extends StatelessWidget {
   var UserName = TextEditingController();
@@ -12,7 +16,11 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var Size = MediaQuery.of(context).size;
-    return Scaffold(
+    return BlocConsumer<CasherCuibt,CasherState>
+      (
+      listener: (context,state){},
+      builder: (context,state){
+        return Scaffold(
 
       extendBodyBehindAppBar: true,
       appBar: _appBar(),
@@ -50,6 +58,9 @@ class Login extends StatelessWidget {
         ],
       ),
     );
+      },
+    );
+
   }
 
   Expanded TextFiledcoulmn(context) {
