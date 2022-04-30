@@ -10,6 +10,7 @@ import 'package:firedart/firedart.dart';
 import 'Compoandis/Comp.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  FirebaseAuth.initialize(webApiKey,Token.fromMap(map));
   Firestore.initialize(projectId);
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
           ));
   }
   }
+
 
 // reviews selles and buys
 // review the store and products

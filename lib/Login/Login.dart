@@ -7,6 +7,7 @@ import 'package:untitled6/HomeLayout/HomeLayout.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import '../Sign_up/SignUp.dart';
 import '../cuibt/State.dart';
 
 class Login extends StatelessWidget {
@@ -131,8 +132,11 @@ class Login extends StatelessWidget {
                 },
                 child: const Text("Login",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
                 color: Colors.black87,
-              ))
+              )),
+          const SizedBox(height: 10,),
+      TextButton(onPressed: ()=>Nevigator(bool:true,page: signUp(),context: context), child: const Text("don't have email yet ?",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),)
         ],
+
       ),
     );
   }

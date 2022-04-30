@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
 const String projectId="dashboard-cashier";
 const String projectApiKey="AIzaSyD9TjXbudtAzUMXfsXYM-PNk6KswEE2upE";
+const String webApiKey="AIzaSyAn9j5zMiHEHd1sYhf5ABrJXgeIA1vIu5k";
 Future Nevigator({ page, context, bool=false}){
   return Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context)=> page),(Route route)=>bool);
 }

@@ -111,7 +111,14 @@ class CasherCuibt extends Cubit<CasherState> {
   var DataTimeDay = TextEditingController();
   var ShowDateEmpolye = true;
   double Sallry = 0;
-
+//Sign up
+  var SignUpForm = GlobalKey<FormState>();
+  var emailController = TextEditingController();
+var nameController = TextEditingController();
+var passController = TextEditingController();
+var passController2 = TextEditingController();
+var phoneController = TextEditingController();
+var shopNameController = TextEditingController();
   //UI
   List<Widget> body = [
     CasherPage(),
@@ -714,17 +721,11 @@ class CasherCuibt extends Cubit<CasherState> {
     });
   }
 
-  void createNewUser({
-    required String name,
-    required String email,
-    required String phone,
-    required String pass,
-    required String nameShop,
-  }) {
+  void createNewUser() {
     FirebaseAuth.instance
-        .signUp(email, pass)
+        .signUp(emailController.text, passController.text)
         .then((value) {
-      createUserProfile(email: email,name: name,uid: value.id,phone: phone,pass: pass,nameShop:nameShop);
+      createUserProfile(email:emailController.text,name: nameController.text,uid: value.id,phone: phoneController.text,pass: passController.text,nameShop:shopNameController.text);
     })
         .catchError((onError) {
           print(onError);
