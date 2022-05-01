@@ -1,6 +1,9 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
@@ -9,12 +12,17 @@ import 'package:firedart/firedart.dart';
 
 import 'Compoandis/Comp.dart';
 void main() async{
+  late var tokenStore = VolatileStore();
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseAuth.initialize(webApiKey,Token.fromMap(map));
   Firestore.initialize(projectId);
+  FirebaseAuth.initialize(webApiKey, tokenStore);
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
-  runApp(const MyApp());
+  var path = Directory.current.path;
+  Hive.init(path);
+  await Hive.openBox("Token");
+
+runApp( const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,7 +31,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-      return MultiBlocProvider(
+
+    return MultiBlocProvider(
           providers: [
             BlocProvider(create: (BuildContext context) => CasherCuibt()..Crdatab())
           ],

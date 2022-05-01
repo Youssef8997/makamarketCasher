@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
+import 'package:untitled6/Compoandis/MyTextForm.dart';
 import 'package:untitled6/HomeLayout/HomeLayout.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -10,133 +10,143 @@ import 'package:velocity_x/velocity_x.dart';
 import '../Sign_up/SignUp.dart';
 import '../cuibt/State.dart';
 
-class Login extends StatelessWidget {
-  var UserName = TextEditingController();
-  var UserPass = TextEditingController();
+class Login extends StatefulWidget {
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  bool isVaildEmail = true;
 
   @override
   Widget build(BuildContext context) {
-    var Size = MediaQuery.of(context).size;
-    return BlocConsumer<CasherCuibt,CasherState>
-      (
-      listener: (context,state){},
-      builder: (context,state){
+    return BlocConsumer<CasherCuibt, CasherState>(
+      listener: (context, state) {
+        if (state is SignInFa) {
+          isVaildEmail = false;
+        }
+        if (state is SignInTr) {
+          setState(() {   isVaildEmail = true;
+          });
+          Nevigator(context: context, bool: false, page: HomeScreen());
+        }
+      },
+      builder: (context, state) {
+        var Size = MediaQuery.of(context).size;
+        var cuibt = CasherCuibt.get(context);
         return Scaffold(
-
-      extendBodyBehindAppBar: true,
-      appBar: _appBar(),
-      body: Stack(
-        alignment: AlignmentDirectional.center,
-        children: [
-          Wallpaper(Size),
-          Align(
+          extendBodyBehindAppBar: true,
+          appBar: _appBar(),
+          body: Stack(
             alignment: AlignmentDirectional.center,
-            child: Container(
-              height: Size.height * 0.8,
-              width: Size.width * 0.6,
-              decoration: BoxDecoration(
-                  color: Colors.white70,
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 6,
-                  )),
-              child: Row(
-                children: [
-                  LogoCoulmn(Size, context),
-                  const SizedBox(
-                    width: 20,
+            children: [
+              Wallpaper(Size),
+              Align(
+                alignment: AlignmentDirectional.center,
+                child: Container(
+                  height: Size.height * 0.8,
+                  width: Size.width * 0.6,
+                  decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 6,
+                      )),
+                  child: Row(
+                    children: [
+                      LogoCoulmn(Size, context),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      MyDiveder(Size),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      TextFiledcoulmn(context, cuibt, state),
+                    ],
                   ),
-                  MyDiveder(Size),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  TextFiledcoulmn(context)
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );
+                ),
+              )
+            ],
+          ),
+        );
       },
     );
-
   }
 
-  Expanded TextFiledcoulmn(context) {
+  Expanded TextFiledcoulmn(context, CasherCuibt cuibt, CasherState state) {
     return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 60,
-            width: 400,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadiusDirectional.circular(25.0),
-              border: Border.all(color:Colors.black),
+      child: Form(
+        key: cuibt.SignInForm,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            MyTextField(
+              Controlr: cuibt.SignEmailController,
+              hint: "youssef@gmail.com",
+              label: "Email Address",
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter Your Email';
+                } else if (isVaildEmail == false) {
+                  return 'This is a error in the email or password';
+                }
+                return null;
+              },
+              keybordtype: TextInputType.emailAddress,
+              Prefix: const Icon(Icons.drive_file_rename_outline,
+                  color: Colors.black),
+               OnTap: ()=>setState(() {isVaildEmail = true;})
             ),
-            child: TextFormField(
-              style: TextStyle(color: Colors.black),
-              maxLines: 1,
-              controller: UserName,
-              decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  prefixIcon: Icon(Icons.drive_file_rename_outline,
-                      color: Colors.black),
-                  hintText: "User Name",
-                  hintStyle: TextStyle(color: Colors.black),
-                  label: Text(
-                    "User Name",
-                    style: TextStyle(color: Colors.black),
-                  )),
+            const SizedBox(
+              height: 20,
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            height: 60,
-            width: 400,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadiusDirectional.circular(25.0),
-              border: Border.all(color:Colors.black),
+            MyTextField(Controlr: cuibt.signPassController, hint: "*****",label: "Password", validator: (value) {
+              if (value!.isEmpty) {
+                return 'Please enter Your Password';
+              } else if (isVaildEmail == false) {
+                return 'This is a error in the email or password';
+              }
+              return null;
+            }, keybordtype: TextInputType.visiblePassword, Prefix: const Icon(Icons.lock, color: Colors.black),
+              isobsr: true,
+              OnTap:()=>setState(() {isVaildEmail = true;})
             ),
-            child: TextFormField(
-              style: TextStyle(color: Colors.black),
-              controller: UserPass,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                prefixIcon: Icon(Icons.lock, color: Colors.black),
-                hintText: "Password",
-                hintStyle: TextStyle(color: Colors.black),
-                label: Text("Password", style: TextStyle(color: Colors.black)),
+            const SizedBox(
+              height: 20,
+            ),
+            Container(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadiusDirectional.circular(20.0),
+                ),
+                child: MaterialButton(
+                  minWidth: 150,
+                  onPressed: () {
+                    if (cuibt.SignInForm.currentState!.validate()) {
+                      cuibt.SignIn(context);
+                    }
+                  },
+                  child: const Text("Login",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                  color: Colors.black87,
+                )),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(
+              onPressed: () =>
+                  Nevigator(bool: true, page: signUp(), context: context),
+              child: const Text(
+                "don't have email yet ?",
+                style:
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
-              obscureText: true,
-              obscuringCharacter: "*",
-              maxLines: 1,
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadiusDirectional.circular(20.0),
-              ),
-              child: MaterialButton(
-                minWidth: 150,
-                onPressed: () {
-                  Nevigator(bool: false, page: HomeScreen(), context: context);
-                },
-                child: const Text("Login",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
-                color: Colors.black87,
-              )),
-          const SizedBox(height: 10,),
-      TextButton(onPressed: ()=>Nevigator(bool:true,page: signUp(),context: context), child: const Text("don't have email yet ?",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),)
-        ],
-
+            )
+          ],
+        ),
       ),
     );
   }
@@ -179,7 +189,7 @@ class Login extends StatelessWidget {
           fontStyle: FontStyle.italic,
           fontWeight: FontWeight.bold,
           shadows: [
-            Shadow(color: Colors.black, blurRadius:1, offset: Offset(0, 3))
+            Shadow(color: Colors.black, blurRadius: 1, offset: Offset(0, 3))
           ]),
     );
   }
@@ -206,26 +216,23 @@ class Login extends StatelessWidget {
             .italic
             .size(25)
             .make()
-            .shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white)
+            .shimmer(
+                duration: const Duration(seconds: 2),
+                primaryColor: Colors.black,
+                secondaryColor: Colors.white)
             .h15(context),
       ],
     );
   }
 
-
-
   AppBar _appBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
-      centerTitle: true,
-      elevation: 0,
-      title: "Login"
-          .text
-          .bold
-          .italic
-          .size(25.0)
-          .make()
-          .shimmer(duration: const Duration(seconds: 2),primaryColor: Colors.black, secondaryColor:Colors.white)
-    );
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        elevation: 0,
+        title: "Login".text.bold.italic.size(25.0).make().shimmer(
+            duration: const Duration(seconds: 2),
+            primaryColor: Colors.black,
+            secondaryColor: Colors.white));
   }
 }

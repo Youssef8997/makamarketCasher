@@ -18,7 +18,7 @@ abstract class CasherState{}
   class DeleteProducts extends CasherState{}
   class SureItemNotFound extends CasherState{}
   class SureItemFound extends CasherState{}
-  class ReturnToPage extends CasherState{}
+  class returnToPage extends CasherState{}
   class InsertIntoOrder extends CasherState{}
   class ErrorInsertIOrder extends CasherState{}
   class DeleteItemOrder extends CasherState{}
@@ -39,7 +39,15 @@ class InsertDateEmployeeSuccessfully extends CasherState{}
 class ChangeEmpo extends CasherState{}
 class GetEmployeeSuccessfully extends CasherState{}
 class deleteEmpo extends CasherState{}
+class ChangeObs extends CasherState{}
+
 //FirebaseState
 class CreateBaseUserProfileTr extends CasherState{}
 class CreateBaseUserProfileFa extends CasherState{}
+class SignInTr extends CasherState{}
+class SignInFa extends CasherState{
+  final Error;
+  SignInFa(this.Error);}
+class SignOut extends CasherState{}
+
 

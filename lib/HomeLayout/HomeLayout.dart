@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
-import 'package:untitled6/models/Casherpage.dart';
+
+import '../Login/Login.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -180,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: const Text('مخزن'),
                     ),
                     ListTile(
-                      onTap: () {},
+                      onTap: () {cuibt.Logout();Nevigator(page: Login(),bool: false,context: context);},
                       leading:const Icon(Icons.exit_to_app),
                       title: const Text('تسجيل خروج'),
                     ),

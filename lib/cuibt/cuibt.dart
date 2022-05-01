@@ -5,9 +5,11 @@ import 'package:firedart/auth/firebase_auth.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/models/AddItem.dart';
 import 'package:untitled6/models/Store.dart';
@@ -18,6 +20,8 @@ import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:untitled6/module/user_module.dart';
+
+import '../HomeLayout/HomeLayout.dart';
 
 class CasherCuibt extends Cubit<CasherState> {
   CasherCuibt() : super(initState());
@@ -114,11 +118,18 @@ class CasherCuibt extends Cubit<CasherState> {
 //Sign up
   var SignUpForm = GlobalKey<FormState>();
   var emailController = TextEditingController();
-var nameController = TextEditingController();
-var passController = TextEditingController();
-var passController2 = TextEditingController();
-var phoneController = TextEditingController();
-var shopNameController = TextEditingController();
+  var nameController = TextEditingController();
+  var passController = TextEditingController();
+  var passController2 = TextEditingController();
+  var phoneController = TextEditingController();
+  var shopNameController = TextEditingController();
+  bool isObserer = true;
+//Sign in
+  var SignInForm = GlobalKey<FormState>();
+  var SignEmailController = TextEditingController();
+  var signPassController = TextEditingController();
+  var box = Hive.box("Token");
+  String? Token;
   //UI
   List<Widget> body = [
     CasherPage(),
@@ -129,6 +140,10 @@ var shopNameController = TextEditingController();
     Money(),
     Store(),
   ];
+  void changeObs() {
+    isObserer = !isObserer;
+    emit(ChangeObs());
+  }
 
   void ChangeMyIndex(value) {
     bodyIndex = value;
@@ -549,13 +564,13 @@ var shopNameController = TextEditingController();
 
   void ChangePageIntoCashier() {
     bodyIndex = 0;
-    emit(ReturnToPage());
+    emit(returnToPage());
   }
 
   void ChangePageIntoAddItem() {
     bodyIndex = 1;
     AlertItemNFound = false;
-    emit(ReturnToPage());
+    emit(returnToPage());
   }
 
   void GetItem() {
@@ -721,15 +736,47 @@ var shopNameController = TextEditingController();
     });
   }
 
-  void createNewUser() {
+  void createNewUser(context) {
     FirebaseAuth.instance
         .signUp(emailController.text, passController.text)
         .then((value) {
-      createUserProfile(email:emailController.text,name: nameController.text,uid: value.id,phone: phoneController.text,pass: passController.text,nameShop:shopNameController.text);
-    })
-        .catchError((onError) {
-          print(onError);
-          emit(CreateBaseUserProfileFa());
+      createUserProfile(
+          email: emailController.text,
+          name: nameController.text,
+          uid: value.id,
+          phone: phoneController.text,
+          pass: passController.text,
+          nameShop: shopNameController.text);
+      emailController.clear();
+      nameController.clear();
+      phoneController.clear();
+      passController.clear();
+      passController.clear();
+      shopNameController.clear();
+      Nevigator(bool: false, page: HomeScreen(), context: context);
+    }).catchError((onError) {
+      print(onError);
+      emit(CreateBaseUserProfileFa());
     });
+  }
+
+  void SignIn(context) {
+    FirebaseAuth.instance
+        .signIn(SignEmailController.text, signPassController.text)
+        .then((value) {
+      Token = value.id;
+      box.put("Token", value.id);
+      Nevigator(bool: false, page: HomeScreen(), context: context);
+      emit(SignInTr());
+    }).catchError((onError) {
+      Token = null;
+      print(onError);
+      emit(SignInFa(onError.toString()));
+    });
+  }
+
+  void Logout() {
+    Hive.box("Token").delete("Token");
+    emit(SignOut());
   }
 }
