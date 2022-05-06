@@ -732,7 +732,7 @@ class CasherCuibt extends Cubit<CasherState> {
       emit(CreateBaseUserProfileTr());
     }).catchError((onError) {
       print(onError);
-      emit(CreateBaseUserProfileFa());
+      emit(CreateBaseUserProfileFa(onError.toString()));
     });
   }
 
@@ -756,7 +756,7 @@ class CasherCuibt extends Cubit<CasherState> {
       Nevigator(bool: false, page: HomeScreen(), context: context);
     }).catchError((onError) {
       print(onError);
-      emit(CreateBaseUserProfileFa());
+      emit(CreateBaseUserProfileFa(onError.toString()));
     });
   }
 

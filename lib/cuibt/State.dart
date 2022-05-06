@@ -43,7 +43,10 @@ class ChangeObs extends CasherState{}
 
 //FirebaseState
 class CreateBaseUserProfileTr extends CasherState{}
-class CreateBaseUserProfileFa extends CasherState{}
+class CreateBaseUserProfileFa extends CasherState{
+  final String error;
+  CreateBaseUserProfileFa(this.error);
+}
 class SignInTr extends CasherState{}
 class SignInFa extends CasherState{
   final Error;

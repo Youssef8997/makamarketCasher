@@ -7,15 +7,16 @@ import 'package:untitled6/HomeLayout/HomeLayout.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import '../Forget password/Forget password.dart';
 import '../Sign_up/SignUp.dart';
 import '../cuibt/State.dart';
 
 class Login extends StatefulWidget {
   @override
-  State<Login> createState() => _LoginState();
+  State<Login> createState() => LoginState();
 }
 
-class _LoginState extends State<Login> {
+class LoginState extends State<Login> {
   bool isVaildEmail = true;
 
   @override
@@ -26,7 +27,8 @@ class _LoginState extends State<Login> {
           isVaildEmail = false;
         }
         if (state is SignInTr) {
-          setState(() {   isVaildEmail = true;
+          setState(() {
+            isVaildEmail = true;
           });
           Nevigator(context: context, bool: false, page: HomeScreen());
         }
@@ -79,73 +81,94 @@ class _LoginState extends State<Login> {
     return Expanded(
       child: Form(
         key: cuibt.SignInForm,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            MyTextField(
-              Controlr: cuibt.SignEmailController,
-              hint: "youssef@gmail.com",
-              label: "Email Address",
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter Your Email';
-                } else if (isVaildEmail == false) {
-                  return 'This is a error in the email or password';
-                }
-                return null;
-              },
-              keybordtype: TextInputType.emailAddress,
-              Prefix: const Icon(Icons.drive_file_rename_outline,
-                  color: Colors.black),
-               OnTap: ()=>setState(() {isVaildEmail = true;})
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            MyTextField(Controlr: cuibt.signPassController, hint: "*****",label: "Password", validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter Your Password';
-              } else if (isVaildEmail == false) {
-                return 'This is a error in the email or password';
-              }
-              return null;
-            }, keybordtype: TextInputType.visiblePassword, Prefix: const Icon(Icons.lock, color: Colors.black),
-              isobsr: true,
-              OnTap:()=>setState(() {isVaildEmail = true;})
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadiusDirectional.circular(20.0),
-                ),
-                child: MaterialButton(
-                  minWidth: 150,
-                  onPressed: () {
-                    if (cuibt.SignInForm.currentState!.validate()) {
-                      cuibt.SignIn(context);
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              MyTextField(
+                  Controlr: cuibt.SignEmailController,
+                  hint: "youssef@gmail.com",
+                  label: "Email Address",
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter Your Email';
+                    } else if (isVaildEmail == false) {
+                      return 'This is a error in the email or password';
                     }
+                    return null;
                   },
-                  child: const Text("Login",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold)),
-                  color: Colors.black87,
-                )),
-            const SizedBox(
-              height: 10,
-            ),
-            TextButton(
-              onPressed: () =>
-                  Nevigator(bool: true, page: signUp(), context: context),
-              child: const Text(
-                "don't have email yet ?",
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  keybordtype: TextInputType.emailAddress,
+                  Prefix: const Icon(Icons.drive_file_rename_outline,
+                      color: Colors.black),
+                  OnTap: () => setState(() {
+                        isVaildEmail = true;
+                      })),
+              const SizedBox(
+                height: 20,
               ),
-            )
-          ],
+              MyTextField(
+                  Controlr: cuibt.signPassController,
+                  hint: "*****",
+                  label: "Password",
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter Your Password';
+                    } else if (isVaildEmail == false) {
+                      return 'This is a error in the email or password';
+                    }
+                    return null;
+                  },
+                  keybordtype: TextInputType.visiblePassword,
+                  Prefix: const Icon(Icons.lock, color: Colors.black),
+                  isobsr: true,
+                  OnTap: () => setState(() {
+                        isVaildEmail = true;
+                      })),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadiusDirectional.circular(20.0),
+                  ),
+                  child: MaterialButton(
+                    minWidth: 150,
+                    onPressed: () {
+                      if (cuibt.SignInForm.currentState!.validate()) {
+                        cuibt.SignIn(context);
+                      }
+                    },
+                    child: const Text("Login",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
+                    color: Colors.black87,
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              TextButton(
+                onPressed: () =>
+                    Nevigator(bool: true, page: signUp(), context: context),
+                child: const Text(
+                  "don't have email yet ?",
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 15,),
+              TextButton(
+                onPressed: () =>
+                    Nevigator(bool: true, page: const ForgetPassword(), context: context),
+                child: const Text(
+                  "Forget Your password ?",
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

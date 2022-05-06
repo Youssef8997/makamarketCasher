@@ -8,8 +8,8 @@ import 'package:untitled6/cuibt/cuibt.dart';
 import '../cuibt/State.dart';
 
 class CasherPage extends StatelessWidget {
-  @override
   var scrolllabel = ScrollController();
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
         listener: (context, state) {},

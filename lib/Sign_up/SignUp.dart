@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:untitled6/Compoandis/MyContenar.dart';
 import 'package:untitled6/Compoandis/MyTextForm.dart';
@@ -8,11 +9,28 @@ import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class signUp extends StatelessWidget {
+import '../Login/Login.dart';
+
+class signUp extends StatefulWidget {
+  @override
+  State<signUp> createState() => _signUpState();
+}
+
+class _signUpState extends State<signUp> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt, CasherState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if(state is CreateBaseUserProfileFa)
+        {
+          MotionToast.error(
+              title:  Text("Error in SignUp"),
+              description:  Text("This Email is already used"),
+            enableAnimation: true,
+            toastDuration:const Duration(seconds: 3) ,
+          ).show(context);
+        }
+      },
       builder: (context, state) {
         var cuibt = CasherCuibt.get(context);
         var Size = MediaQuery.of(context).size;
@@ -43,7 +61,8 @@ class signUp extends StatelessWidget {
                         Child: Row(
                           children: [
                             LogoCoulmn(Size, context),
-                            const SizedBox(height: double.maxFinite, width: 5),
+              LoginState().MyDiveder(Size),
+                            const SizedBox(width:10),
                             TextFieldColumn(cuibt,context),
                           ],
                         )))
