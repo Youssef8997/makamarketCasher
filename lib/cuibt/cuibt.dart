@@ -774,7 +774,8 @@ class CasherCuibt extends Cubit<CasherState> {
       emit(SignInFa(onError.toString()));
     });
   }
-
+void RessetPassword() {
+}
   void Logout() {
     Hive.box("Token").delete("Token");
     emit(SignOut());
