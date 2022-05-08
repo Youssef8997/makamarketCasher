@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
+import 'package:untitled6/Login/Login.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/models/AddItem.dart';
 import 'package:untitled6/models/Store.dart';
@@ -130,6 +131,9 @@ class CasherCuibt extends Cubit<CasherState> {
   var signPassController = TextEditingController();
   var box = Hive.box("Token");
   String? Token;
+  //Rest Password
+  var RestPasswordForm = GlobalKey<FormState>();
+  var RestEmailController = TextEditingController();
   //UI
   List<Widget> body = [
     CasherPage(),
@@ -774,8 +778,9 @@ class CasherCuibt extends Cubit<CasherState> {
       emit(SignInFa(onError.toString()));
     });
   }
-void RessetPassword() {
-}
+void RessetPassword(context) {
+    FirebaseAuth.instance.resetPassword(RestEmailController.text).whenComplete(() => Nevigator(bool: false,context: context,page: Login()));
+  }
   void Logout() {
     Hive.box("Token").delete("Token");
     emit(SignOut());
