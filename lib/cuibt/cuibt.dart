@@ -30,6 +30,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var databaseFactory = databaseFactoryFfi;
   late Database dataBase;
   List Products = [];
+  List NewProducts = [];
   List SearchProducts = [];
   List Supplayer = [];
   List orders = [];
@@ -99,6 +100,8 @@ class CasherCuibt extends Cubit<CasherState> {
   bool selected = false;
   bool NInserted = true;
   var NumberOfOrder = 1;
+  var Notes = TextEditingController(text: "dddddd");
+
 
   //Add Employee
   var NameOfEmpolyees = TextEditingController();
@@ -176,10 +179,10 @@ class CasherCuibt extends Cubit<CasherState> {
 
   void Crdatab() async {
     dataBase =
-        await openDatabase("kk.db", version: 1, onCreate: (dataBase, version) {
+        await openDatabase("lord.db", version: 1, onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
-          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE)');
+          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE,Notes Text)');
       dataBase.execute(
           'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,NumberInPlace INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
       dataBase.execute(
@@ -214,11 +217,12 @@ class CasherCuibt extends Cubit<CasherState> {
       getAllOrders(dataBase).then((value) {
         recordedOrders = [];
         recordedOrders = value;
-        if (value.isNotEmpty)
+        if (value.isNotEmpty) {
           NumberOfOrder = ((recordedOrders[recordedOrders.length - 1]
                       ["NumberOrder"]) +
                   1) ??
               1;
+        }
       });
       GetDataEmpolyee(dataBase);
 
@@ -298,6 +302,7 @@ class CasherCuibt extends Cubit<CasherState> {
               .rawInsert(
                   'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney,NumberInPlace)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}","${NumberInPlace.text}")')
               .then((value) {
+                print("the value is $value");
             emit(InsertProductSuccessfully());
             getProductsAfterChange();
             NameOfItem.clear();

@@ -182,7 +182,7 @@ class LoginState extends State<Login> {
             padding: const EdgeInsets.only(left: 10),
             child: LoginLogo(Size),
           ),
-          MakaMarketName(),
+          MakaMarketName("lord"),
           const Spacer(),
           MyName(context),
           const Text(
@@ -203,10 +203,10 @@ class LoginState extends State<Login> {
     );
   }
 
-  Text MakaMarketName() {
-    return const Text(
-      "Market",
-      style: TextStyle(
+  Text MakaMarketName(text) {
+    return  Text(
+      text,
+      style: const TextStyle(
           color: Colors.black,
           fontSize: 30,
           fontStyle: FontStyle.italic,

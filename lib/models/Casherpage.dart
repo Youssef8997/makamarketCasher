@@ -1,3 +1,4 @@
+
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -272,6 +273,9 @@ onTap: (){
 
   casherTable(context, CasherCuibt cuibt) {
     return DataTable(
+      showBottomBorder: true,
+        showCheckboxColumn:true,
+        sortColumnIndex: 1,
         dataTextStyle:
            const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         headingTextStyle: const TextStyle(
@@ -283,13 +287,12 @@ onTap: (){
         columnSpacing: 90,
         horizontalMargin: 10,
         border: TableBorder.all(
+
             color: Colors.grey,
             borderRadius: BorderRadius.circular(15),
             width: 2),
         columns: const [
-          DataColumn(
-            label: Text("Code"),
-          ),
+
           DataColumn(
             label: Text("Name"),
           ),
@@ -302,12 +305,15 @@ onTap: (){
           DataColumn(
             label: Text("total"),
           ),
+          DataColumn(
+            label: Text("Notes"),
+          ),
         ],
         rows: cuibt.orders.asMap().entries.map((r) {
           var e=r.value;
           int index=r.key;
           return DataRow(
-              onSelectChanged: (select){
+              onSelectChanged:(_){
                 print(index);
                 cuibt.InsertValueItem(
                   codeOFItem: "${e["Code"]}",
@@ -321,13 +327,14 @@ FocusScope.of(context).requestFocus(cuibt.foucs);
                 cuibt.cahnge();
               },
               cells: [
-                DataCell(Text("${e["Code"]}")),
                 DataCell(Text("${e["Name"]}")),
                 DataCell(
                   Text("${e["Price"]}"),
                 ),
                 DataCell(Text("${e["Num"]}")),
                 DataCell(Text("${e["TotalMoney"]}")),
+                DataCell(
+                 TextFormField(controller: cuibt.Notes,decoration:InputDecoration(border:InputBorder.none)))
               ]);
         }).toList());
   }

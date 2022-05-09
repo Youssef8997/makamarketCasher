@@ -29,7 +29,7 @@ class AddItem extends StatelessWidget {
                     const SizedBox(
                       height: 30,
                     ),
-                    if (!cuibt.Search) MakaMarketName()
+                    if (!cuibt.Search) StoreNmae()
                   ],
                 ),
               ),
@@ -121,10 +121,9 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
-              onChanged: (value){
-                cuibt.SureItemNotFound();
-
-              },
+                onChanged: (value) {
+                  cuibt.SureItemNotFound();
+                },
                 Controlr: cuibt.CodeOfItem,
                 label: "Code Of Item",
                 hint: "003************",
@@ -177,16 +176,15 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
-                OnTap: (){
+                OnTap: () {
                   showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
-                    firstDate: DateTime(DateTime.now().year-1),
+                    firstDate: DateTime(DateTime.now().year - 1),
                     lastDate: DateTime.now(),
                   ).then((value) {
                     value ??= DateTime.now();
-                    cuibt.StartDate.text =DateFormat.yMMMd().format(value);
-
+                    cuibt.StartDate.text = DateFormat.yMMMd().format(value);
                   });
                 },
                 Controlr: cuibt.StartDate,
@@ -202,18 +200,17 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
-              OnTap: (){
-                showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.parse('2027-11-07'),
-                ).then((value) {
-                  value ??= DateTime.now();
-                    cuibt.EndDate.text =DateFormat.yMMMd().format(value);
-
-                });
-              },
+                OnTap: () {
+                  showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.parse('2027-11-07'),
+                  ).then((value) {
+                    value ??= DateTime.now();
+                    cuibt.EndDate.text = DateFormat.yMMMd().format(value);
+                  });
+                },
                 Controlr: cuibt.EndDate,
                 label: "EndDate",
                 hint: "3-10-2023",
@@ -237,14 +234,14 @@ class AddItem extends StatelessWidget {
                   child: MaterialButton(
                     onPressed: () {
                       if (cuibt.kayform.currentState!.validate()) {
-                            cuibt.insertIntoProducts();
-                            if(cuibt.DisableInsertButton.toggle()) {
+                        cuibt.insertIntoProducts();
+                        if (cuibt.DisableInsertButton.toggle()) {
                           settingDialog(context);
                         }
                       }
                     },
-                    child:
-                        const Text("Insert", style: TextStyle(color: Colors.white)),
+                    child: const Text("Insert",
+                        style: TextStyle(color: Colors.white)),
                     color: Colors.grey.shade900,
                   ),
                 ),
@@ -259,9 +256,11 @@ class AddItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(25.0),
                     ),
                     child: MaterialButton(
-                      onPressed: () {if (cuibt.kayform.currentState!.validate()) {
-                        cuibt.updateProdcts();
-                      }},
+                      onPressed: () {
+                        if (cuibt.kayform.currentState!.validate()) {
+                          cuibt.updateProdcts();
+                        }
+                      },
                       child: const Text("Edit",
                           style: TextStyle(color: Colors.white)),
                       color: Colors.grey.shade900,
@@ -319,7 +318,7 @@ class AddItem extends StatelessWidget {
     );
   }
 
-  Text MakaMarketName() {
+  Text StoreNmae() {
     return const Text(
       "Maka Market",
       style: TextStyle(
@@ -358,9 +357,7 @@ class AddItem extends StatelessWidget {
                     label: "Name",
                     hint: "",
                     onChanged: (value) {
-
                       cuibt.getSearchItem(value);
-
                     }),
                 const SizedBox(
                   height: 30,
@@ -410,22 +407,23 @@ class AddItem extends StatelessWidget {
         ],
         rows: cuibt.SearchProducts.map((e) {
           return DataRow(
-              onLongPress: (){
+              onLongPress: () {
                 cuibt.insertValueIntoControlar(e);
               },
               cells: [
-            DataCell(Text("${e["Code"]}")),
-            DataCell(Text("${e["Name"]}"),
-            ),
-            DataCell(
-              Text("${e["Price"]}"),
-
-            ),
-            DataCell(Text("${e["NumberInStore"]}")),
-            DataCell(Text("${e["EndDate"]}")),
-          ]);
+                DataCell(Text("${e["Code"]}")),
+                DataCell(
+                  Text("${e["Name"]}"),
+                ),
+                DataCell(
+                  Text("${e["Price"]}"),
+                ),
+                DataCell(Text("${e["NumberInStore"]}")),
+                DataCell(Text("${e["EndDate"]}")),
+              ]);
         }).toList());
   }
+
   settingDialog(context) {
     return showDialog(
         context: context,
@@ -439,19 +437,23 @@ class AddItem extends StatelessWidget {
               clipBehavior: Clip.antiAliasWithSaveLayer,
               backgroundColor: Colors.white60,
               elevation: 2,
-              content: const Text("This item is already found",style: const TextStyle(fontWeight: FontWeight.w900)),
+              content: const Text("This item is already found",
+                  style: const TextStyle(fontWeight: FontWeight.w900)),
               actions: [
                 MaterialButton(
                   color: Colors.blueGrey[700],
-                  onPressed: (){
+                  onPressed: () {
                     Navigator.pop(context);
-                  },child:const Text("Okay",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
-
+                  },
+                  child: const Text("Okay",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )),
+                ),
               ],
             ),
           );
         });
   }
-
-
 }
