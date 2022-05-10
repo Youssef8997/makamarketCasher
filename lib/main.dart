@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
           providers: [
-            BlocProvider(create: (BuildContext context) => CasherCuibt()..Crdatab())
+            BlocProvider(create: (BuildContext context) => CasherCuibt()..createDataBase())
           ],
           child:MaterialApp(
               debugShowCheckedModeBanner: false,

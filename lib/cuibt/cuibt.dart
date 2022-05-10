@@ -21,11 +21,12 @@ import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:untitled6/module/user_module.dart';
-
 import '../HomeLayout/HomeLayout.dart';
+import '../module/Product module.dart';
 
 class CasherCuibt extends Cubit<CasherState> {
   CasherCuibt() : super(initState());
+
   static CasherCuibt get(context) => BlocProvider.of(context);
   var databaseFactory = databaseFactoryFfi;
   late Database dataBase;
@@ -102,7 +103,6 @@ class CasherCuibt extends Cubit<CasherState> {
   var NumberOfOrder = 1;
   var Notes = TextEditingController(text: "dddddd");
 
-
   //Add Employee
   var NameOfEmpolyees = TextEditingController();
   var SalaryOfEmpolyees = TextEditingController();
@@ -119,6 +119,8 @@ class CasherCuibt extends Cubit<CasherState> {
   var DataTimeDay = TextEditingController();
   var ShowDateEmpolye = true;
   double Sallry = 0;
+  var valueEmpo;
+
 //Sign up
   var SignUpForm = GlobalKey<FormState>();
   var emailController = TextEditingController();
@@ -128,15 +130,18 @@ class CasherCuibt extends Cubit<CasherState> {
   var phoneController = TextEditingController();
   var shopNameController = TextEditingController();
   bool isObserer = true;
+
 //Sign in
   var SignInForm = GlobalKey<FormState>();
   var SignEmailController = TextEditingController();
   var signPassController = TextEditingController();
   var box = Hive.box("Token");
   String? Token;
+
   //Rest Password
   var RestPasswordForm = GlobalKey<FormState>();
   var RestEmailController = TextEditingController();
+
   //UI
   List<Widget> body = [
     CasherPage(),
@@ -147,6 +152,62 @@ class CasherCuibt extends Cubit<CasherState> {
     Money(),
     Store(),
   ];
+
+  void cahnge() {
+    emit(SetState());
+  }
+
+  void insertValueIntoControlar(e) {
+    NameOfItem.text = e["Name"];
+    CodeOfItem.text = e["Code"];
+    PriceOfItem.text = e["Price"].toString();
+    NumberOfItem.text = e["NumberInStore"].toString();
+    StartDate.text = e["StartDate"].toString();
+    EndDate.text = e["EndDate"].toString();
+    id = e["id"];
+
+    emit(InsertValueIntoControlar());
+  }
+
+
+
+
+
+
+  void ChangePageIntoCashier() {
+    bodyIndex = 0;
+    emit(returnToPage());
+  }
+
+  void ChangePageIntoAddItem() {
+    bodyIndex = 1;
+    AlertItemNFound = false;
+    emit(returnToPage());
+  }
+
+
+  void InsertValueItem(
+      {NameOFItem, codeOFItem, NumberOFItem, Price, id, index}) {
+    NameOfProduct.text = NameOFItem;
+    CodeOfProduct.text = codeOFItem;
+    DChangeNumberItem = false;
+    idOfChange = id;
+    price = Price;
+    Index = index;
+    emit(InsertIntoCashier());
+  }
+
+
+
+  void changeSelected(bool) {
+    selected = bool;
+    emit(ChangeSelected());
+  }
+
+
+
+
+
   void changeObs() {
     isObserer = !isObserer;
     emit(ChangeObs());
@@ -177,133 +238,100 @@ class CasherCuibt extends Cubit<CasherState> {
     emit(ChangeValuee());
   }
 
-  void Crdatab() async {
-    dataBase =
-        await openDatabase("lord.db", version: 1, onCreate: (dataBase, version) {
-      print("create data base");
-      dataBase.execute(
-          'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE,Notes Text)');
-      dataBase.execute(
-          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,NumberInPlace INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
-      dataBase.execute(
-          'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
-      dataBase.execute(
-          'CREATE TABLE Fees (id INTEGER PRIMARY KEY,Name TEXT,Paid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
-      dataBase.execute(
-          'CREATE TABLE Employee (id INTEGER PRIMARY KEY,Name TEXT,Salary DOUBLE,HireDate Text,AttendanceDate Text,LeavingDate Text)');
-      dataBase
-          .execute(
+  void createDataBase() async {
+    dataBase = await openDatabase("ew.db", version: 1,
+        onCreate: (dataBase, version) {
+          print("create data base");
+          dataBase.execute(
+              'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE,Notes Text)');
+          dataBase.execute(
+              'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,NumberInPlace INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
+          dataBase.execute(
+              'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
+          dataBase.execute(
+              'CREATE TABLE Fees (id INTEGER PRIMARY KEY,Name TEXT,Paid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
+          dataBase.execute(
+              'CREATE TABLE Employee (id INTEGER PRIMARY KEY,Name TEXT,Salary DOUBLE,HireDate Text,AttendanceDate Text,LeavingDate Text)');
+          dataBase
+              .execute(
               'CREATE TABLE EmployeeAttendance (id INTEGER,AttendanceDate TEXT,LeavingDate Text,DataTimeDay TEXT)')
-          .then((value) {
-        print("Table is created");
-        emit(CreateDataBaseSuccessfully());
-      }).catchError((error) {
-        print("error is${error.toString()}");
-        emit(CreateDataBaseError());
-      });
-    }, onOpen: (dataBase) {
-      getDataSupplayers(dataBase).then((value) {
-        Supplayer = [];
-        Supplayer = value;
-      });
-      getDataProducts(dataBase).then((value) {
-        Products = [];
-        Products = value;
-      });
-      getDataFees(dataBase).then((value) {
-        fees = [];
-        fees = value;
-      });
-      getAllOrders(dataBase).then((value) {
-        recordedOrders = [];
-        recordedOrders = value;
-        if (value.isNotEmpty) {
-          NumberOfOrder = ((recordedOrders[recordedOrders.length - 1]
-                      ["NumberOrder"]) +
+              .then((value) {
+            print("Table is created");
+            emit(CreateDataBaseSuccessfully());
+          }).catchError((error) {
+            print("error is${error.toString()}");
+            emit(CreateDataBaseError());
+          });
+        }, onOpen: (dataBase) {
+          getDataSuppliers(dataBase).then((value) {
+            Supplayer = [];
+            Supplayer = value;
+          });
+          getDataProducts(dataBase).then((value) {
+            Products = [];
+            Products = value;
+          });
+          getDataFees(dataBase).then((value) {
+            fees = [];
+            fees = value;
+          });
+          getAllOrders(dataBase).then((value) {
+            recordedOrders = [];
+            recordedOrders = value;
+            if (value.isNotEmpty) {
+              NumberOfOrder = ((recordedOrders[recordedOrders.length - 1]
+              ["NumberOrder"]) +
                   1) ??
-              1;
-        }
-      });
-      GetDataEmpolyee(dataBase);
+                  1;
+            }
+          });
+          GetDataEmployee(dataBase);
 
-      emit(GetDataProductsSuccessfully());
-    }).catchError((Error) {
+          emit(GetDataProductsSuccessfully());
+        }).catchError((Error) {
       print("the error is ${Error.toString()}");
       emit(GetDataProductsBaseError());
     });
   }
 
+// products Methods{
   Future<List<Map>> getDataProducts(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Products');
   }
-
   Future<List<Map>> getItemProducts(dataBase, key) async {
     return await dataBase.rawQuery('SELECT*FROM Products WHERE Code=?', [key]);
   }
-
   Future<List<Map>> getItemSProductsSearch(dataBase, value) async {
     return await dataBase
         .rawQuery('SELECT*FROM Products WHERE Name like ?', ["${value}%"]);
   }
-
-  Future<List<Map>> getOrders(value) async {
-    return await dataBase
-        .rawQuery('SELECT*FROM Orders WHERE NumberOrder = ?', ["$value"]);
-  }
-
-  Future<List<Map>> getAllOrders(dataBase) async {
-    return await dataBase.rawQuery('SELECT*FROM Orders');
-  }
-
-  Future<List<Map>> getDataSupplayers(dataBase) async {
-    return await dataBase.rawQuery('SELECT*FROM Suppliers');
-  }
-
-  Future<List<Map>> getDataFees(dataBase) async {
-    return await dataBase.rawQuery('SELECT*FROM Fees');
-  }
-
-  Future<List<Map>> getDataEmployee(dataBase) async {
-    return await dataBase.rawQuery('SELECT*FROM Employee');
-  }
-
-  Future<List<Map>> getDataEmployeeEspcially(dataBase, id) async {
-    return await dataBase.rawQuery('SELECT*FROM Employee WHERE id=?', [id]);
-  }
-
-  void GetDataEmpolyee(dataBase) {
-    getDataEmployee(dataBase).then((value) {
-      employee = [];
-      employee = value;
-      emit(GetEmployeeSuccessfully());
+  void getProductsAfterChange() {
+    getDataProducts(dataBase).then((value) {
+      Products = [];
+      Products = value;
+      emit(GetDataProductsSuccessfully());
     });
   }
-
-  Future<List<Map>> getdateAttendEmployee(id, date) async {
-    return await dataBase
-        .rawQuery('SELECT*FROM EmployeeAttendance WHERE id = ?', ["$id"]);
-  }
-
-  void getEmployeeDate(id, date) {
-    print("im in getEmployeeDate");
-    getdateAttendEmployee(id, date).then((value) {
-      DateEmployee = [];
-      DateEmployee = value;
-      print(DateEmployee);
-      emit(InsertDateEmployeeError());
-    });
-  }
-
   Future insertIntoProducts() async {
     SureItemNotFound().then((value) async {
       if (DisableInsertButton) {
         await dataBase.transaction((txn) {
           txn
               .rawInsert(
-                  'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney,NumberInPlace)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}","${NumberInPlace.text}")')
+              'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney,NumberInPlace)VALUES("${NameOfItem
+                  .text}","${CodeOfItem.text}","${PriceOfItem
+                  .text}","${NumberOfItem.text}","${StartDate.text}","${EndDate
+                  .text}","1","${double.parse(
+                  PriceOfItem.text)}","${NumberInPlace.text}")')
               .then((value) {
-                print("the value is $value");
-            emit(InsertProductSuccessfully());
+            getItemProducts(dataBase, CodeOfItem.text)
+                .then((value) {
+              print("this is item $value");
+              NewProducts.add(value.single);
+              uploadNewProduct();
+            }
+
+            );
             getProductsAfterChange();
             NameOfItem.clear();
             CodeOfItem.clear();
@@ -322,7 +350,296 @@ class CasherCuibt extends Cubit<CasherState> {
       }
     });
   }
+  void updateProducts() {
+    dataBase.rawUpdate('UPDATE Products SET Price=? WHERE Code=? ',
+        [PriceOfItem.text, CodeOfItem.text]);
+    dataBase.rawUpdate('UPDATE Products SET NumberInStore=? WHERE Code=? ',
+        [NumberOfItem.text, CodeOfItem.text]);
+    dataBase.rawUpdate('UPDATE Products SET Name=? WHERE Code=? ',
+        [NameOfItem.text, CodeOfItem.text]);
+    dataBase.rawUpdate('UPDATE Products SET StartDate=? WHERE Code=? ',
+        [StartDate.text, CodeOfItem.text]);
+    dataBase.rawUpdate('UPDATE Products SET EndDate=? WHERE Code=? ',
+        [EndDate.text, CodeOfItem.text]);
+    getProductsAfterChange();
+    getSearchItem(NameOfSearch.text);
+    emit(UpdateProducts());
+  }
+  void updateProductsARecord({Number, Code, price}) {
+    dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ', [1, Code]);
+    dataBase.rawUpdate(
+        'UPDATE Products SET NumberInStore=? WHERE Code=? ', [Number, Code]);
+    dataBase.rawUpdate(
+        'UPDATE Products SET TotalMoney=? WHERE Code=? ', [price, Code]);
+    getProductsAfterChange();
+    emit(UpdateProducts());
+  }
+  void deleteProducts() async {
+    await dataBase.rawDelete(
+        'DELETE FROM Products WHERE Code=? ', [CodeOfItem.text]).then((value) {
+      getProductsAfterChange();
+      getSearchItem(NameOfSearch.text);
+    });
+    CodeOfItem.clear();
+    NameOfItem.clear();
+    NumberOfItem.clear();
+    PriceOfItem.clear();
+    EndDate.clear();
+    StartDate.clear();
+    id = null;
+    emit(DeleteProducts());
+  }
+  Future SureItemNotFound() async {
+    getItemProducts(dataBase, CodeOfItem.text).then((value) {
+      if (value.isNotEmpty) {
+        DisableInsertButton = false;
+        print("$DisableInsertButton it isss");
+        emit(SureItemFound());
+      } else {
+        DisableInsertButton = true;
+      }
+      emit(SureItemFound());
+    });
+  }
+  void UpdeteNumAfterChange() {
+    dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
+        [NumberOfProduct.text, CodeOfProduct.text]);
+    dataBase.rawUpdate('UPDATE Products SET TotalMoney=? WHERE Code=? ',
+        [double.parse(NumberOfProduct.text) * price!, CodeOfProduct.text]);
+    total = total - orders[Index!]["TotalMoney"];
+    orders.removeAt(Index!);
+    DChangeNumberItem = true;
+    GetItem();
+    emit(UpdateNumItem());
+  }
+  void getSearchItem(valuee) {
+    getItemSProductsSearch(dataBase, valuee).then((value) {
+      SearchProducts = [];
+      SearchProducts = value;
+      emit(GetSearchItem());
+    });
+  }
 
+//firebase
+  void uploadNewProduct() {
+    print("this is upload $NewProducts");
+    for (var element in NewProducts) {
+      ProductsModule? product = ProductsModule(
+        name: element["Name"],
+        price: element["Price"],
+        code: element["Code"],
+        quantityInShop: element["NumberInPlace"],
+        quantityInStore: element["NumberInStore"],
+        startDate: element["StartDate"],
+        endDate: element["EndDate"],
+      );
+      Firestore.instance
+          .collection("Users")
+          .document(box.get("Token"))
+          .collection("products")
+          .document("${element["Name"]}")
+          .set(product.toJson())
+          .then((value) {
+        NewProducts.remove(element);
+        emit(InsertProductTr());
+      }).catchError((onError) {
+        emit(InsertProductFa(onError.toString()));
+      });
+    }
+  }
+
+  //employee
+  Future<List<Map>> getDataEmployee(dataBase) async {
+    return await dataBase.rawQuery('SELECT*FROM Employee');
+  }
+  Future<List<Map>> getDataEmployeeEspcially(dataBase, id) async {
+    return await dataBase.rawQuery('SELECT*FROM Employee WHERE id=?', [id]);
+  }
+  void GetDataEmployee(dataBase) {
+    getDataEmployee(dataBase).then((value) {
+      employee = [];
+      employee = value;
+      emit(GetEmployeeSuccessfully());
+    });
+  }
+  void getEmployeeDate(id, date) {
+    print("im in getEmployeeDate");
+    getdateAttendEmployee(id, date).then((value) {
+      DateEmployee = [];
+      DateEmployee = value;
+      print(DateEmployee);
+      emit(InsertDateEmployeeError());
+    });
+  }
+  Future insertIntoEmployee() async {
+    await dataBase.transaction((txn) {
+      txn
+          .rawInsert(
+          'INSERT INTO Employee(Name,Salary,HireDate,AttendanceDate,LeavingDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}","${AttendanceDateOfEmpolyees.text}","${LeavingDateOfEmpolyees.text}")')
+          .then((value) {
+        print("$value insertetd sucsseffly");
+        GetDataEmployee(dataBase);
+        NameOfEmpolyees.clear();
+        SalaryOfEmpolyees.clear();
+        HireDateOfEmpolyees.clear();
+        emit(InsertEmployeeSuccessfully());
+      }).catchError((error) {
+        print(" the error is ${error.toString()}");
+        emit(InsertEmployeeError());
+      });
+      return getname();
+    });
+  }
+  Future insertIntoEmployeeAttendance({required id}) async {
+    return dataBase.transaction((txn) {
+      txn
+          .rawInsert(
+        //(
+        // (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,TotalTime TEXT,TotalSalary DOUBLE,DataTimeDay TEXT)')
+          'INSERT INTO EmployeeAttendance(id,AttendanceDate,LeavingDate,DataTimeDay)VALUES'
+              '("$id","${AttendanceDate.text}","${LeavingDate.text}","${DateFormat.yMMMd().format(DateTime.now())}")')
+          .then((value) {
+        print("$value insertetd sucsseffly");
+        getEmployeeDate(id, DateTime.now());
+        emit(InsertDateEmployeeSuccessfully());
+      }).catchError((error) {
+        print(" the error is ${error.toString()}");
+        emit(InsertDateEmployeeError());
+      });
+      return getname();
+    });
+  }
+  Future<List<Map>> getdateAttendEmployee(id, date) async {
+    return await dataBase
+        .rawQuery('SELECT*FROM EmployeeAttendance WHERE id = ?', ["$id"]);
+  }
+  void DeleteEmployee(id) async {
+    print("value");
+
+    await dataBase
+        .rawDelete('DELETE FROM Employee WHERE id=? ', [id]).then((value) {
+      print("$value");
+      DeleteEmpoAttends(id);
+      emit(deleteEmpo());
+    }).catchError((error) {
+      print(error);
+    });
+  }
+  void DeleteEmpoAttends(id) async {
+    await dataBase
+        .rawDelete('DELETE FROM EmployeeAttendance WHERE id=? ', [id])
+        .then((value) {})
+        .catchError((error) {
+      print(error);
+    });
+  }
+  void ChangeValueOfEmployee(value) {
+    valueEmpo = value;
+    print("$valueEmpo");
+    emit(ChangeEmpo());
+  }
+   //Suppliers
+  Future<List<Map>> getDataSuppliers(dataBase) async {
+    return await dataBase.rawQuery('SELECT*FROM Suppliers');
+  }
+  Future insertIntoSuppliers() async {
+    TotalOfSupllayers = double.parse(CostOfInvoice.text);
+    await dataBase.transaction((txn) {
+      txn
+          .rawInsert(
+          'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
+          .then((value) {
+        print("$value insertetd sucsseffly");
+        emit(InsertProductSuccessfully());
+        getSuppliersAfterChange();
+        NameOfSupllayers.clear();
+        CostOfInvoice.clear();
+        PaidOfInvoice.clear();
+        DateOfSupllayers.clear();
+      }).catchError((error) {
+        print(" the error is ${error.toString()}");
+        emit(InsertProductError());
+      });
+      return getname();
+    });
+  }
+  Future<List<Map>> getDataFees(dataBase) async {
+    return await dataBase.rawQuery('SELECT*FROM Fees');
+  }
+  Future insertIntoFees(id) async {
+    payedMoney = payedMoney + double.parse(paidOfFees.text);
+    totalMoney = AllMoneyGet - payedMoney;
+    TotalOfSupllayers =
+        Supplayer[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
+    if (TotalOfSupllayers >= 0) {
+      await dataBase.transaction((txn) {
+        txn
+            .rawInsert(
+            'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${Supplayer[value - 1]["Name"]}","${paidOfFees.text}","$TotalOfSupllayers","${dateOfFees.text}")')
+            .then((value) {
+          getFeesAfterChange();
+          updateSuppliers(id);
+          paidOfFees.clear();
+          dateOfFees.clear();
+
+          print("$value insertetd sucsseffly");
+          emit(InsertProductSuccessfully());
+        }).catchError((error) {
+          print(" the error is ${error.toString()}");
+          emit(InsertProductError());
+        });
+        return getname();
+      });
+    } else {
+      isMoreThanTotalMoney = true;
+      emit(InsertProductError());
+    }
+  }
+  void getSuppliersAfterChange() {
+    getDataSuppliers(dataBase).then((value) {
+      Supplayer = [];
+      Supplayer = value;
+      print(Supplayer);
+      emit(GetDataSupplayersSuccessfully());
+    });
+  }
+  void getFeesAfterChange() {
+    getDataFees(dataBase).then((value) {
+      fees = [];
+      fees = value;
+      print(fees);
+      emit(GetDataSupplayersSuccessfully());
+    });
+  }
+  void updateSuppliers(id) {
+    dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
+        [TotalOfSupllayers, id]);
+    dataBase.rawUpdate('UPDATE Suppliers SET LastPaid=? WHERE id=? ',
+        [double.parse(paidOfFees.text), id]);
+    dataBase.rawUpdate(
+        'UPDATE Suppliers SET LastDate=? WHERE id=? ', [dateOfFees.text, id]);
+    getFeesAfterChange();
+    getSuppliersAfterChange();
+    emit(UpdateProducts());
+  }
+  void updateSuppliersAfterAdd(id) {
+    var totalSuppliersAfterAdd =
+        Supplayer[id - 1]["TotalSuppliers"] + double.parse(paidOfFees.text);
+    dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
+        [totalSuppliersAfterAdd, id]);
+    paidOfFees.clear();
+    dateOfFees.clear();
+    getSuppliersAfterChange();
+    emit(UpdateProducts());
+  }
+  //Orders
+  Future<List<Map>> getOrders(value) async {
+    return await dataBase
+        .rawQuery('SELECT*FROM Orders WHERE NumberOrder = ?', ["$value"]);
+  }
+  Future<List<Map>> getAllOrders(dataBase) async {
+    return await dataBase.rawQuery('SELECT*FROM Orders');
+  }
   Future RecordOrder() async {
     AllMoneyGet = AllMoneyGet + total;
     totalMoney = AllMoneyGet - payedMoney;
@@ -332,7 +649,7 @@ class CasherCuibt extends Cubit<CasherState> {
             .rawInsert(
                 'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder,AllMoney)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder","$AllMoneyGet")')
             .then((value) {
-          updateProdctsARecord(
+          updateProductsARecord(
               Code: e["code"],
               Number: e["NumberInStore"] - e["Num"],
               price: e["price"]);
@@ -355,233 +672,18 @@ class CasherCuibt extends Cubit<CasherState> {
 
     emit(RecordOrderSuccessfullyl());
   }
-
-  Future insertIntoSupplayers() async {
-    TotalOfSupllayers = double.parse(CostOfInvoice.text);
-    await dataBase.transaction((txn) {
-      txn
-          .rawInsert(
-              'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
-          .then((value) {
-        print("$value insertetd sucsseffly");
-        emit(InsertProductSuccessfully());
-        getSuppliersAfterChange();
-        NameOfSupllayers.clear();
-        CostOfInvoice.clear();
-        PaidOfInvoice.clear();
-        DateOfSupllayers.clear();
-      }).catchError((error) {
-        print(" the error is ${error.toString()}");
-        emit(InsertProductError());
-      });
-      return getname();
-    });
-  }
-
-  Future insertIntoFees(id) async {
-    payedMoney = payedMoney + double.parse(paidOfFees.text);
-    totalMoney = AllMoneyGet - payedMoney;
-    TotalOfSupllayers =
-        Supplayer[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
-    if (TotalOfSupllayers >= 0) {
-      await dataBase.transaction((txn) {
-        txn
-            .rawInsert(
-                'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${Supplayer[value - 1]["Name"]}","${paidOfFees.text}","$TotalOfSupllayers","${dateOfFees.text}")')
-            .then((value) {
-          getFeesAfterChange();
-          updateSuppliers(id);
-          paidOfFees.clear();
-          dateOfFees.clear();
-
-          print("$value insertetd sucsseffly");
-          emit(InsertProductSuccessfully());
-        }).catchError((error) {
-          print(" the error is ${error.toString()}");
-          emit(InsertProductError());
-        });
-        return getname();
-      });
-    } else {
-      isMoreThanTotalMoney = true;
-      emit(InsertProductError());
+  void deleteItemFOrders(context) {
+    orders.removeAt(Index!);
+    DChangeNumberItem = true;
+    total = 0.0;
+    for (int l = 0; l < orders.length; l++) {
+      total = orders[l]["TotalMoney"] + total;
     }
+    CodeOfProduct.clear();
+    NameOfProduct.clear();
+    NumberOfProduct.clear();
+    emit(DeleteItemOrder());
   }
-
-  Future insertIntoEmpolyees() async {
-    await dataBase.transaction((txn) {
-      txn
-          .rawInsert(
-              'INSERT INTO Employee(Name,Salary,HireDate,AttendanceDate,LeavingDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}","${AttendanceDateOfEmpolyees.text}","${LeavingDateOfEmpolyees.text}")')
-          .then((value) {
-        print("$value insertetd sucsseffly");
-        GetDataEmpolyee(dataBase);
-        NameOfEmpolyees.clear();
-        SalaryOfEmpolyees.clear();
-        HireDateOfEmpolyees.clear();
-        emit(InsertEmployeeSuccessfully());
-      }).catchError((error) {
-        print(" the error is ${error.toString()}");
-        emit(InsertEmployeeError());
-      });
-      return getname();
-    });
-  }
-
-  Future insertIntoEmployeeAttendance({required id}) async {
-    return dataBase.transaction((txn) {
-      txn
-          .rawInsert(
-              //(
-              // (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,TotalTime TEXT,TotalSalary DOUBLE,DataTimeDay TEXT)')
-              'INSERT INTO EmployeeAttendance(id,AttendanceDate,LeavingDate,DataTimeDay)VALUES'
-              '("$id","${AttendanceDate.text}","${LeavingDate.text}","${DateFormat.yMMMd().format(DateTime.now())}")')
-          .then((value) {
-        print("$value insertetd sucsseffly");
-        getEmployeeDate(id, DateTime.now());
-        emit(InsertDateEmployeeSuccessfully());
-      }).catchError((error) {
-        print(" the error is ${error.toString()}");
-        emit(InsertDateEmployeeError());
-      });
-      return getname();
-    });
-  }
-
-  void getProductsAfterChange() {
-    getDataProducts(dataBase).then((value) {
-      Products = [];
-      Products = value;
-      print(Products);
-      emit(GetDataProductsSuccessfully());
-    });
-  }
-
-  void getSuppliersAfterChange() {
-    getDataSupplayers(dataBase).then((value) {
-      Supplayer = [];
-      Supplayer = value;
-      print(Supplayer);
-      emit(GetDataSupplayersSuccessfully());
-    });
-  }
-
-  void getFeesAfterChange() {
-    getDataFees(dataBase).then((value) {
-      fees = [];
-      fees = value;
-      print(fees);
-      emit(GetDataSupplayersSuccessfully());
-    });
-  }
-
-  Future<String> getname() async => ("youssef ahmed ");
-
-  void cahnge() {
-    emit(SetState());
-  }
-
-  void insertValueIntoControlar(e) {
-    NameOfItem.text = e["Name"];
-    CodeOfItem.text = e["Code"];
-    PriceOfItem.text = e["Price"].toString();
-    NumberOfItem.text = e["NumberInStore"].toString();
-    StartDate.text = e["StartDate"].toString();
-    EndDate.text = e["EndDate"].toString();
-    id = e["id"];
-
-    emit(InsertValueIntoControlar());
-  }
-
-  void updateProdcts() {
-    dataBase.rawUpdate('UPDATE Products SET Price=? WHERE Code=? ',
-        [PriceOfItem.text, CodeOfItem.text]);
-    dataBase.rawUpdate('UPDATE Products SET NumberInStore=? WHERE Code=? ',
-        [NumberOfItem.text, CodeOfItem.text]);
-    dataBase.rawUpdate('UPDATE Products SET Name=? WHERE Code=? ',
-        [NameOfItem.text, CodeOfItem.text]);
-    dataBase.rawUpdate('UPDATE Products SET StartDate=? WHERE Code=? ',
-        [StartDate.text, CodeOfItem.text]);
-    dataBase.rawUpdate('UPDATE Products SET EndDate=? WHERE Code=? ',
-        [EndDate.text, CodeOfItem.text]);
-    getProductsAfterChange();
-    getSearchItem(NameOfSearch.text);
-    emit(UpdateProducts());
-  }
-
-  void updateProdctsARecord({Number, Code, price}) {
-    dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ', [1, Code]);
-    dataBase.rawUpdate(
-        'UPDATE Products SET NumberInStore=? WHERE Code=? ', [Number, Code]);
-    dataBase.rawUpdate(
-        'UPDATE Products SET TotalMoney=? WHERE Code=? ', [price, Code]);
-    getProductsAfterChange();
-    emit(UpdateProducts());
-  }
-
-  void updateSuppliers(id) {
-    dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
-        [TotalOfSupllayers, id]);
-    dataBase.rawUpdate('UPDATE Suppliers SET LastPaid=? WHERE id=? ',
-        [double.parse(paidOfFees.text), id]);
-    dataBase.rawUpdate(
-        'UPDATE Suppliers SET LastDate=? WHERE id=? ', [dateOfFees.text, id]);
-    getFeesAfterChange();
-    getSuppliersAfterChange();
-    emit(UpdateProducts());
-  }
-
-  void updateSuppliersAfterAdd(id) {
-    var totalSuppliersAfterAdd =
-        Supplayer[id - 1]["TotalSuppliers"] + double.parse(paidOfFees.text);
-    dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
-        [totalSuppliersAfterAdd, id]);
-    paidOfFees.clear();
-    dateOfFees.clear();
-    getSuppliersAfterChange();
-    emit(UpdateProducts());
-  }
-
-  void deleteProducts() async {
-    await dataBase.rawDelete(
-        'DELETE FROM Products WHERE Code=? ', [CodeOfItem.text]).then((value) {
-      getProductsAfterChange();
-      getSearchItem(NameOfSearch.text);
-    });
-    CodeOfItem.clear();
-    NameOfItem.clear();
-    NumberOfItem.clear();
-    PriceOfItem.clear();
-    EndDate.clear();
-    StartDate.clear();
-    id = null;
-    emit(DeleteProducts());
-  }
-
-  Future SureItemNotFound() async {
-    getItemProducts(dataBase, CodeOfItem.text).then((value) {
-      if (value.isNotEmpty) {
-        DisableInsertButton = false;
-        print("$DisableInsertButton it isss");
-        emit(SureItemFound());
-      } else {
-        DisableInsertButton = true;
-      }
-      emit(SureItemFound());
-    });
-  }
-
-  void ChangePageIntoCashier() {
-    bodyIndex = 0;
-    emit(returnToPage());
-  }
-
-  void ChangePageIntoAddItem() {
-    bodyIndex = 1;
-    AlertItemNFound = false;
-    emit(returnToPage());
-  }
-
   void GetItem() {
     if (DChangeNumberItem) {
       if (orders.isEmpty ||
@@ -620,64 +722,6 @@ class CasherCuibt extends Cubit<CasherState> {
       UpdeteNumAfterChange();
     }
   }
-
-  void InsertValueItem(
-      {NameOFItem, codeOFItem, NumberOFItem, Price, id, index}) {
-    NameOfProduct.text = NameOFItem;
-    CodeOfProduct.text = codeOFItem;
-    DChangeNumberItem = false;
-    idOfChange = id;
-    price = Price;
-    Index = index;
-    emit(InsertIntoCashier());
-  }
-
-  void deleteItemFOrders(context) {
-    orders.removeAt(Index!);
-    DChangeNumberItem = true;
-    total = 0.0;
-    for (int l = 0; l < orders.length; l++) {
-      total = orders[l]["TotalMoney"] + total;
-    }
-    CodeOfProduct.clear();
-    NameOfProduct.clear();
-    NumberOfProduct.clear();
-    emit(DeleteItemOrder());
-  }
-
-  void UpdeteNumAfterChange() {
-    dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
-        [NumberOfProduct.text, CodeOfProduct.text]);
-    dataBase.rawUpdate('UPDATE Products SET TotalMoney=? WHERE Code=? ',
-        [double.parse(NumberOfProduct.text) * price!, CodeOfProduct.text]);
-    total = total - orders[Index!]["TotalMoney"];
-    orders.removeAt(Index!);
-    DChangeNumberItem = true;
-    GetItem();
-    emit(UpdateNumItem());
-  }
-
-  void changeSelected(bool) {
-    selected = bool;
-    emit(ChangeSelected());
-  }
-
-  void getSearchItem(valuee) {
-    getItemSProductsSearch(dataBase, valuee).then((value) {
-      SearchProducts = [];
-      SearchProducts = value;
-      emit(GetSearchItem());
-    });
-  }
-
-  void calcTotalOfRecite() {
-    TotalOfRecite = 0.0;
-    for (var element in recordedOrders) {
-      TotalOfRecite = element["TotalMoney"] + TotalOfRecite;
-    }
-    emit(calcRiciet());
-  }
-
   void getRecite(Text) {
     getOrders(Text).then((value) {
       recordedOrders = [];
@@ -686,36 +730,23 @@ class CasherCuibt extends Cubit<CasherState> {
       emit(GetRecites());
     });
   }
-
-  var valueEmpo;
-
-  void ChangeValueOFEmpo(value) {
-    valueEmpo = value;
-    print("$valueEmpo");
-    emit(ChangeEmpo());
+  void calcTotalOfRecite() {
+    TotalOfRecite = 0.0;
+    for (var element in recordedOrders) {
+      TotalOfRecite = element["TotalMoney"] + TotalOfRecite;
+    }
+    emit(calcRiciet());
   }
 
-  void DeleteEmpo(id) async {
-    print("value");
 
-    await dataBase
-        .rawDelete('DELETE FROM Employee WHERE id=? ', [id]).then((value) {
-      print("$value");
-      DeleteEmpoAttends(id);
-      emit(deleteEmpo());
-    }).catchError((error) {
-      print(error);
-    });
-  }
 
-  void DeleteEmpoAttends(id) async {
-    await dataBase
-        .rawDelete('DELETE FROM EmployeeAttendance WHERE id=? ', [id])
-        .then((value) {})
-        .catchError((error) {
-          print(error);
-        });
-  }
+
+
+
+  Future<String> getname() async => ("youssef ahmed ");
+
+
+
 
   void createUserProfile({
     required String name,
@@ -745,6 +776,7 @@ class CasherCuibt extends Cubit<CasherState> {
     });
   }
 
+  //Firebase auth
   void createNewUser(context) {
     FirebaseAuth.instance
         .signUp(emailController.text, passController.text)
@@ -783,11 +815,16 @@ class CasherCuibt extends Cubit<CasherState> {
       emit(SignInFa(onError.toString()));
     });
   }
-void RessetPassword(context) {
-    FirebaseAuth.instance.resetPassword(RestEmailController.text).whenComplete(() => Nevigator(bool: false,context: context,page: Login()));
+
+  void RessetPassword(context) {
+    FirebaseAuth.instance.resetPassword(RestEmailController.text).whenComplete(
+        () => Nevigator(bool: false, context: context, page: Login()));
   }
+
   void Logout() {
     Hive.box("Token").delete("Token");
     emit(SignOut());
   }
+
+
 }

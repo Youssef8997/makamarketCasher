@@ -84,7 +84,7 @@ class _EmpoloyeState extends State<Empoloye> {
                   }).toList(),
                   onChanged: (Object? value)
                       {
-                        cuibt.ChangeValueOFEmpo(value);
+                        cuibt.ChangeValueOfEmployee(value);
 
                       },
                   value: cuibt.valueEmpo,
@@ -160,7 +160,7 @@ class _EmpoloyeState extends State<Empoloye> {
               child: const Text("Remove employee",
                   style: TextStyle(color: Colors.white)),
               OnPreesed: () {
-                cuibt.DeleteEmpo(cuibt.valueEmpo);
+                cuibt.DeleteEmployee(cuibt.valueEmpo);
               },            ),
             myButton(
               child: const Text("Edit Information",

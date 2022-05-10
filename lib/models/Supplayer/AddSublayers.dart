@@ -97,7 +97,7 @@ class InputSupplayers extends StatelessWidget {
               child: MaterialButton(
                 onPressed: () {
                   if (cuibt.SublayersKeyForm.currentState!.validate()) {
-                    cuibt.insertIntoSupplayers().then((value) => Navigator.pop(context));
+                    cuibt.insertIntoSuppliers().then((value) => Navigator.pop(context));
                   }
 
                 },

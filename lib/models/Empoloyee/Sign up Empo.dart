@@ -137,7 +137,7 @@ class SignUpEmpo extends StatelessWidget {
               child: MaterialButton(
                 onPressed: () {
                   if (cuibt.AddEmpoKey.currentState!.validate()) {
-                    cuibt.insertIntoEmpolyees().then((value) => Navigator.pop(context));
+                    cuibt.insertIntoEmployee().then((value) => Navigator.pop(context));
                   }
 
                 },

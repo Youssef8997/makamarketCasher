@@ -42,6 +42,7 @@ class deleteEmpo extends CasherState{}
 class ChangeObs extends CasherState{}
 
 //FirebaseState
+//Firebase Auth State
 class CreateBaseUserProfileTr extends CasherState{}
 class CreateBaseUserProfileFa extends CasherState{
   final String error;
@@ -52,5 +53,11 @@ class SignInFa extends CasherState{
   final Error;
   SignInFa(this.Error);}
 class SignOut extends CasherState{}
+//Firebase store State
+class InsertProductTr extends CasherState{}
+class InsertProductFa extends CasherState{
+  final Error;
+  InsertProductFa(this.Error);
+}
 
 

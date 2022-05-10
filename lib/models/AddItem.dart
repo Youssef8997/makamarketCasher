@@ -258,7 +258,7 @@ class AddItem extends StatelessWidget {
                     child: MaterialButton(
                       onPressed: () {
                         if (cuibt.kayform.currentState!.validate()) {
-                          cuibt.updateProdcts();
+                          cuibt.updateProducts();
                         }
                       },
                       child: const Text("Edit",
