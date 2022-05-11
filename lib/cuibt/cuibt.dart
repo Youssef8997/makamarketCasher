@@ -20,6 +20,7 @@ import 'package:untitled6/models/Items.dart';
 import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
+import 'package:untitled6/module/Suppliers.dart';
 import 'package:untitled6/module/user_module.dart';
 import '../HomeLayout/HomeLayout.dart';
 import '../module/Product module.dart';
@@ -33,13 +34,15 @@ class CasherCuibt extends Cubit<CasherState> {
   List Products = [];
   List NewProducts = [];
   List SearchProducts = [];
-  List Supplayer = [];
+  List Suppliers = [];
+  List NewSuppliers = [];
   List orders = [];
   List recordedOrders = [];
   List employee = [];
   List DateEmployee = [];
   double TotalOfRecite = 0.0;
   List fees = [];
+  List NewFees = [];
   int bodyIndex = 0;
   bool Search = false;
   var value;
@@ -156,7 +159,6 @@ class CasherCuibt extends Cubit<CasherState> {
   void cahnge() {
     emit(SetState());
   }
-
   void insertValueIntoControlar(e) {
     NameOfItem.text = e["Name"];
     CodeOfItem.text = e["Code"];
@@ -168,26 +170,16 @@ class CasherCuibt extends Cubit<CasherState> {
 
     emit(InsertValueIntoControlar());
   }
-
-
-
-
-
-
   void ChangePageIntoCashier() {
     bodyIndex = 0;
     emit(returnToPage());
   }
-
   void ChangePageIntoAddItem() {
     bodyIndex = 1;
     AlertItemNFound = false;
     emit(returnToPage());
   }
-
-
-  void InsertValueItem(
-      {NameOFItem, codeOFItem, NumberOFItem, Price, id, index}) {
+  void InsertValueItem({NameOFItem, codeOFItem, NumberOFItem, Price, id, index}) {
     NameOfProduct.text = NameOFItem;
     CodeOfProduct.text = codeOFItem;
     DChangeNumberItem = false;
@@ -196,48 +188,34 @@ class CasherCuibt extends Cubit<CasherState> {
     Index = index;
     emit(InsertIntoCashier());
   }
-
-
-
   void changeSelected(bool) {
     selected = bool;
     emit(ChangeSelected());
   }
-
-
-
-
-
   void changeObs() {
     isObserer = !isObserer;
     emit(ChangeObs());
   }
-
   void ChangeMyIndex(value) {
     bodyIndex = value;
     emit(ChangeIndex());
   }
-
   void AddItemChangeSearch() {
     Search = !Search;
     emit(ChangeSearchAbilty());
   }
-
   void ItemSChangeSearch() {
     ItemsSearch = !ItemsSearch;
     emit(ChangeSearchAbilty());
   }
-
   void ChangeValue(valuee) {
     value = valuee;
     emit(ChangeValuee());
   }
-
   void ChangeStoreValue(valuee) {
     storeValue = valuee;
     emit(ChangeValuee());
   }
-
   void createDataBase() async {
     dataBase = await openDatabase("ew.db", version: 1,
         onCreate: (dataBase, version) {
@@ -264,8 +242,8 @@ class CasherCuibt extends Cubit<CasherState> {
           });
         }, onOpen: (dataBase) {
           getDataSuppliers(dataBase).then((value) {
-            Supplayer = [];
-            Supplayer = value;
+            Suppliers = [];
+            Suppliers = value;
           });
           getDataProducts(dataBase).then((value) {
             Products = [];
@@ -293,8 +271,7 @@ class CasherCuibt extends Cubit<CasherState> {
       emit(GetDataProductsBaseError());
     });
   }
-
-// products Methods{
+//// products Methods{
   Future<List<Map>> getDataProducts(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Products');
   }
@@ -538,7 +515,7 @@ class CasherCuibt extends Cubit<CasherState> {
     print("$valueEmpo");
     emit(ChangeEmpo());
   }
-   //Suppliers
+ ///Suppliers
   Future<List<Map>> getDataSuppliers(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Suppliers');
   }
@@ -549,8 +526,10 @@ class CasherCuibt extends Cubit<CasherState> {
           .rawInsert(
           'INSERT INTO Suppliers(Name,LastPaid,TotalSuppliers,LastDate)VALUES("${NameOfSupllayers.text}","${PaidOfInvoice.text}","$TotalOfSupllayers","${DateOfSupllayers.text}")')
           .then((value) {
-        print("$value insertetd sucsseffly");
-        emit(InsertProductSuccessfully());
+        getDataSuppliersEspcially(dataBase,value).then((value) {
+          NewSuppliers.add(value.single);
+          uploadNewSuppliers();
+          });
         getSuppliersAfterChange();
         NameOfSupllayers.clear();
         CostOfInvoice.clear();
@@ -570,12 +549,12 @@ class CasherCuibt extends Cubit<CasherState> {
     payedMoney = payedMoney + double.parse(paidOfFees.text);
     totalMoney = AllMoneyGet - payedMoney;
     TotalOfSupllayers =
-        Supplayer[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
+        Suppliers[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
     if (TotalOfSupllayers >= 0) {
       await dataBase.transaction((txn) {
         txn
             .rawInsert(
-            'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${Supplayer[value - 1]["Name"]}","${paidOfFees.text}","$TotalOfSupllayers","${dateOfFees.text}")')
+            'INSERT INTO Fees(Name,Paid,TotalSuppliers,LastDate)VALUES("${Suppliers[value - 1]["Name"]}","${paidOfFees.text}","$TotalOfSupllayers","${dateOfFees.text}")')
             .then((value) {
           getFeesAfterChange();
           updateSuppliers(id);
@@ -597,9 +576,9 @@ class CasherCuibt extends Cubit<CasherState> {
   }
   void getSuppliersAfterChange() {
     getDataSuppliers(dataBase).then((value) {
-      Supplayer = [];
-      Supplayer = value;
-      print(Supplayer);
+      Suppliers = [];
+      Suppliers = value;
+      print(Suppliers);
       emit(GetDataSupplayersSuccessfully());
     });
   }
@@ -624,7 +603,7 @@ class CasherCuibt extends Cubit<CasherState> {
   }
   void updateSuppliersAfterAdd(id) {
     var totalSuppliersAfterAdd =
-        Supplayer[id - 1]["TotalSuppliers"] + double.parse(paidOfFees.text);
+        Suppliers[id - 1]["TotalSuppliers"] + double.parse(paidOfFees.text);
     dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
         [totalSuppliersAfterAdd, id]);
     paidOfFees.clear();
@@ -632,6 +611,60 @@ class CasherCuibt extends Cubit<CasherState> {
     getSuppliersAfterChange();
     emit(UpdateProducts());
   }
+  Future<List<Map>> getDataSuppliersEspcially(dataBase, id) async {
+    return await dataBase.rawQuery('SELECT*FROM Suppliers WHERE id=?', [id]);
+  }
+
+  //Fire base
+  void uploadNewSuppliers() {
+    print("this is upload $NewSuppliers");
+    for (var element in NewSuppliers) {
+     SuppliersModule?  Suppliers = SuppliersModule(
+        name: element["Name"],
+   id: element["id"],
+       TotalSuppliers: element["TotalSuppliers"],
+       LastPaid: element["LastPaid"],
+       feesDate: element["LastDate"],
+      );
+      Firestore.instance
+          .collection("Users")
+          .document(box.get("Token"))
+          .collection("Suppliers")
+          .document("${element["Name"]}")
+          .set(Suppliers.toJson())
+          .then((value) {
+        NewSuppliers.remove(element);
+        emit(InsertSuppliersTr());
+      }).catchError((onError) {
+        emit(InsertSuppliersFa(onError.toString()));
+      });
+    }
+  }
+  void uploadNewFess() {
+    print("this is upload $NewFees");
+    for (var element in NewSuppliers) {
+     SuppliersModule?  Suppliers = SuppliersModule(
+        name: element["Name"],
+   id: element["id"],
+       TotalSuppliers: element["TotalSuppliers"],
+       LastPaid: element["LastPaid"],
+       feesDate: element["LastDate"],
+      );
+      Firestore.instance
+          .collection("Users")
+          .document(box.get("Token"))
+          .collection("Suppliers")
+          .document("${element["Name"]}")
+          .set(Suppliers.toJson())
+          .then((value) {
+        NewSuppliers.remove(element);
+        emit(InsertSuppliersTr());
+      }).catchError((onError) {
+        emit(InsertSuppliersFa(onError.toString()));
+      });
+    }
+  }
+
   //Orders
   Future<List<Map>> getOrders(value) async {
     return await dataBase

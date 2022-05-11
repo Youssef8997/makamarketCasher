@@ -60,4 +60,8 @@ class InsertProductFa extends CasherState{
   InsertProductFa(this.Error);
 }
 
-
+class InsertSuppliersTr extends CasherState{}
+class InsertSuppliersFa extends CasherState{
+  final Error;
+  InsertSuppliersFa(this.Error);
+}

@@ -55,7 +55,7 @@ int? indexl;
             child: DropdownButton(
 
               alignment: AlignmentDirectional.center,
-              items: cuibt.Supplayer.map((e) {
+              items: cuibt.Suppliers.map((e) {
                 return DropdownMenuItem(
                   child: Text("${e["Name"]}"),
                   value: e["id"],
@@ -70,7 +70,7 @@ int? indexl;
         Expanded(
             child: ListView.separated(
                 itemBuilder: (context,index) {
-                  if(cuibt.fees[index]["Name"]==cuibt.Supplayer[cuibt.value-1]["Name"]) {
+                  if(cuibt.fees[index]["Name"]==cuibt.Suppliers[cuibt.value-1]["Name"]) {
                     return  feesContainer(Size, cuibt.fees[index]);
                   }
                   else {
@@ -115,7 +115,7 @@ int? indexl;
                         bool: true,
                         context: context,
                         page: PayFees(
-                          NameOfSupllayers: cuibt.Supplayer[cuibt.value - 1]
+                          NameOfSupllayers: cuibt.Suppliers[cuibt.value - 1]
                               ["Name"],
                           id: cuibt.value,
                         ));
@@ -138,7 +138,7 @@ int? indexl;
                   borderRadius: BorderRadius.circular(25.0),
                 ),
                 child: MaterialButton(
-                  onPressed: () {Nevigator(page: AddMoney(NameOfSupllayers: cuibt.Supplayer[cuibt.value - 1]
+                  onPressed: () {Nevigator(page: AddMoney(NameOfSupllayers: cuibt.Suppliers[cuibt.value - 1]
                   ["Name"],id: cuibt.value, ),context: context,bool: true);},
                   child: const Text("Increases money",
                       style: TextStyle(color: Colors.white)),
