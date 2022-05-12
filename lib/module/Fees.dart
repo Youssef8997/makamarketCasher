@@ -1,19 +1,18 @@
-//' (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
 class FeesModule {
   String? name;
   int?id;
-  double? LastPaid;
-  double? TotalFees;
+  double? TotalSuppliers;
+  double? Paid;
   String? feesDate;
 
   FeesModule(
-      {this.name, this.id, this.LastPaid, this.TotalFees, this.feesDate});
+      {this.name, this.id, this.TotalSuppliers, this.Paid, this.feesDate});
 
   FeesModule.fromJson(Map<String, dynamic> json){
     name = json['name'];
     id= json['id'];
-    LastPaid = json['LastPaid'];
-    TotalFees = json['TotalFees'];
+    TotalSuppliers = json['TotalSuppliers'];
+    Paid = json['Paid'];
     feesDate = json['feesDate'];
   }
 
@@ -22,8 +21,8 @@ class FeesModule {
     return {
       'name':name,
       'id':id,
-      'LastPaid':LastPaid,
-      'TotalFees':TotalFees,
+      'TotalSuppliers':TotalSuppliers,
+      'Paid':Paid,
       'feesDate':feesDate,
     };
   }

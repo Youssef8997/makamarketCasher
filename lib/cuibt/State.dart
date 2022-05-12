@@ -65,3 +65,9 @@ class InsertSuppliersFa extends CasherState{
   final Error;
   InsertSuppliersFa(this.Error);
 }
+
+class InsertFeesTr extends CasherState{}
+class InsertFeesFa extends CasherState{
+  final Error;
+  InsertFeesFa(this.Error);
+}
