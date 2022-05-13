@@ -71,3 +71,13 @@ class InsertFeesFa extends CasherState{
   final Error;
   InsertFeesFa(this.Error);
 }
+class InsertEmployeeTr extends CasherState{}
+class InsertEmployeeFa extends CasherState{
+  final Error;
+  InsertEmployeeFa(this.Error);
+}
+class InsertDateEmployeeTr extends CasherState{}
+class InsertDateEmployeeFa extends CasherState{
+  final Error;
+  InsertDateEmployeeFa(this.Error);
+}

@@ -20,11 +20,13 @@ import 'package:untitled6/models/Items.dart';
 import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
+import 'package:untitled6/module/Employee.dart';
 import 'package:untitled6/module/Suppliers.dart';
 import 'package:untitled6/module/user_module.dart';
 import '../HomeLayout/HomeLayout.dart';
 import '../module/Fees.dart';
 import '../module/Product module.dart';
+import '../module/dateEmpo.dart';
 
 class CasherCuibt extends Cubit<CasherState> {
   CasherCuibt() : super(initState());
@@ -40,7 +42,9 @@ class CasherCuibt extends Cubit<CasherState> {
   List orders = [];
   List recordedOrders = [];
   List employee = [];
+  List NewEmployee = [];
   List DateEmployee = [];
+  List NewDateEmployee = [];
   double TotalOfRecite = 0.0;
   List fees = [];
   List NewFees = [];
@@ -443,7 +447,7 @@ class CasherCuibt extends Cubit<CasherState> {
     }
   }
 
-  //employee
+  //employee Methods
   Future<List<Map>> getDataEmployee(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Employee');
   }
@@ -460,9 +464,8 @@ class CasherCuibt extends Cubit<CasherState> {
     });
   }
 
-  void getEmployeeDate(id, date) {
-    print("im in getEmployeeDate");
-    getdateAttendEmployee(id, date).then((value) {
+  void getEmployeeDate(id) {
+    getdateAttendEmployee(id).then((value) {
       DateEmployee = [];
       DateEmployee = value;
       print(DateEmployee);
@@ -476,7 +479,10 @@ class CasherCuibt extends Cubit<CasherState> {
           .rawInsert(
               'INSERT INTO Employee(Name,Salary,HireDate,AttendanceDate,LeavingDate)VALUES("${NameOfEmpolyees.text}","${SalaryOfEmpolyees.text}","${HireDateOfEmpolyees.text}","${AttendanceDateOfEmpolyees.text}","${LeavingDateOfEmpolyees.text}")')
           .then((value) {
-        print("$value insertetd sucsseffly");
+        getDataEmployeeEspcially(dataBase, value).then((value) {
+          NewEmployee.add(value.single);
+          uploadNewEmployee();
+        });
         GetDataEmployee(dataBase);
         NameOfEmpolyees.clear();
         SalaryOfEmpolyees.clear();
@@ -495,12 +501,14 @@ class CasherCuibt extends Cubit<CasherState> {
       txn
           .rawInsert(
               //(
-              // (id INTEGER,AttendanceDate TEXT,delayTime TEXT,LeavingDate Text,OverTime TEXT,TotalTime TEXT,TotalSalary DOUBLE,DataTimeDay TEXT)')
               'INSERT INTO EmployeeAttendance(id,AttendanceDate,LeavingDate,DataTimeDay)VALUES'
               '("$id","${AttendanceDate.text}","${LeavingDate.text}","${DateFormat.yMMMd().format(DateTime.now())}")')
           .then((value) {
-        print("$value insertetd sucsseffly");
-        getEmployeeDate(id, DateTime.now());
+        getdateAttendEmployee(id).then((value) {
+          NewDateEmployee.add(value.last);
+          uploadNewAttendedEmployee();
+        });
+        getEmployeeDate(id);
         emit(InsertDateEmployeeSuccessfully());
       }).catchError((error) {
         print(" the error is ${error.toString()}");
@@ -510,7 +518,7 @@ class CasherCuibt extends Cubit<CasherState> {
     });
   }
 
-  Future<List<Map>> getdateAttendEmployee(id, date) async {
+  Future<List<Map>> getdateAttendEmployee(id) async {
     return await dataBase
         .rawQuery('SELECT*FROM EmployeeAttendance WHERE id = ?', ["$id"]);
   }
@@ -543,7 +551,60 @@ class CasherCuibt extends Cubit<CasherState> {
     emit(ChangeEmpo());
   }
 
-  ///Suppliers
+  //Fire base
+  void uploadNewEmployee() {
+    print("this is upload $NewEmployee");
+    for (var element in NewEmployee) {
+      EmployeeModule? Employee = EmployeeModule(
+        name: element["Name"],
+        id: element["id"],
+        Salary: element["Salary"],
+        HireDate: element["HireDate"],
+        LeavingDate: element["LeavingDate"],
+        AttendanceDate: element["AttendanceDate"],
+      );
+      Firestore.instance
+          .collection("Users")
+          .document(box.get("Token"))
+          .collection("Employee")
+          .document("${element["id"]}")
+          .set(Employee.toJson())
+          .then((value) {
+        NewEmployee.remove(element);
+        emit(InsertEmployeeTr());
+      }).catchError((onError) {
+        emit(InsertEmployeeFa(onError.toString()));
+      });
+    }
+  }
+
+  void uploadNewAttendedEmployee() {
+    print("this is upload $NewDateEmployee");
+    for (var element in NewDateEmployee) {
+      EmployeeDateModule? employeeDateModule = EmployeeDateModule(
+        id: element["id"],
+        LeavingDate: element["LeavingDate"],
+        AttendanceDate: element["AttendanceDate"],
+        DataTimeDay: element["DataTimeDay"],
+      );
+      Firestore.instance
+          .collection("Users")
+          .document(box.get("Token"))
+          .collection("Employee")
+          .document("${element["id"]}")
+          .collection("Attendance,Leaving Date")
+          .document(element["DataTimeDay"])
+          .set(employeeDateModule.toJson())
+          .then((value) {
+        NewDateEmployee.remove(element);
+        emit(InsertDateEmployeeTr());
+      }).catchError((onError) {
+        emit(InsertDateEmployeeFa(onError.toString()));
+      });
+    }
+  }
+
+  ///Suppliers Methods
   Future<List<Map>> getDataSuppliers(dataBase) async {
     return await dataBase.rawQuery('SELECT*FROM Suppliers');
   }
@@ -653,6 +714,7 @@ class CasherCuibt extends Cubit<CasherState> {
   Future<List<Map>> getDataSuppliersEspcially(dataBase, id) async {
     return await dataBase.rawQuery('SELECT*FROM Suppliers WHERE id=?', [id]);
   }
+
   Future<List<Map>> getDataFessEspcially(dataBase, id) async {
     return await dataBase.rawQuery('SELECT*FROM Fees WHERE id=?', [id]);
   }
@@ -710,7 +772,7 @@ class CasherCuibt extends Cubit<CasherState> {
     }
   }
 
-  //Orders
+  //Orders Methods
   Future<List<Map>> getOrders(value) async {
     return await dataBase
         .rawQuery('SELECT*FROM Orders WHERE NumberOrder = ?', ["$value"]);

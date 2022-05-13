@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/Compoandis/MyTextForm.dart';
 import 'package:untitled6/Compoandis/button.dart';
@@ -104,7 +103,9 @@ class _EmpoloyeState extends State<Empoloye> {
                     context: context,
                     initialTime: TimeOfDay.now(),
                   ).then((value) {
-                    cuibt.AttendanceDate.text = value!.format(context);
+                    if(value != null) {
+                      cuibt.AttendanceDate.text = value.format(context);
+                    }
                   });
                 },
                 Controlr: cuibt.AttendanceDate,
@@ -172,7 +173,7 @@ class _EmpoloyeState extends State<Empoloye> {
                   style: TextStyle(color: Colors.white)),
               OnPreesed: () {
                 print(cuibt.valueEmpo);
-                cuibt.getEmployeeDate(cuibt.valueEmpo,DateTime.now());
+                cuibt.getEmployeeDate(cuibt.valueEmpo,);
 
                 setState(() {
                   cuibt.ShowDateEmpolye = !cuibt.ShowDateEmpolye;
