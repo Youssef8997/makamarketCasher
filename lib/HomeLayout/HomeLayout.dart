@@ -11,18 +11,19 @@ import '../Login/Login.dart';
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
+
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+
   final _advancedDrawerController = AdvancedDrawerController();
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CasherCuibt,CasherState>
       (
-        listener: (context,state){
-
-        },
+        listener: (context,state){},
         builder: (context,state){
           var size=MediaQuery.of(context).size;
           var cuibt=CasherCuibt.get(context);
@@ -42,11 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     offset: Offset(20, 20)
                 ),
               ],
-              borderRadius: const BorderRadius.all(Radius.circular(16)),
+              borderRadius:  BorderRadius.all(Radius.circular(16)),
             ),
             child: Shortcuts(
               shortcuts:{LogicalKeySet(LogicalKeyboardKey.tab):ReturnToPage()} ,
               child: Actions(
+
                 actions: {ReturnToPage:CallbackAction<ReturnToPage>(onInvoke: (intent)=>cuibt.ChangePageIntoCashier())},
                 child: Scaffold(
                   extendBodyBehindAppBar: true,

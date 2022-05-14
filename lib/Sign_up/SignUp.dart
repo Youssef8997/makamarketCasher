@@ -189,22 +189,7 @@ class _signUpState extends State<signUp> {
             const SizedBox(
               height: 20,
             ),
-            MyTextField(
-              label: "Shop Name",
-              keybordtype: TextInputType.text,
-              hint: "lord Syrian",
-              Controlr: cuibt.shopNameController,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "phone is required";
-                }
-                return null;
-              },
-              Prefix: const Icon(Icons.store, color: Colors.black),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
+
          myButton(child: const Text("Sign Up", style: TextStyle(color: Colors.white,fontSize: 19,fontWeight: FontWeight.bold),),OnPreesed: () {
         if(cuibt.SignUpForm.currentState!.validate()) {
           cuibt.createNewUser(context);
@@ -224,7 +209,6 @@ class _signUpState extends State<signUp> {
             padding: const EdgeInsets.only(left: 10),
             child: LoginLogo(Size),
           ),
-          ShopName(),
           const Spacer(),
           MyName(context),
           const Text(

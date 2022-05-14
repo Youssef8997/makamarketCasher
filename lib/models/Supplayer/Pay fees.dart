@@ -123,7 +123,6 @@ final int id;
     );
   }
   settingDialog(context,CasherCuibt cuibt) {
-    var size=MediaQuery.of(context).size;
     return showDialog(
         context: context,
         builder: (context) {
@@ -135,11 +134,7 @@ final int id;
               clipBehavior: Clip.antiAliasWithSaveLayer,
               backgroundColor: Colors.white,
               elevation: 0,
-              content:Center(
-
-                  child:Text("You cant pay more than debit money ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w900),)
-
-              ),
+              content:const Text("You cant pay more than debit money ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w900),),
               actions: [
                 MaterialButton(onPressed: (){Navigator.pop(context);cuibt.isMoreThanTotalMoney=false;},child: const Text("Okay"),)
               ],

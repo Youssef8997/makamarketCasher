@@ -1,3 +1,4 @@
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,7 +31,7 @@ class LoginState extends State<Login> {
           setState(() {
             isVaildEmail = true;
           });
-          Nevigator(context: context, bool: false, page: HomeScreen());
+          settingDialog(context, CasherCuibt.get(context));
         }
       },
       builder: (context, state) {
@@ -182,7 +183,6 @@ class LoginState extends State<Login> {
             padding: const EdgeInsets.only(left: 10),
             child: LoginLogo(Size),
           ),
-          MakaMarketName("lord"),
           const Spacer(),
           MyName(context),
           const Text(
@@ -203,19 +203,6 @@ class LoginState extends State<Login> {
     );
   }
 
-  Text MakaMarketName(text) {
-    return  Text(
-      text,
-      style: const TextStyle(
-          color: Colors.black,
-          fontSize: 30,
-          fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.bold,
-          shadows: [
-            Shadow(color: Colors.black, blurRadius: 1, offset: Offset(0, 3))
-          ]),
-    );
-  }
 
   Container LoginLogo(Size Size) {
     return Container(
@@ -258,4 +245,46 @@ class LoginState extends State<Login> {
             primaryColor: Colors.black,
             secondaryColor: Colors.white));
   }
+  settingDialog(context,CasherCuibt cuibt) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return BlurryContainer(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+
+            blur: 6,
+            child: AlertDialog(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              content: Container(
+                  height:150,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
+
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Please Enter Name of your current shop ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+                      const SizedBox( height: 10,),
+                      MyTextField(Controlr: cuibt.shopNameController, hint: "Shop Name",),
+                    ],
+                  )
+              ),
+              actions: [
+                MaterialButton(onPressed: (){
+                  Navigator.pop(context);
+                  Nevigator(context: context, bool: false, page: HomeScreen());
+                },child: const Text("Okay"),)
+              ],
+            ),
+          );
+        });
+  }
+
 }

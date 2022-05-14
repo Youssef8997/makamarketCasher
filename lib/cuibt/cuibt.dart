@@ -29,7 +29,7 @@ import '../module/Product module.dart';
 import '../module/dateEmpo.dart';
 
 class CasherCuibt extends Cubit<CasherState> {
-  CasherCuibt() : super(initState());
+  CasherCuibt() : super(intState());
 
   static CasherCuibt get(context) => BlocProvider.of(context);
   var databaseFactory = databaseFactoryFfi;
@@ -110,6 +110,8 @@ class CasherCuibt extends Cubit<CasherState> {
   bool NInserted = true;
   var NumberOfOrder = 1;
   var Notes = TextEditingController(text: "dddddd");
+  var shopNameController = TextEditingController();
+  bool unKnownName=true;
 
   //Add Employee
   var NameOfEmpolyees = TextEditingController();
@@ -136,7 +138,6 @@ class CasherCuibt extends Cubit<CasherState> {
   var passController = TextEditingController();
   var passController2 = TextEditingController();
   var phoneController = TextEditingController();
-  var shopNameController = TextEditingController();
   bool isObserer = true;
 
 //Sign in
@@ -235,8 +236,8 @@ class CasherCuibt extends Cubit<CasherState> {
   }
 
   void createDataBase() async {
-    dataBase =
-        await openDatabase("ew.db", version: 1, onCreate: (dataBase, version) {
+    dataBase = await openDatabase("hehe.db", version: 1,
+        onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE,Notes Text)');
@@ -435,6 +436,8 @@ class CasherCuibt extends Cubit<CasherState> {
       Firestore.instance
           .collection("Users")
           .document(box.get("Token"))
+          .collection("Shops")
+          .document(shopNameController.text)
           .collection("products")
           .document("${element["Name"]}")
           .set(product.toJson())
@@ -566,6 +569,8 @@ class CasherCuibt extends Cubit<CasherState> {
       Firestore.instance
           .collection("Users")
           .document(box.get("Token"))
+          .collection("Shops")
+          .document(shopNameController.text)
           .collection("Employee")
           .document("${element["id"]}")
           .set(Employee.toJson())
@@ -590,6 +595,8 @@ class CasherCuibt extends Cubit<CasherState> {
       Firestore.instance
           .collection("Users")
           .document(box.get("Token"))
+          .collection("Shops")
+          .document(shopNameController.text)
           .collection("Employee")
           .document("${element["id"]}")
           .collection("Attendance,Leaving Date")
@@ -650,7 +657,7 @@ class CasherCuibt extends Cubit<CasherState> {
             .then((value) {
           getDataFessEspcially(dataBase, value).then((value) {
             NewFees.add(value.single);
-            uploadNewFess();
+            uploadNewFess(id: id);
           });
           getFeesAfterChange();
           updateSuppliers(id);
@@ -704,7 +711,12 @@ class CasherCuibt extends Cubit<CasherState> {
     var totalSuppliersAfterAdd =
         Suppliers[id - 1]["TotalSuppliers"] + double.parse(paidOfFees.text);
     dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
-        [totalSuppliersAfterAdd, id]);
+        [totalSuppliersAfterAdd, id]).then((value) {
+          getDataSuppliersEspcially(dataBase, value).then((value) {
+      NewSuppliers.add(value.single);
+      uploadNewSuppliers();
+    });});
+
     paidOfFees.clear();
     dateOfFees.clear();
     getSuppliersAfterChange();
@@ -721,31 +733,57 @@ class CasherCuibt extends Cubit<CasherState> {
 
   //Fire base
   void uploadNewSuppliers() {
-    print("this is upload $NewSuppliers");
-    for (var element in NewSuppliers) {
-      SuppliersModule? Suppliers = SuppliersModule(
-        name: element["Name"],
-        id: element["id"],
-        TotalSuppliers: element["TotalSuppliers"],
-        LastPaid: element["LastPaid"],
-        feesDate: element["LastDate"],
-      );
-      Firestore.instance
-          .collection("Users")
-          .document(box.get("Token"))
-          .collection("Suppliers")
-          .document("${element["Name"]}")
-          .set(Suppliers.toJson())
-          .then((value) {
-        NewSuppliers.remove(element);
-        emit(InsertSuppliersTr());
-      }).catchError((onError) {
-        emit(InsertSuppliersFa(onError.toString()));
-      });
-    }
-  }
+      log("this is upload $NewSuppliers");
+      for (var element in NewSuppliers) {
+        SuppliersModule? Suppliers = SuppliersModule(
+          name: element["Name"],
+          id: element["id"],
+          TotalSuppliers: element["TotalSuppliers"],
+          LastPaid: element["LastPaid"],
+          feesDate: element["LastDate"],
+        );
+        Firestore.instance
+            .collection("Users")
+            .document(box.get("Token"))
+            .collection("Shops")
+            .document(shopNameController.text)
+            .collection("Suppliers")
+            .document("${element["Name"]}")
+            .set(Suppliers.toJson())
+            .then((value) {
+          NewSuppliers.remove(element);
+          emit(InsertSuppliersTr());
+        }).catchError((onError) {
+          emit(InsertSuppliersFa(onError.toString()));
+        });
+      }
 
-  void uploadNewFess() {
+  }
+  void updateNewSuppliers({FeesModule? feesModule,int? id}) {
+
+     SuppliersModule? Suppliers = SuppliersModule(
+          name: feesModule!.name,
+          id: id,
+          TotalSuppliers: feesModule.TotalSuppliers,
+          LastPaid: feesModule.Paid,
+          feesDate:feesModule.feesDate,
+        );
+        Firestore.instance
+            .collection("Users")
+            .document(box.get("Token"))
+            .collection("Shops")
+            .document(shopNameController.text)
+            .collection("Suppliers")
+            .document("${feesModule.name}")
+            .set(Suppliers.toJson())
+            .then((value) {
+          emit(InsertSuppliersTr());
+        }).catchError((onError) {
+          emit(InsertSuppliersFa(onError.toString()));
+        });
+
+  }
+  void uploadNewFess({id}) {
     print("this is upload $NewFees");
     for (var element in NewFees) {
       FeesModule? Fess = FeesModule(
@@ -758,12 +796,15 @@ class CasherCuibt extends Cubit<CasherState> {
       Firestore.instance
           .collection("Users")
           .document(box.get("Token"))
+          .collection("Shops")
+          .document(shopNameController.text)
           .collection("Suppliers")
           .document("${element["Name"]}")
           .collection("Fees")
           .document(element["id"].toString())
           .set(Fess.toJson())
           .then((value) {
+        updateNewSuppliers(feesModule: Fess,id: id);
         NewFees.remove(element);
         emit(InsertFeesTr());
       }).catchError((onError) {
@@ -771,6 +812,7 @@ class CasherCuibt extends Cubit<CasherState> {
       });
     }
   }
+
 
   //Orders Methods
   Future<List<Map>> getOrders(value) async {
@@ -945,7 +987,6 @@ class CasherCuibt extends Cubit<CasherState> {
         .then((value) {
       Token = value.id;
       box.put("Token", value.id);
-      Nevigator(bool: false, page: HomeScreen(), context: context);
       emit(SignInTr());
     }).catchError((onError) {
       Token = null;

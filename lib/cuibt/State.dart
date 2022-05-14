@@ -1,5 +1,5 @@
 abstract class CasherState{}
-  class initState extends CasherState{}
+  class intState extends CasherState{}
   class ChangeIndex extends CasherState{}
   class ChangeValuee extends CasherState{}
   class ChangeSearchAbilty extends CasherState{}
