@@ -189,10 +189,26 @@ class _signUpState extends State<signUp> {
             const SizedBox(
               height: 20,
             ),
-
+            MyTextField(
+              isobsr: true,
+              label: "inside password",
+              hint: "*****",
+              Controlr: cuibt.passWordController,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return "phone is required";
+                }
+                return null;
+              },
+              Prefix: const Icon(Icons.lock, color: Colors.black),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
          myButton(child: const Text("Sign Up", style: TextStyle(color: Colors.white,fontSize: 19,fontWeight: FontWeight.bold),),OnPreesed: () {
         if(cuibt.SignUpForm.currentState!.validate()) {
           cuibt.createNewUser(context);
+          cuibt.box.put("Password", cuibt.passWordController.text);
         }
          }),
           ],

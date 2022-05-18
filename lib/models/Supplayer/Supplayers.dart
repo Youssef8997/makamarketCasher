@@ -53,11 +53,10 @@ int? indexl;
               border: Border.all(color: Colors.black, width: 2)),
           child: DropdownButtonHideUnderline(
             child: DropdownButton(
-
               alignment: AlignmentDirectional.center,
               items: cuibt.Suppliers.map((e) {
                 return DropdownMenuItem(
-                  child: Text("${e["Name"]}"),
+                  child: Text("     ${e["Name"]}"),
                   value: e["id"],
                 );
               }).toList(),

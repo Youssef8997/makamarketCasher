@@ -29,7 +29,6 @@ class AddItem extends StatelessWidget {
                     const SizedBox(
                       height: 30,
                     ),
-                    if (!cuibt.Search) StoreNmae()
                   ],
                 ),
               ),

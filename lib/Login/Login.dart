@@ -279,6 +279,7 @@ class LoginState extends State<Login> {
               actions: [
                 MaterialButton(onPressed: (){
                   Navigator.pop(context);
+                  cuibt.box.put("shopName",cuibt.shopNameController.text);
                   Nevigator(context: context, bool: false, page: HomeScreen());
                 },child: const Text("Okay"),)
               ],

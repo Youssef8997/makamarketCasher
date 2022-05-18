@@ -1,9 +1,11 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:developer';
 
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:firedart/auth/firebase_auth.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -23,6 +25,7 @@ import 'package:sqflite_common/sqlite_api.dart';
 import 'package:untitled6/module/Employee.dart';
 import 'package:untitled6/module/Suppliers.dart';
 import 'package:untitled6/module/user_module.dart';
+import '../Compoandis/MyTextForm.dart';
 import '../HomeLayout/HomeLayout.dart';
 import '../module/Fees.dart';
 import '../module/Product module.dart';
@@ -86,7 +89,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var paidOfFees = TextEditingController();
   var dateOfFees = TextEditingController();
   var feesKeyForm = GlobalKey<FormState>();
-  double payedMoney = 0.0;
+  double payedMoney =0.0;
 
   //Add money
   var increesKeyForm = GlobalKey<FormState>();
@@ -111,7 +114,9 @@ class CasherCuibt extends Cubit<CasherState> {
   var NumberOfOrder = 1;
   var Notes = TextEditingController(text: "dddddd");
   var shopNameController = TextEditingController();
+  var passWordController = TextEditingController();
   bool unKnownName=true;
+
 
   //Add Employee
   var NameOfEmpolyees = TextEditingController();
@@ -130,6 +135,10 @@ class CasherCuibt extends Cubit<CasherState> {
   var ShowDateEmpolye = true;
   double Sallry = 0;
   var valueEmpo;
+  var valueRate;
+  var nameOfEmpolyees;
+  List EmpolyeesRate=[1,2,3,4,5];
+  List RateColors=[Colors.black,Colors.red[900],Colors.redAccent,Colors.orange[900],Colors.yellow,Colors.green];
 
 //Sign up
   var SignUpForm = GlobalKey<FormState>();
@@ -145,6 +154,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var SignEmailController = TextEditingController();
   var signPassController = TextEditingController();
   var box = Hive.box("Token");
+  var money = Hive.box("Money");
   String? Token;
 
   //Rest Password
@@ -161,11 +171,62 @@ class CasherCuibt extends Cubit<CasherState> {
     Money(),
     Store(),
   ];
+  final advancedDrawerController = AdvancedDrawerController();
 
+  void sureUser(Number,context){
+    showDialog(
+        context: context,
+        builder: (context) {
+          return BlurryContainer(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            blur: 6,
+            child: AlertDialog(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              content: Container(
+                  height:150,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
+
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(" Enter password of your current shop ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+                      const SizedBox( height: 10,),
+                      MyTextField(Controlr:passWordController, hint: "*****",isobsr: true),
+                    ],
+                  )
+              ),
+              actions: [
+                MaterialButton(onPressed: (){
+                  Navigator.pop(context);
+                  if(passWordController.text==box.get("Password")){
+                    if(bodyIndex!=Number) {
+                      ChangeMyIndex(Number);
+                    }
+                  }
+                  passWordController.clear();
+                },child: const Text("Okay"),)
+              ],
+            ),
+          );
+        });
+
+  advancedDrawerController.hideDrawer();
+
+  }
   void cahnge() {
     emit(SetState());
   }
-
+  void handleMenuButtonPressed() {
+    advancedDrawerController.showDrawer();
+  }
   void insertValueIntoControlar(e) {
     NameOfItem.text = e["Name"];
     CodeOfItem.text = e["Code"];
@@ -437,7 +498,7 @@ class CasherCuibt extends Cubit<CasherState> {
           .collection("Users")
           .document(box.get("Token"))
           .collection("Shops")
-          .document(shopNameController.text)
+          .document(box.get("shopName"))
           .collection("products")
           .document("${element["Name"]}")
           .set(product.toJson())
@@ -553,7 +614,16 @@ class CasherCuibt extends Cubit<CasherState> {
     print("$valueEmpo");
     emit(ChangeEmpo());
   }
+  void ChangeRateOfEmployee(value) {
+    valueRate = value;
+    print("$valueRate");
+    emit(ChangeEmpo());
+  }
+void insertNameOfEmployee(name){
+  nameOfEmpolyees=name;
+  emit(ChangeEmpo());
 
+}
   //Fire base
   void uploadNewEmployee() {
     print("this is upload $NewEmployee");
@@ -570,7 +640,7 @@ class CasherCuibt extends Cubit<CasherState> {
           .collection("Users")
           .document(box.get("Token"))
           .collection("Shops")
-          .document(shopNameController.text)
+          .document(box.get("shopName"))
           .collection("Employee")
           .document("${element["id"]}")
           .set(Employee.toJson())
@@ -582,7 +652,6 @@ class CasherCuibt extends Cubit<CasherState> {
       });
     }
   }
-
   void uploadNewAttendedEmployee() {
     print("this is upload $NewDateEmployee");
     for (var element in NewDateEmployee) {
@@ -596,7 +665,7 @@ class CasherCuibt extends Cubit<CasherState> {
           .collection("Users")
           .document(box.get("Token"))
           .collection("Shops")
-          .document(shopNameController.text)
+          .document(box.get("shopName"))
           .collection("Employee")
           .document("${element["id"]}")
           .collection("Attendance,Leaving Date")
@@ -609,6 +678,24 @@ class CasherCuibt extends Cubit<CasherState> {
         emit(InsertDateEmployeeFa(onError.toString()));
       });
     }
+  }
+  void uploadRateEmployee(id) {
+      Firestore.instance
+          .collection("Users")
+          .document(box.get("Token"))
+          .collection("Shops")
+          .document(box.get("shopName"))
+          .collection("Employee")
+          .document("${id}")
+          .collection("Rate")
+          .document(DateFormat.yMMMd().format(DateTime.now()))
+          .set({"Rate":valueRate})
+          .then((value) {
+        emit(InsertDateEmployeeTr());
+      }).catchError((onError) {
+        emit(InsertDateEmployeeFa(onError.toString()));
+      });
+
   }
 
   ///Suppliers Methods
@@ -646,6 +733,7 @@ class CasherCuibt extends Cubit<CasherState> {
 
   Future insertIntoFees(id) async {
     payedMoney = payedMoney + double.parse(paidOfFees.text);
+    box.put("payedMoney", payedMoney);
     totalMoney = AllMoneyGet - payedMoney;
     TotalOfSupllayers =
         Suppliers[id - 1]["TotalSuppliers"] - double.parse(paidOfFees.text);
@@ -746,7 +834,7 @@ class CasherCuibt extends Cubit<CasherState> {
             .collection("Users")
             .document(box.get("Token"))
             .collection("Shops")
-            .document(shopNameController.text)
+            .document(box.get("shopName"))
             .collection("Suppliers")
             .document("${element["Name"]}")
             .set(Suppliers.toJson())
@@ -772,7 +860,7 @@ class CasherCuibt extends Cubit<CasherState> {
             .collection("Users")
             .document(box.get("Token"))
             .collection("Shops")
-            .document(shopNameController.text)
+            .document(box.get("shopName"))
             .collection("Suppliers")
             .document("${feesModule.name}")
             .set(Suppliers.toJson())
@@ -797,7 +885,7 @@ class CasherCuibt extends Cubit<CasherState> {
           .collection("Users")
           .document(box.get("Token"))
           .collection("Shops")
-          .document(shopNameController.text)
+          .document(box.get("shopName"))
           .collection("Suppliers")
           .document("${element["Name"]}")
           .collection("Fees")
@@ -826,7 +914,9 @@ class CasherCuibt extends Cubit<CasherState> {
 
   Future RecordOrder() async {
     AllMoneyGet = AllMoneyGet + total;
+    box.put("AllMoneyGet", AllMoneyGet);
     totalMoney = AllMoneyGet - payedMoney;
+    box.put("totalMoney", totalMoney);
     for (var e in orders) {
       await dataBase.transaction((txn) {
         txn
@@ -925,9 +1015,13 @@ class CasherCuibt extends Cubit<CasherState> {
     }
     emit(calcRiciet());
   }
-
+  void storeMoneyValue(){
+    payedMoney=box.get("payedMoney")??0.0;
+    totalMoney=box.get("totalMoney")??0.0;
+    AllMoneyGet=box.get("AllMoneyGet")??0.0;
+  }
   Future<String> getname() async => ("youssef ahmed ");
-
+  //Firebase auth
   void createUserProfile({
     required String name,
     required String email,
@@ -956,7 +1050,6 @@ class CasherCuibt extends Cubit<CasherState> {
     });
   }
 
-  //Firebase auth
   void createNewUser(context) {
     FirebaseAuth.instance
         .signUp(emailController.text, passController.text)
@@ -1002,6 +1095,7 @@ class CasherCuibt extends Cubit<CasherState> {
 
   void Logout() {
     Hive.box("Token").delete("Token");
+    Hive.box("Token").delete("shopName");
     emit(SignOut());
   }
 }

@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
-
 import '../Login/Login.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
 
-  final _advancedDrawerController = AdvancedDrawerController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
           var cuibt=CasherCuibt.get(context);
           return AdvancedDrawer(
             backdropColor: Colors.blueGrey,
-            controller: _advancedDrawerController,
+            controller: cuibt.advancedDrawerController,
             animationCurve: Curves.easeInOut,
             animationDuration: const Duration(milliseconds: 300),
             animateChildDecoration: true,
@@ -48,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Shortcuts(
               shortcuts:{LogicalKeySet(LogicalKeyboardKey.tab):ReturnToPage()} ,
               child: Actions(
-
                 actions: {ReturnToPage:CallbackAction<ReturnToPage>(onInvoke: (intent)=>cuibt.ChangePageIntoCashier())},
                 child: Scaffold(
                   extendBodyBehindAppBar: true,
@@ -57,9 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: Colors.transparent,
                     leading: IconButton(
                       color: Colors.teal,
-                      onPressed: _handleMenuButtonPressed,
+                      onPressed: cuibt.handleMenuButtonPressed,
                       icon: ValueListenableBuilder<AdvancedDrawerValue>(
-                        valueListenable: _advancedDrawerController,
+                        valueListenable: cuibt.advancedDrawerController,
                         builder: (_, value, __) {
                           return AnimatedSwitcher(
                             duration: const Duration(milliseconds: 250),
@@ -96,22 +93,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListTile(
                       selected: cuibt.bodyIndex==1?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {
-                        if(cuibt.bodyIndex!=1)
-                        cuibt.ChangeMyIndex(1);
-                      _advancedDrawerController.hideDrawer();
-                      },
+                      onTap: ()=>cuibt.sureUser(1,context),
                       leading: Icon(Icons.add_business_rounded),
                       title: Text('اضافه صنف',style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                     ListTile(
                       selected: cuibt.bodyIndex==2?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {
-                        if(cuibt.bodyIndex!=2)
-                        cuibt.ChangeMyIndex(2);
-                        _advancedDrawerController.hideDrawer();
-                        },
+                      onTap: ()=>cuibt.sureUser(2,context),
+
 
                       leading:const CircleAvatar(
                         radius:15,
@@ -124,11 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListTile(
                       selected: cuibt.bodyIndex==3?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {
-                        if(cuibt.bodyIndex!=3)
-                        cuibt.ChangeMyIndex(3);
-                        _advancedDrawerController.hideDrawer();
-                        },
+                      onTap: ()=>cuibt.sureUser(3,context),
                       leading:const CircleAvatar(
                         backgroundColor: Colors.blueGrey,
                         radius:15,
@@ -140,9 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListTile(
                       selected: cuibt.bodyIndex==4?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {    if(cuibt.bodyIndex!=4)
-                        cuibt.ChangeMyIndex(4);
-                      _advancedDrawerController.hideDrawer();},
+                      onTap: ()=>cuibt.sureUser(4,  context),
                       leading:const CircleAvatar(
                         backgroundColor: Colors.blueGrey,
                         foregroundColor:Colors.blueGrey ,
@@ -155,9 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListTile(
                       selected: cuibt.bodyIndex==5?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {    if(cuibt.bodyIndex!=5)
-                        cuibt.ChangeMyIndex(5);
-                      _advancedDrawerController.hideDrawer();},
+                      onTap: ()=>cuibt.sureUser(5,  context),
                       leading:const CircleAvatar(
                         backgroundColor: Colors.blueGrey,
                         foregroundColor:Colors.blueGrey ,
@@ -170,9 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListTile(
                       selected: cuibt.bodyIndex==6?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: () {    if(cuibt.bodyIndex!=6)
-                        cuibt.ChangeMyIndex(6);
-                      _advancedDrawerController.hideDrawer();},
+                      onTap: ()=>cuibt.sureUser(6,  context),
+
                       leading:const CircleAvatar(
                         backgroundColor: Colors.blueGrey,
                         foregroundColor:Colors.blueGrey ,
@@ -183,7 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: const Text('مخزن'),
                     ),
                     ListTile(
-                      onTap: () {cuibt.Logout();Nevigator(page: Login(),bool: false,context: context);},
+                      onTap: () {
+                        cuibt.Logout();Nevigator(page: Login(),bool: false,context: context);
+                        },
                       leading:const Icon(Icons.exit_to_app),
                       title: const Text('تسجيل خروج'),
                     ),
@@ -200,8 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   }
 
-  void _handleMenuButtonPressed() {
-    _advancedDrawerController.showDrawer();
-  }
+
+
 }
 class ReturnToPage extends Intent{}
