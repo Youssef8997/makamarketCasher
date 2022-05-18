@@ -149,7 +149,7 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
-                Controlr: cuibt.NumberOfItem,
+                Controlr: cuibt.QuantityInStore,
                 label: "Number Of Item in store",
                 hint: "20",
                 validator: (value) {
@@ -162,8 +162,8 @@ class AddItem extends StatelessWidget {
               height: 20,
             ),
             MyTextField(
-                Controlr: cuibt.NumberInPlace,
-                label: "Number Of Item in place",
+                Controlr: cuibt.QuantityInShop,
+                label: "Number Of Item in Shop",
                 hint: "20",
                 validator: (value) {
                   if (value!.isEmpty) {

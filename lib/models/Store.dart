@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled6/Compoandis/MyContenar.dart';
+import 'package:untitled6/Compoandis/MyTextForm.dart';
+import 'package:untitled6/Compoandis/button.dart';
 import 'package:untitled6/cuibt/State.dart';
 import 'package:untitled6/cuibt/cuibt.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -18,18 +20,12 @@ class Store extends StatelessWidget {
                 Height: size.height*.8,
                 Width: size.width*.8,
               Child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                 Center(child: TitleOfContenar("Store")),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const[
-                     Text("اذن سحب من المخزن ",style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold),),
-                  SizedBox(width: 20,)
-                  ],
-
-                ),
-                  const SizedBox(height: 50,),
+            const  SizedBox(height: 50,),
+              Text(" withdraw from the store",style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.w900,color:Colors.grey[900]!,fontStyle: FontStyle.italic),),
+                  const SizedBox(height: 20,),
                   Container(
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     height: 50,
@@ -47,6 +43,13 @@ class Store extends StatelessWidget {
                         }).toList(),onChanged: (Object? value)=>cuibt.ChangeStoreValue(value),value: cuibt.storeValue,),
                     ),
                   ),
+                  const SizedBox(height: 50,),
+                  Padding(
+                    padding:EdgeInsets.symmetric(horizontal:size.width*.2),
+                    child: MyTextField(Controlr: cuibt.Quantity, hint: "20 packages",label: "Quantity",Prefix: Icon(Icons.sync_alt,color: Colors.grey[900]!,),),
+                  ),
+                  const Spacer(),
+                  Center(child: myButton(child: Text("Withdraw"),OnPreesed: ()=>cuibt.WithdrawFromStore(),)),
 
               ],)
             ),

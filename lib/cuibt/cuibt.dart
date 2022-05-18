@@ -63,12 +63,12 @@ class CasherCuibt extends Cubit<CasherState> {
   var NameOfItem = TextEditingController();
   var CodeOfItem = TextEditingController();
   var PriceOfItem = TextEditingController();
-  var NumberOfItem = TextEditingController();
+  var QuantityInStore = TextEditingController();
   var StartDate = TextEditingController();
   var EndDate = TextEditingController();
   var NameOfSearch = TextEditingController();
   var CodeOfSearch = TextEditingController();
-  var NumberInPlace = TextEditingController();
+  var QuantityInShop = TextEditingController();
   var kayform = GlobalKey<FormState>();
   int? id;
 
@@ -160,7 +160,8 @@ class CasherCuibt extends Cubit<CasherState> {
   //Rest Password
   var RestPasswordForm = GlobalKey<FormState>();
   var RestEmailController = TextEditingController();
-
+//Store
+  var Quantity = TextEditingController();
   //UI
   List<Widget> body = [
     CasherPage(),
@@ -231,7 +232,7 @@ class CasherCuibt extends Cubit<CasherState> {
     NameOfItem.text = e["Name"];
     CodeOfItem.text = e["Code"];
     PriceOfItem.text = e["Price"].toString();
-    NumberOfItem.text = e["NumberInStore"].toString();
+    QuantityInStore.text = e["QuantityInStore"].toString();
     StartDate.text = e["StartDate"].toString();
     EndDate.text = e["EndDate"].toString();
     id = e["id"];
@@ -303,7 +304,7 @@ class CasherCuibt extends Cubit<CasherState> {
       dataBase.execute(
           'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE,Notes Text)');
       dataBase.execute(
-          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,NumberInStore INTEGER,NumberInPlace INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
+          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,QuantityInStore INTEGER,QuantityInShop INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
       dataBase.execute(
           'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
@@ -380,7 +381,7 @@ class CasherCuibt extends Cubit<CasherState> {
         await dataBase.transaction((txn) {
           txn
               .rawInsert(
-                  'INSERT INTO Products(Name,Code,Price,NumberInStore,StartDate,EndDate,Num,TotalMoney,NumberInPlace)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${NumberOfItem.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}","${NumberInPlace.text}")')
+                  'INSERT INTO Products(Name,Code,Price,QuantityInStore,StartDate,EndDate,Num,TotalMoney,QuantityInShop)VALUES("${NameOfItem.text}","${CodeOfItem.text}","${PriceOfItem.text}","${QuantityInStore.text}","${StartDate.text}","${EndDate.text}","1","${double.parse(PriceOfItem.text)}","${QuantityInShop.text}")')
               .then((value) {
             getItemProducts(dataBase, CodeOfItem.text).then((value) {
               print("this is item $value");
@@ -391,7 +392,7 @@ class CasherCuibt extends Cubit<CasherState> {
             NameOfItem.clear();
             CodeOfItem.clear();
             PriceOfItem.clear();
-            NumberOfItem.clear();
+            QuantityInStore.clear();
             StartDate.clear();
             EndDate.clear();
           }).catchError((error) {
@@ -409,8 +410,8 @@ class CasherCuibt extends Cubit<CasherState> {
   void updateProducts() {
     dataBase.rawUpdate('UPDATE Products SET Price=? WHERE Code=? ',
         [PriceOfItem.text, CodeOfItem.text]);
-    dataBase.rawUpdate('UPDATE Products SET NumberInStore=? WHERE Code=? ',
-        [NumberOfItem.text, CodeOfItem.text]);
+    dataBase.rawUpdate('UPDATE Products SET QuantityInStore=? WHERE Code=? ',
+        [QuantityInStore.text, CodeOfItem.text]);
     dataBase.rawUpdate('UPDATE Products SET Name=? WHERE Code=? ',
         [NameOfItem.text, CodeOfItem.text]);
     dataBase.rawUpdate('UPDATE Products SET StartDate=? WHERE Code=? ',
@@ -421,11 +422,21 @@ class CasherCuibt extends Cubit<CasherState> {
     getSearchItem(NameOfSearch.text);
     emit(UpdateProducts());
   }
+void WithdrawFromStore(String number){
+  getItemProducts(dataBase,storeValue).then((value) {
+    dataBase.rawUpdate('UPDATE Products SET QuantityInStore=? WHERE Code=? ',
+        [int.parse(value.single["QuantityInStore"])-int.parse(Quantity.text), storeValue]);
+    dataBase.rawUpdate('UPDATE Products SET QuantityInStore=? WHERE Code=? ',
+        [int.parse(value.single["QuantityInStore"])-int.parse(Quantity.text), storeValue]);
+  });
+  getProductsAfterChange();
+  emit(UpdateProducts());
 
+}
   void updateProductsARecord({Number, Code, price}) {
     dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ', [1, Code]);
     dataBase.rawUpdate(
-        'UPDATE Products SET NumberInStore=? WHERE Code=? ', [Number, Code]);
+        'UPDATE Products SET QuantityInStore=? WHERE Code=? ', [Number, Code]);
     dataBase.rawUpdate(
         'UPDATE Products SET TotalMoney=? WHERE Code=? ', [price, Code]);
     getProductsAfterChange();
@@ -440,7 +451,7 @@ class CasherCuibt extends Cubit<CasherState> {
     });
     CodeOfItem.clear();
     NameOfItem.clear();
-    NumberOfItem.clear();
+    QuantityInStore.clear();
     PriceOfItem.clear();
     EndDate.clear();
     StartDate.clear();
@@ -489,8 +500,8 @@ class CasherCuibt extends Cubit<CasherState> {
         name: element["Name"],
         price: element["Price"],
         code: element["Code"],
-        quantityInShop: element["NumberInPlace"],
-        quantityInStore: element["NumberInStore"],
+        quantityInShop: element["QuantityInShop"],
+        quantityInStore: element["QuantityInStore"],
         startDate: element["StartDate"],
         endDate: element["EndDate"],
       );
@@ -925,7 +936,7 @@ void insertNameOfEmployee(name){
             .then((value) {
           updateProductsARecord(
               Code: e["code"],
-              Number: e["NumberInStore"] - e["Num"],
+              Number: e["QuantityInStore"] - e["Num"],
               price: e["price"]);
           orders = [];
           total = 0.0;
