@@ -22,6 +22,7 @@ void main() async{
   Hive.init(path);
   await Hive.openBox("Token");
   await Hive.openBox("Money");
+  await Hive.openBox("products");
 
 runApp( const MyApp());
 }

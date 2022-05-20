@@ -93,11 +93,8 @@ class CasherPage extends StatelessWidget {
 
   Shortcuts TextFormRow(CasherCuibt cuibt,context) {
     return Shortcuts(
-      manager: ShortcutManager(shortcuts: {LogicalKeySet(LogicalKeyboardKey.digit0): RemoveItem(),}, ),
       shortcuts: {
         LogicalKeySet(LogicalKeyboardKey.delete): RemoveItem(),
-        LogicalKeySet(LogicalKeyboardKey.enter): EnterButton(),
-        LogicalKeySet(LogicalKeyboardKey.space): EnterButton(),
         LogicalKeySet(LogicalKeyboardKey.insert): RecordOrder(),
 
       },
@@ -108,20 +105,6 @@ class CasherPage extends StatelessWidget {
             cuibt.deleteItemFOrders(context);
       }),
 
-          EnterButton:
-              CallbackAction<EnterButton>(onInvoke: (intent) {
-                cuibt.GetItem();
-                if(cuibt.AlertChangeNum) {
-              settingDialog(context,"This item is found,Change the number of this item",cuibt);
-              cuibt.AlertChangeNum=false;
-              cuibt.cahnge();
-            }
-                else if (cuibt.AlertItemNFound) {
-              settingDialog(context,"This item not found",cuibt);
-              cuibt.AlertItemNFound=false;
-              cuibt.cahnge();
-                }
-          }),
           RecordOrder:
           CallbackAction<RecordOrder>(onInvoke: (intent) {
          cuibt.RecordOrder();
@@ -139,55 +122,39 @@ class CasherPage extends StatelessWidget {
             ),
             Expanded(
                 child: MyTextField(
-
+                  Focusnode: cuibt.foucsCode,
               Controlr: cuibt.CodeOfProduct,
               hint: "Write code of Product",
+                  OnSubmitted: (_){
+                    cuibt.GetItem(context);
+                    if(cuibt.AlertChangeNum) {
+                      settingDialog(context,"This item is found,Change the number of this item",cuibt);
+                      cuibt.AlertChangeNum=false;
+                      cuibt.cahnge();
+                    }
+                    else if (cuibt.AlertItemNFound) {
+                      settingDialog(context,"This item not found",cuibt);
+                      cuibt.AlertItemNFound=false;
+                      cuibt.cahnge();
+                    }
+                  }
             )),
-            const SizedBox(width: 5),
-            const Text("Name:",
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 19,
-                    fontStyle: FontStyle.italic)),
-            const SizedBox(
-              width: 5,
-            ),
-            Expanded(
-                child: MyTextField(
-                    Controlr: cuibt.NameOfProduct,
-                    hint: "Write name of Product")),
-            const SizedBox(width: 5),
-            const Text("Number:",
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 19,
-                    fontStyle: FontStyle.italic)),
-            const SizedBox(
-              width: 5,
-            ),
-            Expanded(
-                child: MyTextField(
-                    Focusnode: cuibt.foucs,
-                    Controlr: cuibt.NumberOfProduct,
-                    hint: "Write number of Product")),
-            if(cuibt.Search)
-              const SizedBox(width: 5),
-            if(cuibt.Search)
+            const SizedBox(width: 40),
             const Text("ReciteNum:",
                 style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 19,
                     fontStyle: FontStyle.italic)),
-            if(cuibt.Search)
+
               const SizedBox(
               width: 5,
             ),
-            if(cuibt.Search)
+
               Expanded(
                 child: MyTextField(
                     Controlr: cuibt.NumOrders,
                     hint: "150",
-                  onChanged: (Text){
+                  OnSubmitted: (Text){
                     cuibt.getRecite(Text);
                         if(cuibt.recordedOrders.isNotEmpty) {
                           orderDialog(context, cuibt);
@@ -314,7 +281,7 @@ onTap: (){
           int index=r.key;
           return DataRow(
               onSelectChanged:(_){
-                print(index);
+                FocusScope.of(context).requestFocus(cuibt.foucsCode);
                 cuibt.InsertValueItem(
                   codeOFItem: "${e["Code"]}",
                   NameOFItem: "${e["Name"]}",
@@ -322,16 +289,35 @@ onTap: (){
                   id: e["id"],
                   Price:e["Price"],
                   index: index,
+
                 );
-FocusScope.of(context).requestFocus(cuibt.foucs);
-                cuibt.cahnge();
               },
               cells: [
                 DataCell(Text("${e["Name"]}")),
                 DataCell(
                   Text("${e["Price"]}"),
                 ),
-                DataCell(Text("${e["Num"]}")),
+                DataCell(
+                  TextFormField(
+                    onChanged:(_){cuibt.InsertValueItem(
+                      codeOFItem: "${e["Code"]}",
+                      NameOFItem: "${e["Name"]}",
+                      NumberOFItem: "${e["Num"]}",
+                      id: e["id"],
+                      Price:e["Price"],
+                      index: index,
+
+                    );},
+                    cursorColor: Colors.green,
+                    cursorRadius: Radius.circular(10),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                    focusNode: cuibt.foucsNumber,
+                    controller: cuibt.NumberOfProduct,
+                  onFieldSubmitted: (_){cuibt.UpdeteNumAfterChange(context);}
+                  ),),
+
                 DataCell(Text("${e["TotalMoney"]}")),
                 DataCell(
                  TextFormField(controller: cuibt.Notes,decoration:InputDecoration(border:InputBorder.none)))

@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:developer';
 
+
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:firedart/auth/firebase_auth.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -21,13 +22,13 @@ import 'package:untitled6/models/Empoloyee/AttindANDLivingEmpo.dart';
 import 'package:untitled6/models/Items.dart';
 import 'package:untitled6/models/Money.dart';
 import 'package:untitled6/models/Supplayer/Supplayers.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 import 'package:untitled6/module/Employee.dart';
 import 'package:untitled6/module/Suppliers.dart';
 import 'package:untitled6/module/user_module.dart';
 import '../Compoandis/MyTextForm.dart';
 import '../HomeLayout/HomeLayout.dart';
 import '../module/Fees.dart';
+import '../module/OrdersMoudle.dart';
 import '../module/Product module.dart';
 import '../module/dateEmpo.dart';
 
@@ -44,6 +45,7 @@ class CasherCuibt extends Cubit<CasherState> {
   List NewSuppliers = [];
   List orders = [];
   List recordedOrders = [];
+  List MapOrders = [];
   List employee = [];
   List NewEmployee = [];
   List DateEmployee = [];
@@ -89,7 +91,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var paidOfFees = TextEditingController();
   var dateOfFees = TextEditingController();
   var feesKeyForm = GlobalKey<FormState>();
-  double payedMoney =0.0;
+  double payedMoney = 0.0;
 
   //Add money
   var increesKeyForm = GlobalKey<FormState>();
@@ -107,7 +109,8 @@ class CasherCuibt extends Cubit<CasherState> {
   int? Index;
   double AllMoneyGet = 0.0;
   double totalMoney = 0.0;
-  FocusNode foucs = FocusNode();
+  FocusNode foucsNumber = FocusNode();
+  FocusNode foucsCode = FocusNode();
   double total = 0.0;
   bool selected = false;
   bool NInserted = true;
@@ -115,8 +118,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var Notes = TextEditingController(text: "dddddd");
   var shopNameController = TextEditingController();
   var passWordController = TextEditingController();
-  bool unKnownName=true;
-
+  bool unKnownName = true;
 
   //Add Employee
   var NameOfEmpolyees = TextEditingController();
@@ -137,8 +139,15 @@ class CasherCuibt extends Cubit<CasherState> {
   var valueEmpo;
   var valueRate;
   var nameOfEmpolyees;
-  List EmpolyeesRate=[1,2,3,4,5];
-  List RateColors=[Colors.black,Colors.red[900],Colors.redAccent,Colors.orange[900],Colors.yellow,Colors.green];
+  List EmpolyeesRate = [1, 2, 3, 4, 5];
+  List RateColors = [
+    Colors.black,
+    Colors.red[900],
+    Colors.redAccent,
+    Colors.orange[900],
+    Colors.yellow,
+    Colors.green
+  ];
 
 //Sign up
   var SignUpForm = GlobalKey<FormState>();
@@ -153,8 +162,7 @@ class CasherCuibt extends Cubit<CasherState> {
   var SignInForm = GlobalKey<FormState>();
   var SignEmailController = TextEditingController();
   var signPassController = TextEditingController();
-  var box = Hive.box("Token");
-  var money = Hive.box("Money");
+
   String? Token;
 
   //Rest Password
@@ -162,6 +170,10 @@ class CasherCuibt extends Cubit<CasherState> {
   var RestEmailController = TextEditingController();
 //Store
   var Quantity = TextEditingController();
+  //Hive box
+  var box = Hive.box("Token");
+  var money = Hive.box("Money");
+  var productsBox = Hive.box("products");
   //UI
   List<Widget> body = [
     CasherPage(),
@@ -174,7 +186,7 @@ class CasherCuibt extends Cubit<CasherState> {
   ];
   final advancedDrawerController = AdvancedDrawerController();
 
-  void sureUser(Number,context){
+  void sureUser(Number, context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -187,47 +199,59 @@ class CasherCuibt extends Cubit<CasherState> {
               backgroundColor: Colors.white,
               elevation: 0,
               content: Container(
-                  height:150,
+                  height: 150,
                   width: 120,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     color: Colors.white,
-
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(" Enter password of your current shop ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
-                      const SizedBox( height: 10,),
-                      MyTextField(Controlr:passWordController, hint: "*****",isobsr: true),
+                      const Text(
+                        " Enter password of your current shop ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      MyTextField(
+                          Controlr: passWordController,
+                          hint: "*****",
+                          isobsr: true),
                     ],
-                  )
-              ),
+                  )),
               actions: [
-                MaterialButton(onPressed: (){
-                  Navigator.pop(context);
-                  if(passWordController.text==box.get("Password")){
-                    if(bodyIndex!=Number) {
-                      ChangeMyIndex(Number);
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (passWordController.text == box.get("Password")) {
+                      if (bodyIndex != Number) {
+                        ChangeMyIndex(Number);
+                      }
                     }
-                  }
-                  passWordController.clear();
-                },child: const Text("Okay"),)
+                    passWordController.clear();
+                  },
+                  child: const Text("Okay"),
+                )
               ],
             ),
           );
         });
 
-  advancedDrawerController.hideDrawer();
-
+    advancedDrawerController.hideDrawer();
   }
+
   void cahnge() {
     emit(SetState());
   }
+
   void handleMenuButtonPressed() {
     advancedDrawerController.showDrawer();
   }
+
   void insertValueIntoControlar(e) {
     NameOfItem.text = e["Name"];
     CodeOfItem.text = e["Code"];
@@ -239,6 +263,7 @@ class CasherCuibt extends Cubit<CasherState> {
 
     emit(InsertValueIntoControlar());
   }
+
   Future<String> getName() async => ("youssef ahmed ");
 
   void ChangePageIntoCashier() {
@@ -299,7 +324,7 @@ class CasherCuibt extends Cubit<CasherState> {
   }
 
   void createDataBase() async {
-    dataBase = await openDatabase("nbnb.db", version: 1,
+    dataBase = await openDatabase("maryoma.db", version: 1,
         onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
@@ -386,6 +411,7 @@ class CasherCuibt extends Cubit<CasherState> {
               .then((value) {
             getItemProducts(dataBase, CodeOfItem.text).then((value) {
               print("this is item $value");
+              productsBox.put(value.single["Code"],0);
               NewProducts.add(value.single);
               uploadNewProduct();
             });
@@ -423,19 +449,26 @@ class CasherCuibt extends Cubit<CasherState> {
     getSearchItem(NameOfSearch.text);
     emit(UpdateProducts());
   }
-void WithdrawFromStore(String number){
-  getItemProducts(dataBase,storeValue).then((value) {
-    dataBase.rawUpdate('UPDATE Products SET QuantityInStore=? WHERE Code=? ',
-        [value.single["QuantityInStore"]-int.parse(Quantity.text), storeValue]);
-    dataBase.rawUpdate('UPDATE Products SET QuantityInShop=? WHERE Code=? ',
-        [value.single["QuantityInShop"]+int.parse(Quantity.text), storeValue]);
-    getProductsAfterChange();
-print("the number is ${value.single["QuantityInStore"]-int.parse(Quantity.text)}");
-  });
 
-  emit(UpdateProducts());
+  void WithdrawFromStore(String number) {
+    getItemProducts(dataBase, storeValue).then((value) {
+      dataBase.rawUpdate(
+          'UPDATE Products SET QuantityInStore=? WHERE Code=? ', [
+        value.single["QuantityInStore"] - int.parse(Quantity.text),
+        storeValue
+      ]);
+      dataBase.rawUpdate('UPDATE Products SET QuantityInShop=? WHERE Code=? ', [
+        value.single["QuantityInShop"] + int.parse(Quantity.text),
+        storeValue
+      ]);
+      getProductsAfterChange();
+      print(
+          "the number is ${value.single["QuantityInStore"] - int.parse(Quantity.text)}");
+    });
 
-}
+    emit(UpdateProducts());
+  }
+
   void updateProductsARecord({Number, Code, price}) {
     dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ', [1, Code]);
     dataBase.rawUpdate(
@@ -475,16 +508,17 @@ print("the number is ${value.single["QuantityInStore"]-int.parse(Quantity.text)}
     });
   }
 
-  void UpdeteNumAfterChange() {
-    dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
-        [NumberOfProduct.text, CodeOfProduct.text]);
-    dataBase.rawUpdate('UPDATE Products SET TotalMoney=? WHERE Code=? ',
-        [double.parse(NumberOfProduct.text) * price!, CodeOfProduct.text]);
-    total = total - orders[Index!]["TotalMoney"];
-    orders.removeAt(Index!);
-    DChangeNumberItem = true;
-    GetItem();
-    emit(UpdateNumItem());
+  void UpdeteNumAfterChange(contetx) {
+print("index is $Index");
+      dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
+          [NumberOfProduct.text, CodeOfProduct.text]);
+      dataBase.rawUpdate('UPDATE Products SET TotalMoney=? WHERE Code=? ',
+          [double.parse(NumberOfProduct.text) * price!, CodeOfProduct.text]);
+      total = total - orders[Index!]["TotalMoney"];
+      orders.removeAt(Index!);
+      GetItem(contetx);
+      emit(UpdateNumItem());
+
   }
 
   void getSearchItem(valuee) {
@@ -628,16 +662,18 @@ print("the number is ${value.single["QuantityInStore"]-int.parse(Quantity.text)}
     print("$valueEmpo");
     emit(ChangeEmpo());
   }
+
   void ChangeRateOfEmployee(value) {
     valueRate = value;
     print("$valueRate");
     emit(ChangeEmpo());
   }
-void insertNameOfEmployee(name){
-  nameOfEmpolyees=name;
-  emit(ChangeEmpo());
 
-}
+  void insertNameOfEmployee(name) {
+    nameOfEmpolyees = name;
+    emit(ChangeEmpo());
+  }
+
   //Fire base
   void uploadNewEmployee() {
     print("this is upload $NewEmployee");
@@ -666,6 +702,7 @@ void insertNameOfEmployee(name){
       });
     }
   }
+
   void uploadNewAttendedEmployee() {
     print("this is upload $NewDateEmployee");
     for (var element in NewDateEmployee) {
@@ -693,23 +730,22 @@ void insertNameOfEmployee(name){
       });
     }
   }
-  void uploadRateEmployee(id) {
-      Firestore.instance
-          .collection("Users")
-          .document(box.get("Token"))
-          .collection("Shops")
-          .document(box.get("shopName"))
-          .collection("Employee")
-          .document("${id}")
-          .collection("Rate")
-          .document(DateFormat.yMMMd().format(DateTime.now()))
-          .set({"Rate":valueRate})
-          .then((value) {
-        emit(InsertDateEmployeeTr());
-      }).catchError((onError) {
-        emit(InsertDateEmployeeFa(onError.toString()));
-      });
 
+  void uploadRateEmployee(id) {
+    Firestore.instance
+        .collection("Users")
+        .document(box.get("Token"))
+        .collection("Shops")
+        .document(box.get("shopName"))
+        .collection("Employee")
+        .document("${id}")
+        .collection("Rate")
+        .document(DateFormat.yMMMd().format(DateTime.now()))
+        .set({"Rate": valueRate}).then((value) {
+      emit(InsertDateEmployeeTr());
+    }).catchError((onError) {
+      emit(InsertDateEmployeeFa(onError.toString()));
+    });
   }
 
   ///Suppliers Methods
@@ -814,10 +850,11 @@ void insertNameOfEmployee(name){
         Suppliers[id - 1]["TotalSuppliers"] + double.parse(paidOfFees.text);
     dataBase.rawUpdate('UPDATE Suppliers SET TotalSuppliers=? WHERE id=? ',
         [totalSuppliersAfterAdd, id]).then((value) {
-          getDataSuppliersEspcially(dataBase, value).then((value) {
-      NewSuppliers.add(value.single);
-      uploadNewSuppliers();
-    });});
+      getDataSuppliersEspcially(dataBase, value).then((value) {
+        NewSuppliers.add(value.single);
+        uploadNewSuppliers();
+      });
+    });
 
     paidOfFees.clear();
     dateOfFees.clear();
@@ -835,56 +872,55 @@ void insertNameOfEmployee(name){
 
   //Fire base
   void uploadNewSuppliers() {
-      log("this is upload $NewSuppliers");
-      for (var element in NewSuppliers) {
-        SuppliersModule? Suppliers = SuppliersModule(
-          name: element["Name"],
-          id: element["id"],
-          TotalSuppliers: element["TotalSuppliers"],
-          LastPaid: element["LastPaid"],
-          feesDate: element["LastDate"],
-        );
-        Firestore.instance
-            .collection("Users")
-            .document(box.get("Token"))
-            .collection("Shops")
-            .document(box.get("shopName"))
-            .collection("Suppliers")
-            .document("${element["Name"]}")
-            .set(Suppliers.toJson())
-            .then((value) {
-          NewSuppliers.remove(element);
-          emit(InsertSuppliersTr());
-        }).catchError((onError) {
-          emit(InsertSuppliersFa(onError.toString()));
-        });
-      }
-
+    log("this is upload $NewSuppliers");
+    for (var element in NewSuppliers) {
+      SuppliersModule? Suppliers = SuppliersModule(
+        name: element["Name"],
+        id: element["id"],
+        TotalSuppliers: element["TotalSuppliers"],
+        LastPaid: element["LastPaid"],
+        feesDate: element["LastDate"],
+      );
+      Firestore.instance
+          .collection("Users")
+          .document(box.get("Token"))
+          .collection("Shops")
+          .document(box.get("shopName"))
+          .collection("Suppliers")
+          .document("${element["Name"]}")
+          .set(Suppliers.toJson())
+          .then((value) {
+        NewSuppliers.remove(element);
+        emit(InsertSuppliersTr());
+      }).catchError((onError) {
+        emit(InsertSuppliersFa(onError.toString()));
+      });
+    }
   }
-  void updateNewSuppliers({FeesModule? feesModule,int? id}) {
 
-     SuppliersModule? Suppliers = SuppliersModule(
-          name: feesModule!.name,
-          id: id,
-          TotalSuppliers: feesModule.TotalSuppliers,
-          LastPaid: feesModule.Paid,
-          feesDate:feesModule.feesDate,
-        );
-        Firestore.instance
-            .collection("Users")
-            .document(box.get("Token"))
-            .collection("Shops")
-            .document(box.get("shopName"))
-            .collection("Suppliers")
-            .document("${feesModule.name}")
-            .set(Suppliers.toJson())
-            .then((value) {
-          emit(InsertSuppliersTr());
-        }).catchError((onError) {
-          emit(InsertSuppliersFa(onError.toString()));
-        });
-
+  void updateNewSuppliers({FeesModule? feesModule, int? id}) {
+    SuppliersModule? Suppliers = SuppliersModule(
+      name: feesModule!.name,
+      id: id,
+      TotalSuppliers: feesModule.TotalSuppliers,
+      LastPaid: feesModule.Paid,
+      feesDate: feesModule.feesDate,
+    );
+    Firestore.instance
+        .collection("Users")
+        .document(box.get("Token"))
+        .collection("Shops")
+        .document(box.get("shopName"))
+        .collection("Suppliers")
+        .document("${feesModule.name}")
+        .set(Suppliers.toJson())
+        .then((value) {
+      emit(InsertSuppliersTr());
+    }).catchError((onError) {
+      emit(InsertSuppliersFa(onError.toString()));
+    });
   }
+
   void uploadNewFess({id}) {
     print("this is upload $NewFees");
     for (var element in NewFees) {
@@ -906,7 +942,7 @@ void insertNameOfEmployee(name){
           .document(element["id"].toString())
           .set(Fess.toJson())
           .then((value) {
-        updateNewSuppliers(feesModule: Fess,id: id);
+        updateNewSuppliers(feesModule: Fess, id: id);
         NewFees.remove(element);
         emit(InsertFeesTr());
       }).catchError((onError) {
@@ -914,6 +950,7 @@ void insertNameOfEmployee(name){
       });
     }
   }
+
   //Orders Methods
   Future<List<Map>> getOrders(value) async {
     return await dataBase
@@ -925,6 +962,7 @@ void insertNameOfEmployee(name){
   }
 
   Future RecordOrder() async {
+box.put("NumberOrders",NumberOfOrder+1);
     AllMoneyGet = AllMoneyGet + total;
     box.put("AllMoneyGet", AllMoneyGet);
     totalMoney = AllMoneyGet - payedMoney;
@@ -935,6 +973,7 @@ void insertNameOfEmployee(name){
             .rawInsert(
                 'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder,AllMoney)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder","$AllMoneyGet")')
             .then((value) {
+          productsBox.put("${e["Code"]}",(productsBox.get("${e["Code"]}")+e["Num"]));
           updateProductsARecord(
               Code: e["code"],
               Number: e["QuantityInStore"] - e["Num"],
@@ -949,13 +988,12 @@ void insertNameOfEmployee(name){
         return getName();
       });
     }
-    getAllOrders(dataBase).then((value) {
-      recordedOrders = [];
-      recordedOrders = value;
-      NumberOfOrder =
-          (recordedOrders[recordedOrders.length - 1]["NumberOrder"]) + 1;
+    getOrders(NumberOfOrder).then((value) {
+      MapOrders=[];
+      MapOrders=value;
+      uploadOrders();
     });
-
+NumberOfOrder =box.get("NumberOrders")??1;
     emit(RecordOrderSuccessfullyl());
   }
 
@@ -972,27 +1010,21 @@ void insertNameOfEmployee(name){
     emit(DeleteItemOrder());
   }
 
-  void GetItem() {
-    if (DChangeNumberItem) {
-      if (orders.isEmpty ||
-          orders
-              .every((element) => "${element["Code"]}" != CodeOfProduct.text)) {
+  void GetItem(context) {
+      if (orders.isEmpty || orders
+          .every((element) => "${element["Code"]}" != CodeOfProduct.text)) {
         getItemProducts(dataBase, CodeOfProduct.text).then((value) {
           if (value.isNotEmpty) {
+            FocusScope.of(context).autofocus(foucsNumber);
             if (Index == null) {
               orders.add(value.single);
               total = value.single["TotalMoney"] + total;
               CodeOfProduct.clear();
-              NameOfProduct.clear();
-              NumberOfProduct.clear();
               emit(InsertIntoOrder());
             } else if (Index != null) {
               orders.insert(Index!, value.single);
               total = value.single["TotalMoney"] + total;
-              NInserted = false;
               CodeOfProduct.clear();
-              NameOfProduct.clear();
-              NumberOfProduct.clear();
               Index = null;
               emit(InsertIntoOrder());
             }
@@ -1002,15 +1034,9 @@ void insertNameOfEmployee(name){
             emit(ErrorInsertIOrder());
           }
         });
-      } else {
-        AlertChangeNum = true;
-        emit(InsertIntoOrder());
-      }
-    } else {
-      UpdeteNumAfterChange();
+
     }
   }
-
   void getRecite(Text) {
     getOrders(Text).then((value) {
       recordedOrders = [];
@@ -1019,7 +1045,6 @@ void insertNameOfEmployee(name){
       emit(GetRecites());
     });
   }
-
   void calcTotalOfRecite() {
     TotalOfRecite = 0.0;
     for (var element in recordedOrders) {
@@ -1027,14 +1052,33 @@ void insertNameOfEmployee(name){
     }
     emit(calcRiciet());
   }
-  void storeMoneyValue(){
-    payedMoney=box.get("payedMoney")??0.0;
-    totalMoney=box.get("totalMoney")??0.0;
-    AllMoneyGet=box.get("AllMoneyGet")??0.0;
+
+  void storeMoneyValue() {
+    payedMoney = box.get("payedMoney") ?? 0.0;
+    totalMoney = box.get("totalMoney") ?? 0.0;
+    AllMoneyGet = box.get("AllMoneyGet") ?? 0.0;
   }
 
+//firebase
+  void uploadOrders() {
+    for (var e in MapOrders) {
+      OrdersModule Order = OrdersModule(code: e["Code"],name: e["Name"],quantity:productsBox.get(e["Code"]));
+      Firestore.instance
+          .collection("Users")
+          .document(box.get("Token"))
+          .collection("Shops")
+          .document(box.get("shopName"))
+          .collection("Orders")
+          .document("${e["Code"]}")
+          .set(Order.toJson()).then((value){
+        MapOrders.remove(e);
+        emit(InsertOrdersTr());
+      } ).catchError((onError){
+        emit(InsertOrdersFa(onError.toString()));
+      });
 
-
+    }
+  }
 
   //Firebase auth
   void createUserProfile({
