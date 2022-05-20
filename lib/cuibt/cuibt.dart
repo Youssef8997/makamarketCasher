@@ -239,6 +239,7 @@ class CasherCuibt extends Cubit<CasherState> {
 
     emit(InsertValueIntoControlar());
   }
+  Future<String> getName() async => ("youssef ahmed ");
 
   void ChangePageIntoCashier() {
     bodyIndex = 0;
@@ -298,7 +299,7 @@ class CasherCuibt extends Cubit<CasherState> {
   }
 
   void createDataBase() async {
-    dataBase = await openDatabase("hehe.db", version: 1,
+    dataBase = await openDatabase("nbnb.db", version: 1,
         onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
@@ -399,7 +400,7 @@ class CasherCuibt extends Cubit<CasherState> {
             print(" the error is ${error.toString()}");
             emit(InsertProductError());
           });
-          return getname();
+          return getName();
         });
       } else {
         print("I cant do this");
@@ -425,11 +426,13 @@ class CasherCuibt extends Cubit<CasherState> {
 void WithdrawFromStore(String number){
   getItemProducts(dataBase,storeValue).then((value) {
     dataBase.rawUpdate('UPDATE Products SET QuantityInStore=? WHERE Code=? ',
-        [int.parse(value.single["QuantityInStore"])-int.parse(Quantity.text), storeValue]);
-    dataBase.rawUpdate('UPDATE Products SET QuantityInStore=? WHERE Code=? ',
-        [int.parse(value.single["QuantityInStore"])-int.parse(Quantity.text), storeValue]);
+        [value.single["QuantityInStore"]-int.parse(Quantity.text), storeValue]);
+    dataBase.rawUpdate('UPDATE Products SET QuantityInShop=? WHERE Code=? ',
+        [value.single["QuantityInShop"]+int.parse(Quantity.text), storeValue]);
+    getProductsAfterChange();
+print("the number is ${value.single["QuantityInStore"]-int.parse(Quantity.text)}");
   });
-  getProductsAfterChange();
+
   emit(UpdateProducts());
 
 }
@@ -511,7 +514,7 @@ void WithdrawFromStore(String number){
           .collection("Shops")
           .document(box.get("shopName"))
           .collection("products")
-          .document("${element["Name"]}")
+          .document("${element["Code"]}")
           .set(product.toJson())
           .then((value) {
         NewProducts.remove(element);
@@ -567,7 +570,7 @@ void WithdrawFromStore(String number){
         print(" the error is ${error.toString()}");
         emit(InsertEmployeeError());
       });
-      return getname();
+      return getName();
     });
   }
 
@@ -589,7 +592,7 @@ void WithdrawFromStore(String number){
         print(" the error is ${error.toString()}");
         emit(InsertDateEmployeeError());
       });
-      return getname();
+      return getName();
     });
   }
 
@@ -734,7 +737,7 @@ void insertNameOfEmployee(name){
         print(" the error is ${error.toString()}");
         emit(InsertProductError());
       });
-      return getname();
+      return getName();
     });
   }
 
@@ -768,7 +771,7 @@ void insertNameOfEmployee(name){
           print(" the error is ${error.toString()}");
           emit(InsertProductError());
         });
-        return getname();
+        return getName();
       });
     } else {
       isMoreThanTotalMoney = true;
@@ -911,8 +914,6 @@ void insertNameOfEmployee(name){
       });
     }
   }
-
-
   //Orders Methods
   Future<List<Map>> getOrders(value) async {
     return await dataBase
@@ -945,7 +946,7 @@ void insertNameOfEmployee(name){
           print(" the error is ${error.toString()}");
           emit(RecordOrderError());
         });
-        return getname();
+        return getName();
       });
     }
     getAllOrders(dataBase).then((value) {
@@ -1031,7 +1032,10 @@ void insertNameOfEmployee(name){
     totalMoney=box.get("totalMoney")??0.0;
     AllMoneyGet=box.get("AllMoneyGet")??0.0;
   }
-  Future<String> getname() async => ("youssef ahmed ");
+
+
+
+
   //Firebase auth
   void createUserProfile({
     required String name,

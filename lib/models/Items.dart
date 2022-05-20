@@ -127,7 +127,10 @@ class Items extends StatelessWidget {
               label: Text("Price"),
             ),
             DataColumn(
-              label: Text("Number"),
+              label: Text("Quantity In Store"),
+            ),
+            DataColumn(
+              label: Text("Quantity In Shop"),
             ),
             DataColumn(
               label: Text("EndDate"),
@@ -138,7 +141,8 @@ class Items extends StatelessWidget {
               DataCell(Text("${e["Code"]}")),
               DataCell(Text("${e["Name"]}")),
               DataCell(Text("${e["Price"]}")),
-              DataCell(Text("${e["NumberInStore"]}")),
+              DataCell(Text("${e["QuantityInStore"]}")),
+              DataCell(Text("${e["QuantityInShop"]}")),
               DataCell(Text("${e["EndDate"]}")),
             ]);
           } ).toList()

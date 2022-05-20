@@ -114,7 +114,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListTile(
                       selected: cuibt.bodyIndex==3?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: ()=>cuibt.sureUser(3,context),
+                      onTap: () {
+                        cuibt.bodyIndex!=3?cuibt.ChangeMyIndex(3):null;
+                        cuibt.advancedDrawerController.hideDrawer();
+                      },
+
                       leading:const CircleAvatar(
                         backgroundColor: Colors.blueGrey,
                         radius:15,
@@ -126,7 +130,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListTile(
                       selected: cuibt.bodyIndex==4?true:false,
                       selectedColor: Colors.cyan,
-                      onTap: ()=>cuibt.sureUser(4,  context),
+                      onTap: () {
+                        cuibt.bodyIndex!=4?cuibt.ChangeMyIndex(4):null;
+                        cuibt.advancedDrawerController.hideDrawer();
+                      },
                       leading:const CircleAvatar(
                         backgroundColor: Colors.blueGrey,
                         foregroundColor:Colors.blueGrey ,

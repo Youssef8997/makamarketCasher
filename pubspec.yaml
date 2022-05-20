@@ -46,6 +46,8 @@ dependencies:
   firebase_auth: ^3.3.16
   hive: ^2.1.0
   motion_toast: ^2.1.6
+  connection_notifier: ^0.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

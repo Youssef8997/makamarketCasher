@@ -372,55 +372,62 @@ class AddItem extends StatelessWidget {
 
   CasherTable(context) {
     var cuibt = CasherCuibt.get(context);
-    return DataTable(
-        dataTextStyle:
-            const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-        headingTextStyle: const TextStyle(
-          fontWeight: FontWeight.w900,
-          color: Colors.black,
-          fontSize: 20,
-          fontStyle: FontStyle.italic,
-        ),
-        columnSpacing: 60,
-        horizontalMargin: 10,
-        border: TableBorder.all(
-            color: Colors.grey,
-            borderRadius: BorderRadius.circular(15),
-            width: 2),
-        columns: const [
-          DataColumn(
-            label: Text("Code"),
+    return Expanded(
+      child: DataTable(
+
+          dataTextStyle:
+              const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          headingTextStyle: const TextStyle(
+            fontWeight: FontWeight.w900,
+            color: Colors.black,
+            fontSize: 20,
+            fontStyle: FontStyle.italic,
           ),
-          DataColumn(
-            label: Text("Name"),
-          ),
-          DataColumn(
-            label: Text("Price"),
-          ),
-          DataColumn(
-            label: Text("Number"),
-          ),
-          DataColumn(
-            label: Text("EndDate"),
-          ),
-        ],
-        rows: cuibt.SearchProducts.map((e) {
-          return DataRow(
-              onLongPress: () {
-                cuibt.insertValueIntoControlar(e);
-              },
-              cells: [
-                DataCell(Text("${e["Code"]}")),
-                DataCell(
-                  Text("${e["Name"]}"),
-                ),
-                DataCell(
-                  Text("${e["Price"]}"),
-                ),
-                DataCell(Text("${e["NumberInStore"]}")),
-                DataCell(Text("${e["EndDate"]}")),
-              ]);
-        }).toList());
+          columnSpacing: 10,
+          horizontalMargin: 10,
+          border: TableBorder.all(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(15),
+              width: 2),
+          columns: const [
+            DataColumn(
+              label: Text("Code"),
+            ),
+            DataColumn(
+              label: Text("Name"),
+            ),
+            DataColumn(
+              label: Text("Price"),
+            ),
+            DataColumn(
+              label: Text("store"),
+            ),
+            DataColumn(
+              label: Text(" shop"),
+            ),
+            DataColumn(
+              label: Text("EndDate"),
+            ),
+          ],
+          rows: cuibt.SearchProducts.map((e) {
+            return DataRow(
+                onLongPress: () {
+                  cuibt.insertValueIntoControlar(e);
+                },
+                cells: [
+                  DataCell(Text("${e["Code"]}")),
+                  DataCell(
+                    Text("${e["Name"]}"),
+                  ),
+                  DataCell(
+                    Text("${e["Price"]}"),
+                  ),
+                  DataCell(Text("${e["QuantityInStore"]}")),
+                  DataCell(Text("${e["QuantityInShop"]}")),
+                  DataCell(Text("${e["EndDate"]}")),
+                ]);
+          }).toList()),
+    );
   }
 
   settingDialog(context) {

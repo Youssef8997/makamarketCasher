@@ -245,9 +245,9 @@ class LoginState extends State<Login> {
             primaryColor: Colors.black,
             secondaryColor: Colors.white));
   }
-  settingDialog(context,CasherCuibt cuibt) {
+  settingDialog(contextl,CasherCuibt cuibt) {
     return showDialog(
-        context: context,
+        context: contextl,
         builder: (context) {
           return BlurryContainer(
             height: MediaQuery.of(context).size.height,
@@ -280,7 +280,7 @@ class LoginState extends State<Login> {
                 MaterialButton(onPressed: (){
                   Navigator.pop(context);
                   cuibt.box.put("shopName",cuibt.shopNameController.text);
-                  Nevigator(context: context, bool: false, page: HomeScreen());
+                  Nevigator(context: contextl, bool: false, page: HomeScreen());
                 },child: const Text("Okay"),)
               ],
             ),

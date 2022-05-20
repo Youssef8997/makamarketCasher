@@ -508,7 +508,7 @@ actionsAlignment: MainAxisAlignment.center,
                   Text("${e["Price"]}"),
 
                 ),
-                DataCell(Text("${e["NumberInStore"]}")),
+                DataCell(Text("${e["QuantityInStore"]}")),
                 DataCell(Text("${e["EndDate"]}")),
               ]);
         }).toList());

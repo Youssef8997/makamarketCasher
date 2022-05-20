@@ -1,3 +1,4 @@
+import 'package:connection_notifier/connection_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:untitled6/Compoandis/Comp.dart';
@@ -31,20 +32,38 @@ class _SpalshState extends State<Spalsh>with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Center(
-         child: Lottie.asset(
-              'Asset/LottieAnimation.json',
-           controller: _controller,
-           onLoaded: (composition) {
-             _controller
-               ..duration = composition.duration
-               ..forward().then((value) => Nevigator(context: context,page: Screen,bool: false));
+      child: ConnectionNotifierToggler(
+        connected:Center(
+          child: Lottie.asset(
+            'Asset/LottieAnimation.json',
+            controller: _controller,
+            onLoaded: (composition) {
+              _controller
+                ..duration = composition.duration
+                ..forward().then((value) => Nevigator(context: context,page: Screen,bool: false));
 
-           },
+            },
 
-         ),
+          ),
 
-      ),
+        ),
+          disconnected: Center(
+      child: Lottie.asset(
+          'Asset/LottieAnimation.json',
+          controller: _controller,
+          onLoaded: (composition) {
+    _controller
+    ..duration = composition.duration
+    ..forward().then((value) => Nevigator(context: context,page: HomeScreen(),bool: false));
+
+    },
+
+    ),
+
+    ),
+      )
     );
   }
 }
+/*
+*/

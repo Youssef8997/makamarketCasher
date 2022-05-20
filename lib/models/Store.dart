@@ -49,7 +49,7 @@ class Store extends StatelessWidget {
                     child: MyTextField(Controlr: cuibt.Quantity, hint: "20 packages",label: "Quantity",Prefix: Icon(Icons.sync_alt,color: Colors.grey[900]!,),),
                   ),
                   const Spacer(),
-                  Center(child: myButton(child: Text("Withdraw"),OnPreesed: ()=>cuibt.WithdrawFromStore(),)),
+                  Center(child: myButton(child: Text("Withdraw",style: TextStyle(color: Colors.white,)),OnPreesed: ()=>cuibt.WithdrawFromStore(cuibt.Quantity.text),)),
 
               ],)
             ),
