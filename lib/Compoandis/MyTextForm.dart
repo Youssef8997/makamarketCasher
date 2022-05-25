@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-Widget MyTextField({required Controlr,required String hint,label,Prefix,suffix,keybordtype,isobsr=false,validator,OnTap,enabled,onChanged,Focusnode,OnSubmitted}) {
+Widget MyTextField({auto=false,required Controlr,required String hint,label,Prefix,suffix,keybordtype,isobsr=false,validator,OnTap,enabled,onChanged,Focusnode,OnSubmitted}) {
   return TextFormField(
+    autofocus: auto,
     onFieldSubmitted: OnSubmitted,
     obscuringCharacter: "*",
     focusNode: Focusnode,

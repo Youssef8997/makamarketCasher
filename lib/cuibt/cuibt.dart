@@ -34,7 +34,6 @@ import '../module/dateEmpo.dart';
 
 class CasherCuibt extends Cubit<CasherState> {
   CasherCuibt() : super(intState());
-
   static CasherCuibt get(context) => BlocProvider.of(context);
   var databaseFactory = databaseFactoryFfi;
   late Database dataBase;
@@ -60,7 +59,6 @@ class CasherCuibt extends Cubit<CasherState> {
   bool ItemsSearch = false;
   bool isMoreThanTotalMoney = false;
   bool DisableInsertButton = true;
-
   //Controller of AddItem Screen
   var NameOfItem = TextEditingController();
   var CodeOfItem = TextEditingController();
@@ -73,10 +71,8 @@ class CasherCuibt extends Cubit<CasherState> {
   var QuantityInShop = TextEditingController();
   var kayform = GlobalKey<FormState>();
   int? id;
-
   //controller of Items Screen
   var NameController = TextEditingController();
-
   //Controller Of AddInvoice
   var NameOfSupllayers = TextEditingController();
   var CostOfInvoice = TextEditingController();
@@ -85,17 +81,14 @@ class CasherCuibt extends Cubit<CasherState> {
   double TotalOfSupllayers = 0.0;
   var DateOfSupllayers = TextEditingController();
   var SublayersKeyForm = GlobalKey<FormState>();
-
   //Pay Fees
   var totalFees = TextEditingController();
   var paidOfFees = TextEditingController();
   var dateOfFees = TextEditingController();
   var feesKeyForm = GlobalKey<FormState>();
   double payedMoney = 0.0;
-
   //Add money
   var increesKeyForm = GlobalKey<FormState>();
-
   // CashierPage
   var NameOfProduct = TextEditingController();
   var NumberOfProduct = TextEditingController();
@@ -109,8 +102,10 @@ class CasherCuibt extends Cubit<CasherState> {
   int? Index;
   double AllMoneyGet = 0.0;
   double totalMoney = 0.0;
-  FocusNode foucsNumber = FocusNode();
   FocusNode foucsCode = FocusNode();
+  Map<String, TextEditingController> QuintteyControllers = Map();
+  Map<String, TextEditingController> NoteControllers = Map();
+  Map<String, FocusNode> FocusControllers = Map();
   double total = 0.0;
   bool selected = false;
   bool NInserted = true;
@@ -119,7 +114,6 @@ class CasherCuibt extends Cubit<CasherState> {
   var shopNameController = TextEditingController();
   var passWordController = TextEditingController();
   bool unKnownName = true;
-
   //Add Employee
   var NameOfEmpolyees = TextEditingController();
   var SalaryOfEmpolyees = TextEditingController();
@@ -127,7 +121,6 @@ class CasherCuibt extends Cubit<CasherState> {
   var AttendanceDateOfEmpolyees = TextEditingController();
   var LeavingDateOfEmpolyees = TextEditingController();
   var AddEmpoKey = GlobalKey<FormState>();
-
   //employee
   var AttendanceDate = TextEditingController();
   var delayTime = TextEditingController();
@@ -324,13 +317,13 @@ class CasherCuibt extends Cubit<CasherState> {
   }
 
   void createDataBase() async {
-    dataBase = await openDatabase("maryoma.db", version: 1,
+    dataBase = await openDatabase("bobo.db", version: 1,
         onCreate: (dataBase, version) {
       print("create data base");
       dataBase.execute(
           'CREATE TABLE Orders (Name Text,Code TEXT,Price DOUBLE,OrderDate Text,Num DOUBLE,TotalMoney DOUBLE,NumberOrder INTEGER,AllMoney DOUBLE,Notes Text)');
       dataBase.execute(
-          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,QuantityInStore INTEGER,QuantityInShop INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE)');
+          'CREATE TABLE Products (Name Text,Code TEXT  PRIMARY KEY,Price DOUBLE,QuantityInStore INTEGER,QuantityInShop INTEGER,StartDate Text,EndDate Text,Num DOUBLE,TotalMoney DOUBLE,Notes Text)');
       dataBase.execute(
           'CREATE TABLE Suppliers (id INTEGER PRIMARY KEY,Name TEXT,LastPaid DOUBLE,TotalSuppliers DOUBLE,LastDate Text)');
       dataBase.execute(
@@ -355,6 +348,7 @@ class CasherCuibt extends Cubit<CasherState> {
       getDataProducts(dataBase).then((value) {
         Products = [];
         Products = value;
+        print("products is ${Products}");
       });
       getDataFees(dataBase).then((value) {
         fees = [];
@@ -413,7 +407,6 @@ class CasherCuibt extends Cubit<CasherState> {
               print("this is item $value");
               productsBox.put(value.single["Code"],0);
               NewProducts.add(value.single);
-              uploadNewProduct();
             });
             getProductsAfterChange();
             NameOfItem.clear();
@@ -510,10 +503,12 @@ class CasherCuibt extends Cubit<CasherState> {
 
   void UpdeteNumAfterChange(contetx) {
 print("index is $Index");
-      dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
-          [NumberOfProduct.text, CodeOfProduct.text]);
+      dataBase.rawUpdate('UPDATE Products SET Notes=? WHERE Code=? ',
+          [NoteControllers[CodeOfProduct.text]!.text, CodeOfProduct.text]);
+dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
+    [QuintteyControllers[CodeOfProduct.text]!.text, CodeOfProduct.text]);
       dataBase.rawUpdate('UPDATE Products SET TotalMoney=? WHERE Code=? ',
-          [double.parse(NumberOfProduct.text) * price!, CodeOfProduct.text]);
+          [double.parse(QuintteyControllers[CodeOfProduct.text]!.text) * price!, CodeOfProduct.text]);
       total = total - orders[Index!]["TotalMoney"];
       orders.removeAt(Index!);
       GetItem(contetx);
@@ -593,7 +588,6 @@ print("index is $Index");
           .then((value) {
         getDataEmployeeEspcially(dataBase, value).then((value) {
           NewEmployee.add(value.single);
-          uploadNewEmployee();
         });
         GetDataEmployee(dataBase);
         NameOfEmpolyees.clear();
@@ -618,7 +612,6 @@ print("index is $Index");
           .then((value) {
         getdateAttendEmployee(id).then((value) {
           NewDateEmployee.add(value.last);
-          uploadNewAttendedEmployee();
         });
         getEmployeeDate(id);
         emit(InsertDateEmployeeSuccessfully());
@@ -762,7 +755,6 @@ print("index is $Index");
           .then((value) {
         getDataSuppliersEspcially(dataBase, value).then((value) {
           NewSuppliers.add(value.single);
-          uploadNewSuppliers();
         });
         getSuppliersAfterChange();
         NameOfSupllayers.clear();
@@ -996,7 +988,6 @@ box.put("NumberOrders",NumberOfOrder+1);
 NumberOfOrder =box.get("NumberOrders")??1;
     emit(RecordOrderSuccessfullyl());
   }
-
   void deleteItemFOrders(context) {
     orders.removeAt(Index!);
     DChangeNumberItem = true;
@@ -1009,15 +1000,16 @@ NumberOfOrder =box.get("NumberOrders")??1;
     NumberOfProduct.clear();
     emit(DeleteItemOrder());
   }
-
   void GetItem(context) {
       if (orders.isEmpty || orders
           .every((element) => "${element["Code"]}" != CodeOfProduct.text)) {
         getItemProducts(dataBase, CodeOfProduct.text).then((value) {
           if (value.isNotEmpty) {
-            FocusScope.of(context).autofocus(foucsNumber);
             if (Index == null) {
               orders.add(value.single);
+              QuintteyControllers[value.single["Code"]] = TextEditingController();
+              NoteControllers[value.single["Code"]] = TextEditingController();
+              FocusControllers[value.single["Code"]] = FocusNode();
               total = value.single["TotalMoney"] + total;
               CodeOfProduct.clear();
               emit(InsertIntoOrder());
@@ -1052,7 +1044,6 @@ NumberOfOrder =box.get("NumberOrders")??1;
     }
     emit(calcRiciet());
   }
-
   void storeMoneyValue() {
     payedMoney = box.get("payedMoney") ?? 0.0;
     totalMoney = box.get("totalMoney") ?? 0.0;
@@ -1079,7 +1070,42 @@ NumberOfOrder =box.get("NumberOrders")??1;
 
     }
   }
+// end shift methods
+  void uploadMoney(){
+    Firestore.instance
+        .collection("Users")
+        .document(box.get("Token"))
+        .collection("Shops")
+        .document(box.get("shopName"))
+        .collection("Money")
+        .document("${DateTime.now()}")
+        .set(
+      {
+        "AllMoneyGet": AllMoneyGet,
+        "payedMoney": payedMoney,
+        "totalMoney": totalMoney,
+        "Date": DateTime.now(),
+      },
 
+    ).then((value){
+      emit(InsertMoneyTr());
+    }).catchError((onError){
+      emit(InsertMoneyFa(onError.toString()));
+    });
+  }
+  void EndShift(){
+    uploadNewProduct();
+    uploadNewEmployee();
+    uploadNewAttendedEmployee();
+    uploadNewSuppliers();
+    uploadMoney();
+    box.put("NumberOrders",0.0);
+    box.put("AllMoneyGet",0.0);
+    box.put("totalMoney",0.0);
+    box.put("payedMoney",0.0);
+    storeMoneyValue();
+   emit(endshitf());
+  }
   //Firebase auth
   void createUserProfile({
     required String name,

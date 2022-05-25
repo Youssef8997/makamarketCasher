@@ -29,9 +29,9 @@ class Money extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          botton("Details"),
+                          botton("Details", onPressed: (){}),
                           const SizedBox(width: 20,),
-                          botton("Print"),
+                          botton("Print",onPressed: ()=>cuibt.EndShift()),
 
                         ],
                       )
@@ -41,14 +41,14 @@ class Money extends StatelessWidget {
         });
   }
 
-  Container botton(text) {
+  Container botton(text, { onPressed}) {
     return Container(
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           child: MaterialButton(
-                            onPressed: () {},
+                            onPressed: onPressed,
                             child:  Text("$text", style: const TextStyle(color: Colors.white)),
                             color: Colors.grey.shade900,
                           ),

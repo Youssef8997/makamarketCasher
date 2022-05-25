@@ -86,3 +86,9 @@ class InsertOrdersFa extends CasherState{
   final Error;
   InsertOrdersFa(this.Error);
 }
+class InsertMoneyTr extends CasherState{}
+class InsertMoneyFa extends CasherState{
+  final Error;
+  InsertMoneyFa(this.Error);
+}
+class endshitf extends CasherState{}

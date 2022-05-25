@@ -122,6 +122,7 @@ class CasherPage extends StatelessWidget {
             ),
             Expanded(
                 child: MyTextField(
+             auto: true,
                   Focusnode: cuibt.foucsCode,
               Controlr: cuibt.CodeOfProduct,
               hint: "Write code of Product",
@@ -212,7 +213,7 @@ class CasherPage extends StatelessWidget {
     return InkWell(
 onTap: (){
   cuibt.AddItemChangeSearch();
-  
+
 },
       child: Container(
         height: 40,
@@ -299,28 +300,35 @@ onTap: (){
                 ),
                 DataCell(
                   TextFormField(
-                    onChanged:(_){cuibt.InsertValueItem(
+                    onChanged:(_){
+                      cuibt.InsertValueItem(
                       codeOFItem: "${e["Code"]}",
                       NameOFItem: "${e["Name"]}",
                       NumberOFItem: "${e["Num"]}",
                       id: e["id"],
                       Price:e["Price"],
                       index: index,
-
                     );},
+                      autofocus: true,
                     cursorColor: Colors.green,
-                    cursorRadius: Radius.circular(10),
+                    cursorRadius:const  Radius.circular(10),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                     ),
-                    focusNode: cuibt.foucsNumber,
-                    controller: cuibt.NumberOfProduct,
-                  onFieldSubmitted: (_){cuibt.UpdeteNumAfterChange(context);}
+                    controller: cuibt.QuintteyControllers[e["Code"]],
+                  onFieldSubmitted: (_){
+                      FocusScope.of(context).requestFocus(cuibt.FocusControllers[e["Code"]]);
+
+                    }
                   ),),
 
                 DataCell(Text("${e["TotalMoney"]}")),
                 DataCell(
-                 TextFormField(controller: cuibt.Notes,decoration:InputDecoration(border:InputBorder.none)))
+                 TextFormField(controller:cuibt.NoteControllers[e["Code"]],decoration:InputDecoration(border:InputBorder.none),focusNode: cuibt.FocusControllers[e["Code"]],onFieldSubmitted:(_){
+                   cuibt.UpdeteNumAfterChange(context);
+                   FocusScope.of(context).requestFocus(cuibt.foucsCode);
+
+                 },))
               ]);
         }).toList());
   }
