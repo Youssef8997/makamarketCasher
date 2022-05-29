@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:developer';
 
-
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:firedart/auth/firebase_auth.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -392,6 +391,7 @@ class CasherCuibt extends Cubit<CasherState> {
       Products = [];
       Products = value;
       emit(GetDataProductsSuccessfully());
+
     });
   }
 
@@ -405,7 +405,7 @@ class CasherCuibt extends Cubit<CasherState> {
               .then((value) {
             getItemProducts(dataBase, CodeOfItem.text).then((value) {
               print("this is item $value");
-              productsBox.put(value.single["Code"],0);
+              productsBox.put(value.single["Code"], 0);
               NewProducts.add(value.single);
             });
             getProductsAfterChange();
@@ -469,6 +469,7 @@ class CasherCuibt extends Cubit<CasherState> {
     dataBase.rawUpdate(
         'UPDATE Products SET TotalMoney=? WHERE Code=? ', [price, Code]);
     getProductsAfterChange();
+    print("the number is ${price}");
     emit(UpdateProducts());
   }
 
@@ -502,18 +503,19 @@ class CasherCuibt extends Cubit<CasherState> {
   }
 
   void UpdeteNumAfterChange(contetx) {
-print("index is $Index");
-      dataBase.rawUpdate('UPDATE Products SET Notes=? WHERE Code=? ',
-          [NoteControllers[CodeOfProduct.text]!.text, CodeOfProduct.text]);
-dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
-    [QuintteyControllers[CodeOfProduct.text]!.text, CodeOfProduct.text]);
-      dataBase.rawUpdate('UPDATE Products SET TotalMoney=? WHERE Code=? ',
-          [double.parse(QuintteyControllers[CodeOfProduct.text]!.text) * price!, CodeOfProduct.text]);
-      total = total - orders[Index!]["TotalMoney"];
-      orders.removeAt(Index!);
-      GetItem(contetx);
-      emit(UpdateNumItem());
-
+    print("index is $Index");
+    dataBase.rawUpdate('UPDATE Products SET Notes=? WHERE Code=? ',
+        [NoteControllers[CodeOfProduct.text]!.text, CodeOfProduct.text]);
+    dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
+        [QuintteyControllers[CodeOfProduct.text]!.text, CodeOfProduct.text]);
+    dataBase.rawUpdate('UPDATE Products SET TotalMoney=? WHERE Code=? ', [
+      double.parse(QuintteyControllers[CodeOfProduct.text]!.text) * price!,
+      CodeOfProduct.text
+    ]);
+    total = total - orders[Index!]["TotalMoney"];
+    orders.removeAt(Index!);
+    GetItem(contetx);
+    emit(UpdateNumItem());
   }
 
   void getSearchItem(valuee) {
@@ -954,7 +956,7 @@ dataBase.rawUpdate('UPDATE Products SET Num=? WHERE Code=? ',
   }
 
   Future RecordOrder() async {
-box.put("NumberOrders",NumberOfOrder+1);
+    box.put("NumberOrders", NumberOfOrder + 1);
     AllMoneyGet = AllMoneyGet + total;
     box.put("AllMoneyGet", AllMoneyGet);
     totalMoney = AllMoneyGet - payedMoney;
@@ -965,7 +967,8 @@ box.put("NumberOrders",NumberOfOrder+1);
             .rawInsert(
                 'INSERT INTO Orders(Name,Code,Price,OrderDate,Num,TotalMoney,NumberOrder,AllMoney)VALUES("${e["Name"]}","${e["Code"]}","${e["Price"]}","${DateTime.now()}","${e["Num"]}","${e["TotalMoney"]}","$NumberOfOrder","$AllMoneyGet")')
             .then((value) {
-          productsBox.put("${e["Code"]}",(productsBox.get("${e["Code"]}")+e["Num"]));
+          productsBox.put(
+              "${e["Code"]}", (productsBox.get("${e["Code"]}") + e["Num"]));
           updateProductsARecord(
               Code: e["code"],
               Number: e["QuantityInStore"] - e["Num"],
@@ -981,13 +984,14 @@ box.put("NumberOrders",NumberOfOrder+1);
       });
     }
     getOrders(NumberOfOrder).then((value) {
-      MapOrders=[];
-      MapOrders=value;
+      MapOrders = [];
+      MapOrders = value;
       uploadOrders();
     });
-NumberOfOrder =box.get("NumberOrders")??1;
+    NumberOfOrder = box.get("NumberOrders") ?? 1;
     emit(RecordOrderSuccessfullyl());
   }
+
   void deleteItemFOrders(context) {
     orders.removeAt(Index!);
     DChangeNumberItem = true;
@@ -995,40 +999,82 @@ NumberOfOrder =box.get("NumberOrders")??1;
     for (int l = 0; l < orders.length; l++) {
       total = orders[l]["TotalMoney"] + total;
     }
+    QuintteyControllers[CodeOfProduct.text]!.text="";
+    NoteControllers[CodeOfProduct.text]!.text="";
     CodeOfProduct.clear();
     NameOfProduct.clear();
-    NumberOfProduct.clear();
     emit(DeleteItemOrder());
   }
-  void GetItem(context) {
-      if (orders.isEmpty || orders
-          .every((element) => "${element["Code"]}" != CodeOfProduct.text)) {
-        getItemProducts(dataBase, CodeOfProduct.text).then((value) {
-          if (value.isNotEmpty) {
-            if (Index == null) {
-              orders.add(value.single);
-              QuintteyControllers[value.single["Code"]] = TextEditingController();
-              NoteControllers[value.single["Code"]] = TextEditingController();
-              FocusControllers[value.single["Code"]] = FocusNode();
-              total = value.single["TotalMoney"] + total;
-              CodeOfProduct.clear();
-              emit(InsertIntoOrder());
-            } else if (Index != null) {
-              orders.insert(Index!, value.single);
-              total = value.single["TotalMoney"] + total;
-              CodeOfProduct.clear();
-              Index = null;
-              emit(InsertIntoOrder());
-            }
-          } else {
-            print("item not found");
-            AlertItemNFound = true;
-            emit(ErrorInsertIOrder());
-          }
-        });
 
+  void GetItem(context) {
+    if
+    (orders.every((element) => "${element["Code"]}" != CodeOfProduct.text)) {
+      getItemProducts(dataBase, CodeOfProduct.text).then((value) {
+        if (value.isNotEmpty) {
+          if (Index == null) {
+            orders.add(value.single);
+            QuintteyControllers[value.single["Code"]] = TextEditingController();
+            NoteControllers[value.single["Code"]] = TextEditingController();
+            FocusControllers[value.single["Code"]] = FocusNode();
+            total = value.single["TotalMoney"] + total;
+            CodeOfProduct.clear();
+            emit(InsertIntoOrder());
+          } else if (Index != null) {
+            orders.insert(Index!, value.single);
+            total = value.single["TotalMoney"] + total;
+            CodeOfProduct.clear();
+            Index = null;
+            emit(InsertIntoOrder());
+          }
+        } else {
+          print("item not found");
+          settingDialog(context, "Item Not Found");
+          CodeOfProduct.clear();
+          emit(ErrorInsertIOrder());
+        }
+      });
+    }
+    else {
+      settingDialog(context, "Item Already Exist");
+      CodeOfProduct.clear();
+      emit(ErrorInsertIOrder());
     }
   }
+  settingDialog(context,text,) {
+    return showDialog(
+
+        context: context,
+        builder: (context) {
+          return BlurryContainer(
+            height: 800,
+            width: 300,
+            blur: 6,
+            child: AlertDialog(
+              actionsAlignment: MainAxisAlignment.center,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              backgroundColor: Colors.white60,
+              elevation: 2,
+              content: Text("$text",style: TextStyle(fontWeight: FontWeight.w900)),
+              actions: [
+                MaterialButton(
+                  color: Colors.blueGrey[700],
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },child:const Text("Okay",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
+                if(text=="Item Not Found")
+                  MaterialButton(
+                    color: Colors.blueGrey[700],
+                    onPressed: (){
+                   ChangePageIntoAddItem();
+                      Navigator.pop(context);
+                    },child:const Text("Add item",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
+
+              ],
+            ),
+          );
+        });
+  }
+
   void getRecite(Text) {
     getOrders(Text).then((value) {
       recordedOrders = [];
@@ -1037,6 +1083,7 @@ NumberOfOrder =box.get("NumberOrders")??1;
       emit(GetRecites());
     });
   }
+
   void calcTotalOfRecite() {
     TotalOfRecite = 0.0;
     for (var element in recordedOrders) {
@@ -1044,6 +1091,7 @@ NumberOfOrder =box.get("NumberOrders")??1;
     }
     emit(calcRiciet());
   }
+
   void storeMoneyValue() {
     payedMoney = box.get("payedMoney") ?? 0.0;
     totalMoney = box.get("totalMoney") ?? 0.0;
@@ -1053,7 +1101,10 @@ NumberOfOrder =box.get("NumberOrders")??1;
 //firebase
   void uploadOrders() {
     for (var e in MapOrders) {
-      OrdersModule Order = OrdersModule(code: e["Code"],name: e["Name"],quantity:productsBox.get(e["Code"]));
+      OrdersModule Order = OrdersModule(
+          code: e["Code"],
+          name: e["Name"],
+          quantity: productsBox.get(e["Code"]));
       Firestore.instance
           .collection("Users")
           .document(box.get("Token"))
@@ -1061,24 +1112,25 @@ NumberOfOrder =box.get("NumberOrders")??1;
           .document(box.get("shopName"))
           .collection("Orders")
           .document("${e["Code"]}")
-          .set(Order.toJson()).then((value){
+          .set(Order.toJson())
+          .then((value) {
         MapOrders.remove(e);
         emit(InsertOrdersTr());
-      } ).catchError((onError){
+      }).catchError((onError) {
         emit(InsertOrdersFa(onError.toString()));
       });
-
     }
   }
+
 // end shift methods
-  void uploadMoney(){
+  void uploadMoney() {
     Firestore.instance
         .collection("Users")
         .document(box.get("Token"))
         .collection("Shops")
         .document(box.get("shopName"))
         .collection("Money")
-        .document("${DateTime.now()}")
+        .document("${DateFormat.yMMMd().format(DateTime.now())}")
         .set(
       {
         "AllMoneyGet": AllMoneyGet,
@@ -1086,26 +1138,27 @@ NumberOfOrder =box.get("NumberOrders")??1;
         "totalMoney": totalMoney,
         "Date": DateTime.now(),
       },
-
-    ).then((value){
+    ).then((value) {
       emit(InsertMoneyTr());
-    }).catchError((onError){
+    }).catchError((onError) {
       emit(InsertMoneyFa(onError.toString()));
     });
   }
-  void EndShift(){
+
+  void EndShift() {
     uploadNewProduct();
     uploadNewEmployee();
     uploadNewAttendedEmployee();
     uploadNewSuppliers();
     uploadMoney();
-    box.put("NumberOrders",0.0);
-    box.put("AllMoneyGet",0.0);
-    box.put("totalMoney",0.0);
-    box.put("payedMoney",0.0);
+    box.put("NumberOrders", 0.0);
+    box.put("AllMoneyGet", 0.0);
+    box.put("totalMoney", 0.0);
+    box.put("payedMoney", 0.0);
     storeMoneyValue();
-   emit(endshitf());
+    emit(endshitf());
   }
+
   //Firebase auth
   void createUserProfile({
     required String name,

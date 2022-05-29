@@ -1,4 +1,3 @@
-
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +21,11 @@ class CasherPage extends StatelessWidget {
             TotalOfMoney(cuibt),
             //SearchRightBottom
             Padding(
-              padding:  EdgeInsets.only(left:CasherCuibt.get(context).Search?100:10,bottom: 10,top: 10,right: 10),
+              padding: EdgeInsets.only(
+                  left: CasherCuibt.get(context).Search ? 100 : 10,
+                  bottom: 10,
+                  top: 10,
+                  right: 10),
               child: AnimatedAlign(
                   duration: const Duration(milliseconds: 500),
                   alignment: CasherCuibt.get(context).Search
@@ -35,15 +38,19 @@ class CasherPage extends StatelessWidget {
             ),
             //CashierConte
             Padding(
-              padding: const EdgeInsets.only(bottom: 20),
+              padding:  EdgeInsets.only(bottom: 20,top:CasherCuibt.get(context).Search?180:0),
               child: AnimatedAlign(
                 duration: const Duration(milliseconds: 700),
                 curve: Curves.fastOutSlowIn,
                 alignment: CasherCuibt.get(context).Search
                     ? Alignment.centerLeft
-                    : Alignment.center,
+                    : Alignment.bottomCenter,
                 child: AnimatedContainer(
-                  padding: const EdgeInsets.only(left: 10,top: 10,bottom: 10,),
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    top: 10,
+                    bottom: 10,
+                  ),
                   duration: const Duration(milliseconds: 700),
                   curve: Curves.fastLinearToSlowEaseIn,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -64,50 +71,46 @@ class CasherPage extends StatelessWidget {
             ),
             //searchConte
             Padding(
-                padding: const EdgeInsetsDirectional.only(end: 15,bottom: 20),
-                child: AbsorbPointer(
-                  absorbing: false,
-                  child: Align(
-                    child: SearchCountenar(context, size),
-                    alignment: Alignment.centerRight,
-                  ),
+                padding: const EdgeInsetsDirectional.only(bottom: 20, top: 180),
+                child: Align(
+                  child: SearchCountenar(context, size),
+                  alignment: Alignment.centerRight,
                 )),
-            //bottom Container
-            BottomContainer(size, context, cuibt)
+            //Top  Container
+            topContainer(size, context, cuibt)
           ]);
         });
   }
 
-  Align BottomContainer(Size size, BuildContext context, CasherCuibt cuibt) {
-    return Align(
-      alignment: AlignmentDirectional.bottomCenter,
-      child: MyContainer(
-        Height: size.height * .118,
-        Width: CasherCuibt.get(context).Search
-            ? (size.width) - 10
-            : size.width * .9,
-        Child: TextFormRow(cuibt,context),
+  Padding topContainer(Size size, BuildContext context, CasherCuibt cuibt) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 70,bottom: 5),
+      child: Align(
+        alignment: AlignmentDirectional.topCenter,
+        child: MyContainer(
+          Height: size.height * .118,
+          Width: CasherCuibt.get(context).Search
+              ? (size.width) - 10
+              : size.width * .9,
+          Child: TextFormRow(cuibt, context),
+        ),
       ),
     );
   }
 
-  Shortcuts TextFormRow(CasherCuibt cuibt,context) {
+  Shortcuts TextFormRow(CasherCuibt cuibt, context) {
     return Shortcuts(
       shortcuts: {
         LogicalKeySet(LogicalKeyboardKey.delete): RemoveItem(),
         LogicalKeySet(LogicalKeyboardKey.insert): RecordOrder(),
-
       },
       child: Actions(
         actions: {
-          RemoveItem:
-          CallbackAction<RemoveItem>(onInvoke: (intent) {
+          RemoveItem: CallbackAction<RemoveItem>(onInvoke: (intent) {
             cuibt.deleteItemFOrders(context);
-      }),
-
-          RecordOrder:
-          CallbackAction<RecordOrder>(onInvoke: (intent) {
-         cuibt.RecordOrder();
+          }),
+          RecordOrder: CallbackAction<RecordOrder>(onInvoke: (intent) {
+            cuibt.RecordOrder();
           }),
         },
         child: Row(
@@ -122,52 +125,76 @@ class CasherPage extends StatelessWidget {
             ),
             Expanded(
                 child: MyTextField(
-             auto: true,
-                  Focusnode: cuibt.foucsCode,
-              Controlr: cuibt.CodeOfProduct,
-              hint: "Write code of Product",
-                  OnSubmitted: (_){
-                    cuibt.GetItem(context);
-                    if(cuibt.AlertChangeNum) {
-                      settingDialog(context,"This item is found,Change the number of this item",cuibt);
-                      cuibt.AlertChangeNum=false;
-                      cuibt.cahnge();
+                    auto: true,
+                    Focusnode: cuibt.foucsCode,
+                    Controlr: cuibt.CodeOfProduct,
+                    hint: "Write code of Product",
+                    OnSubmitted: (_) {
+                      cuibt.GetItem(context);
+                      cuibt.NameOfProduct.clear();
+                    },
+                onChanged: (value){
+                  cuibt.getItemProducts(cuibt.dataBase, value).then((value) {
+                    print(value);
+                    if(value.length==1){
+                      cuibt.NameOfProduct.text = value[0]['Name'];
                     }
-                    else if (cuibt.AlertItemNFound) {
-                      settingDialog(context,"This item not found",cuibt);
-                      cuibt.AlertItemNFound=false;
-                      cuibt.cahnge();
+                    else{
+
+                      cuibt.NameOfProduct.clear();
                     }
-                  }
-            )),
+                  });
+                }
+                ))
+
+            ,
             const SizedBox(width: 40),
-            const Text("ReciteNum:",
+            const Text("Item Name:",
                 style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 19,
                     fontStyle: FontStyle.italic)),
+            const SizedBox(
+              width: 5,
+            ),
+            Expanded(
+                child: MyTextField(
+                  enabled: false,
+                    Controlr: cuibt.NameOfProduct,
+                    hint: "",
+                    OnSubmitted: (Text) {
+                      cuibt.getRecite(Text);
+                      if (cuibt.recordedOrders.isNotEmpty) {
+                        orderDialog(context, cuibt);
+                      }
+                    })),
 
+            if(CasherCuibt.get(context).Search)
+                const Text("ReciteNum:",
+                style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 19,
+                    fontStyle: FontStyle.italic)),
+            if(CasherCuibt.get(context).Search)
               const SizedBox(
               width: 5,
             ),
-
-              Expanded(
+            if(CasherCuibt.get(context).Search)
+            Expanded(
                 child: MyTextField(
                     Controlr: cuibt.NumOrders,
                     hint: "150",
-                  OnSubmitted: (Text){
-                    cuibt.getRecite(Text);
-                        if(cuibt.recordedOrders.isNotEmpty) {
-                          orderDialog(context, cuibt);
-                        }
+                    OnSubmitted: (Text) {
+                      cuibt.getRecite(Text);
+                      if (cuibt.recordedOrders.isNotEmpty) {
+                        orderDialog(context, cuibt);
                       }
-                )),
+                    })),
           ],
         ),
       ),
     );
   }
-
 
   Positioned NumberOfOrder(CasherCuibt cuibt) {
     return Positioned(
@@ -180,7 +207,7 @@ class CasherPage extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.white70, borderRadius: BorderRadius.circular(20)),
             alignment: AlignmentDirectional.center,
-            child:SelectableText(
+            child: SelectableText(
               "${cuibt.NumberOfOrder}",
               style: const TextStyle(
                   fontWeight: FontWeight.w800, fontStyle: FontStyle.italic),
@@ -195,15 +222,17 @@ class CasherPage extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Container(
-            height: 40,
-            width: 100,
+            height: 50,
+            width: 120,
             decoration: BoxDecoration(
                 color: Colors.white70, borderRadius: BorderRadius.circular(20)),
             alignment: AlignmentDirectional.center,
             child: Text(
               "${cuibt.total}",
-              style: TextStyle(
-                  fontWeight: FontWeight.w800, fontStyle: FontStyle.italic),
+              style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 19),
             )),
       ),
     );
@@ -211,15 +240,15 @@ class CasherPage extends StatelessWidget {
 
   Widget SearchButton(CasherCuibt cuibt) {
     return InkWell(
-onTap: (){
-  cuibt.AddItemChangeSearch();
-
-},
+      onTap: () {
+        cuibt.AddItemChangeSearch();
+      },
       child: Container(
         height: 40,
         width: 100,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
           color: Colors.white70,
         ),
         alignment: AlignmentDirectional.center,
@@ -230,9 +259,11 @@ onTap: (){
                 color: Colors.grey[900]),
             const SizedBox(width: 5),
             cuibt.Search
-                ? const Text("Close", style: TextStyle(color: Colors.black,))
-                : const Text("Search",
-                    style: TextStyle(color: Colors.black)),
+                ? const Text("Close",
+                    style: TextStyle(
+                      color: Colors.black,
+                    ))
+                : const Text("Search", style: TextStyle(color: Colors.black)),
           ],
         ),
       ),
@@ -241,26 +272,25 @@ onTap: (){
 
   casherTable(context, CasherCuibt cuibt) {
     return DataTable(
-      showBottomBorder: true,
-        showCheckboxColumn:true,
-        sortColumnIndex: 1,
+        showCheckboxColumn: false,
         dataTextStyle:
-           const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+            const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         headingTextStyle: const TextStyle(
           fontWeight: FontWeight.w900,
           color: Colors.black,
           fontSize: 20,
           fontStyle: FontStyle.italic,
         ),
-        columnSpacing: 90,
+        columnSpacing: 50,
         horizontalMargin: 10,
         border: TableBorder.all(
-
             color: Colors.grey,
             borderRadius: BorderRadius.circular(15),
             width: 2),
         columns: const [
-
+          DataColumn(
+            label: Text("num"),
+          ),
           DataColumn(
             label: Text("Name"),
           ),
@@ -278,63 +308,66 @@ onTap: (){
           ),
         ],
         rows: cuibt.orders.asMap().entries.map((r) {
-          var e=r.value;
-          int index=r.key;
+          var e = r.value;
+          int index = r.key;
           return DataRow(
-              onSelectChanged:(_){
+              onSelectChanged: (_) {
                 FocusScope.of(context).requestFocus(cuibt.foucsCode);
                 cuibt.InsertValueItem(
                   codeOFItem: "${e["Code"]}",
                   NameOFItem: "${e["Name"]}",
                   NumberOFItem: "${e["Num"]}",
                   id: e["id"],
-                  Price:e["Price"],
+                  Price: e["Price"],
                   index: index,
-
                 );
               },
               cells: [
+                DataCell(Text("${index + 1}")),
                 DataCell(Text("${e["Name"]}")),
                 DataCell(
                   Text("${e["Price"]}"),
                 ),
                 DataCell(
                   TextFormField(
-                    onChanged:(_){
-                      cuibt.InsertValueItem(
-                      codeOFItem: "${e["Code"]}",
-                      NameOFItem: "${e["Name"]}",
-                      NumberOFItem: "${e["Num"]}",
-                      id: e["id"],
-                      Price:e["Price"],
-                      index: index,
-                    );},
+                      onChanged: (_) {
+                        cuibt.InsertValueItem(
+                          codeOFItem: "${e["Code"]}",
+                          NameOFItem: "${e["Name"]}",
+                          NumberOFItem: "${e["Num"]}",
+                          id: e["id"],
+                          Price: e["Price"],
+                          index: index,
+                        );
+                      },
                       autofocus: true,
-                    cursorColor: Colors.green,
-                    cursorRadius:const  Radius.circular(10),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                    controller: cuibt.QuintteyControllers[e["Code"]],
-                  onFieldSubmitted: (_){
-                      FocusScope.of(context).requestFocus(cuibt.FocusControllers[e["Code"]]);
-
-                    }
-                  ),),
-
+                      cursorColor: Colors.green,
+                      cursorRadius: const Radius.circular(10),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      controller: cuibt.QuintteyControllers[e["Code"]],
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(cuibt.FocusControllers[e["Code"]]);
+                      }),
+                ),
                 DataCell(Text("${e["TotalMoney"]}")),
-                DataCell(
-                 TextFormField(controller:cuibt.NoteControllers[e["Code"]],decoration:InputDecoration(border:InputBorder.none),focusNode: cuibt.FocusControllers[e["Code"]],onFieldSubmitted:(_){
-                   cuibt.UpdeteNumAfterChange(context);
-                   FocusScope.of(context).requestFocus(cuibt.foucsCode);
-
-                 },))
+                DataCell(TextFormField(
+                  controller: cuibt.NoteControllers[e["Code"]],
+                  decoration: InputDecoration(border: InputBorder.none),
+                  focusNode: cuibt.FocusControllers[e["Code"]],
+                  onFieldSubmitted: (_) {
+                    cuibt.UpdeteNumAfterChange(context);
+                    FocusScope.of(context).requestFocus(cuibt.foucsCode);
+                  },
+                ))
               ]);
         }).toList());
   }
-   settingDialog(context,text,CasherCuibt cuibt) {
-    return showDialog(
 
+  settingDialog(context, text, CasherCuibt cuibt) {
+    return showDialog(
         context: context,
         builder: (context) {
           return BlurryContainer(
@@ -342,34 +375,47 @@ onTap: (){
             width: 300,
             blur: 6,
             child: AlertDialog(
-actionsAlignment: MainAxisAlignment.center,
+              actionsAlignment: MainAxisAlignment.center,
               clipBehavior: Clip.antiAliasWithSaveLayer,
               backgroundColor: Colors.white60,
               elevation: 2,
-              content: Text("$text",style: TextStyle(fontWeight: FontWeight.w900)),
+              content:
+                  Text("$text", style: TextStyle(fontWeight: FontWeight.w900)),
               actions: [
                 MaterialButton(
                   color: Colors.blueGrey[700],
-                  onPressed: (){
-                  Navigator.pop(context);
-                  if(text=="This item not found")
-                    cuibt.AlertItemNFound=false;
-                  cuibt.cahnge();
-                },child:const Text("Okay",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
-                if(text=="This item not found")
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (text == "This item not found")
+                      cuibt.AlertItemNFound = false;
+                    cuibt.cahnge();
+                  },
+                  child: const Text("Okay",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )),
+                ),
+                if (text == "This item not found")
                   MaterialButton(
                     color: Colors.blueGrey[700],
-                    onPressed: (){
+                    onPressed: () {
                       cuibt.ChangePageIntoAddItem();
                       Navigator.pop(context);
-                    },child:const Text("Add item",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
-
+                    },
+                    child: const Text("Add item",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        )),
+                  ),
               ],
             ),
           );
         });
   }
-   orderDialog(context,CasherCuibt cuibt)  {
+
+  orderDialog(context, CasherCuibt cuibt) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -381,62 +427,68 @@ actionsAlignment: MainAxisAlignment.center,
               clipBehavior: Clip.antiAliasWithSaveLayer,
               backgroundColor: Colors.white60,
               elevation: 30,
-              title: Text("Number Order: ${cuibt.NumOrders.text}",style:const TextStyle(fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontStyle: FontStyle.italic
-              )),
+              title: Text("Number Order: ${cuibt.NumOrders.text}",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      fontStyle: FontStyle.italic)),
               content: DataTable(
-              dataTextStyle:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-              headingTextStyle: const TextStyle(
-                fontWeight: FontWeight.w900,
-                color: Colors.black,
-                fontSize: 20,
-                fontStyle: FontStyle.italic,
-              ),
-              columnSpacing: 40,
-              horizontalMargin: 10,
-              border: TableBorder.all(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(20),
-                  width: 2),
-              columns: const [
-                DataColumn(
-                  label: Text("Name"),
-                ),
-                DataColumn(
-                  label: Text("Price"),
-                ),
-                DataColumn(
-                  label: Text("Number"),
-                ),
-                DataColumn(
-                  label: Text("Total money"),
-                ),
-              ],
-              //for each and put what give true in another list and show it
-              rows: cuibt.recordedOrders.map((e) {
-                return DataRow(
-                    onLongPress: (){
-                    },
-                    cells: [
-                      DataCell(Text("${e["Name"]}"),
+                  dataTextStyle: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.black),
+                  headingTextStyle: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  columnSpacing: 40,
+                  horizontalMargin: 10,
+                  border: TableBorder.all(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(20),
+                      width: 2),
+                  columns: const [
+                    DataColumn(
+                      label: Text("Name"),
+                    ),
+                    DataColumn(
+                      label: Text("Price"),
+                    ),
+                    DataColumn(
+                      label: Text("Number"),
+                    ),
+                    DataColumn(
+                      label: Text("Total money"),
+                    ),
+                  ],
+                  //for each and put what give true in another list and show it
+                  rows: cuibt.recordedOrders.map((e) {
+                    return DataRow(onLongPress: () {}, cells: [
+                      DataCell(
+                        Text("${e["Name"]}"),
                       ),
                       DataCell(
                         Text("${e["Price"]}"),
-
                       ),
                       DataCell(Text("${e["Num"]}")),
                       DataCell(Text("${e["TotalMoney"]}")),
                     ]);
-              }).toList()),
+                  }).toList()),
               actions: [
                 MaterialButton(
                   color: Colors.blueGrey[700],
-                  onPressed: (){
-                  Navigator.pop(context);
-                },child:const Text("Okay",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,)),),
-                const SizedBox(width: 80,),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Okay",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )),
+                ),
+                const SizedBox(
+                  width: 80,
+                ),
                 Container(
                   alignment: AlignmentDirectional.center,
                   height: 50,
@@ -445,19 +497,21 @@ actionsAlignment: MainAxisAlignment.center,
                     color: Colors.grey[700],
                     borderRadius: BorderRadiusDirectional.circular(20),
                   ),
-                  child: Text("Total:${cuibt.TotalOfRecite}",style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
+                  child: Text("Total:${cuibt.TotalOfRecite}",
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold)),
                 )
-
               ],
             ),
           );
         });
   }
+
   searchCasherTable(context) {
     var cuibt = CasherCuibt.get(context);
     return DataTable(
         dataTextStyle:
-        TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+            TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         headingTextStyle: const TextStyle(
           fontWeight: FontWeight.w900,
           color: Colors.black,
@@ -490,23 +544,23 @@ actionsAlignment: MainAxisAlignment.center,
         //for each and put what give true in another list and show it
         rows: cuibt.SearchProducts.map((e) {
           return DataRow(
-              onLongPress: (){
+              onLongPress: () {
                 cuibt.insertValueIntoControlar(e);
-
               },
               cells: [
                 DataCell(Text("${e["Code"]}")),
-                DataCell(Text("${e["Name"]}"),
+                DataCell(
+                  Text("${e["Name"]}"),
                 ),
                 DataCell(
                   Text("${e["Price"]}"),
-
                 ),
                 DataCell(Text("${e["QuantityInStore"]}")),
                 DataCell(Text("${e["EndDate"]}")),
               ]);
         }).toList());
   }
+
   SearchCountenar(context, size) {
     var cuibt = CasherCuibt.get(context);
     return AnimatedOpacity(
@@ -523,7 +577,6 @@ actionsAlignment: MainAxisAlignment.center,
               physics: BouncingScrollPhysics(),
               controller: scrolllabel,
               children: [
-
                 MyTextField(
                     Controlr: cuibt.NameOfSearch,
                     label: "Name",
@@ -542,9 +595,10 @@ actionsAlignment: MainAxisAlignment.center,
       ),
     );
   }
-
 }
 
 class EnterButton extends Intent {}
+
 class RemoveItem extends Intent {}
+
 class RecordOrder extends Intent {}
